@@ -1,4 +1,4 @@
-const APP_NAME = 'MistWarp';
+const APP_NAME = 'TurboIDE';
 const FEEDBACK_URL = '/roadmap';
 const GITHUB_URL = 'https://github.com/MistWarp';
 const WEBSITE = 'https://mistwarp.org/';

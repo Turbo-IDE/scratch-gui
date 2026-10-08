@@ -168,7 +168,7 @@ import {
     Save, ArchiveRestore, UserPen, Cloud, PackagePlus, Puzzle,
     GitBranch, FileCog, Bug, Database, Undo, Redo, Handshake, Wrench,
     Download, AppWindow, Computer, Shield, Code, Code2,
-    Blocks as BlocksIcon, Menu as MenuIcon, Globe, ExternalLink, Video,
+    Blocks as BlocksIcon, Menu as MenuIcon, Globe, Video,
     ShoppingBag, Backpack, Check, Zap,
     Bookmark, BookmarkPlus, Trash2, FolderOpen
 } from 'lucide-react';
@@ -445,6 +445,8 @@ class MenuBar extends React.Component {
             'handleDocumentMouseDown',
             'handleToggleMoreMenu',
             'handleClickSeeInside',
+            'handleClickUploadProject',
+            'handleReturnHomePage',
             'handleClickNew',
             'handleClickNewWindow',
             'handleClickLoadFromComputer',
@@ -1502,6 +1504,91 @@ class MenuBar extends React.Component {
     handleClickSeeInside () {
         this.props.onClickSeeInside();
     }
+    // Authors: katboizz
+    async handleClickUploadProject () {
+        try {
+            // 1. Mo tab truoc de trinh duyet khong chan Popup
+            const targetUrl = 'https://danvpr.github.io/workshop/#upload';
+            const workshopTab = window.open(targetUrl, '_blank');
+
+            if (!workshopTab) {
+                // eslint-disable-next-line no-alert
+                alert('Vui long cho phep mo Pop-up tren trinh duyet!');
+                return;
+            }
+            this.props.onRequestCloseFile();
+
+            const vm = this.props.vm;
+
+            // 2. Lay ten tac pham
+            const projectTitle = this.props.projectTitle || 'Du an moi';
+
+            // 3. Chup Thumbnail
+            const thumbDataUrl = await new Promise(resolve => {
+                let isDone = false;
+                const fallbackTimer = setTimeout(() => {
+                    if (!isDone) {
+                        isDone = true;
+                        const fallbackCanvas = vm && vm.renderer && vm.renderer.canvas ?
+                            vm.renderer.canvas : document.querySelector('canvas');
+                        resolve(fallbackCanvas ? fallbackCanvas.toDataURL('image/png') : null);
+                    }
+                }, 1500);
+
+                try {
+                    if (vm && vm.renderer && typeof vm.renderer.requestSnapshot === 'function') {
+                        vm.renderer.requestSnapshot(dataUri => {
+                            if (!isDone) {
+                                isDone = true;
+                                clearTimeout(fallbackTimer);
+                                resolve(dataUri);
+                            }
+                        });
+                        vm.renderer.draw();
+                    } else {
+                        clearTimeout(fallbackTimer);
+                        const fallbackCanvas = document.querySelector('canvas');
+                        resolve(fallbackCanvas ? fallbackCanvas.toDataURL('image/png') : null);
+                    }
+                } catch (e) {
+                    clearTimeout(fallbackTimer);
+                    resolve(null);
+                }
+            });
+
+            // 4. Dong goi file .sb3
+            const sb3Blob = await vm.saveProjectSb3();
+            const sb3ArrayBuffer = await sb3Blob.arrayBuffer();
+
+            // 5. Gui du lieu sang tab Workshop khi san sang
+            let hasSent = false;
+            const messageListener = event => {
+                if (event.data && event.data.type === 'DANV_WORKSHOP_READY' && !hasSent) {
+                    hasSent = true;
+                    workshopTab.postMessage({
+                        type: 'DANV_IMPORT_PROJECT',
+                        title: projectTitle,
+                        sb3Buffer: sb3ArrayBuffer,
+                        fileName: `${projectTitle}.sb3`,
+                        thumbDataUrl: thumbDataUrl
+                    }, '*', [sb3ArrayBuffer]);
+                    window.removeEventListener('message', messageListener);
+                }
+            };
+            window.addEventListener('message', messageListener);
+
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Loi khi xuat file du an:', error);
+            // eslint-disable-next-line no-alert
+            alert('Khong the dong goi du an: ' + error.message);
+        }
+    }
+    handleReturnHomePage () {
+        const Return = 'https://turbows.pages.dev/';
+
+        window.location.href = Return;
+    }
     handleClickUndo () {
         // The costume and sound editors have their own undo; the workspace is hidden there.
         if (this.props.isPlayerOnly || !this.props.blocksTabVisible || !this.state.canUndo) return;
@@ -1720,9 +1807,6 @@ class MenuBar extends React.Component {
         };
     }
     render () {
-        const mistwarpAction = communityEnabled ?
-            getMistWarpAction(this.state.mistwarpProject, this.props.projectChanged) :
-            null;
         const newProjectMessage = (
             <FormattedMessage
                 defaultMessage="New"
@@ -1756,18 +1840,18 @@ class MenuBar extends React.Component {
                     )}
                 >
                     <a
-                        href="/"
+                        href="https://turbows.pages.dev/"
                         className={classNames(styles.menuBarItem, styles.hoverable, styles.homeLink)}
                         title={this.props.intl.formatMessage(menuLabelMessages.home)}
                         data-mw-item="__home"
                     >
                         <img
                             src={mistwarpLogo}
-                            alt="MistWarp"
+                            alt="TurboIDE"
                             className={styles.homeLogo}
                         />
                         <span className={styles.homeWordmark}>
-                            {'MistWarp'}
+                            {'TurboIDE'}
                         </span>
                     </a>
                     {this.state.menuCollapsed && (
@@ -1887,43 +1971,18 @@ class MenuBar extends React.Component {
                                             />
                                         </MenuItem>
                                     )}
-                                    {this.props.roturReady ? (
-                                        <MenuSection>
-                                            <MenuItem
-                                                disabled={!mistwarpAction}
-                                                onClick={this.handleClickMistWarpShare}
-                                                shortcut={this.state.mistwarpProject ?
-                                                    shortcutHint('save', this.props.customShortcuts) : null}
-                                                subtitle={mistwarpAction ?
-                                                    null : this.props.intl.formatMessage(twMessages.noChanges)}
-                                            >
-                                                <Globe />
-                                                {mistwarpAction === 'remix' ? (
-                                                    <FormattedMessage
-                                                        defaultMessage="Remix to MistWarp"
-                                                        description="File menu item to remix a MistWarp project"
-                                                        id="mw.menuBar.remix"
-                                                    />
-                                                ) : (
-                                                    <FormattedMessage
-                                                        defaultMessage="Save to MistWarp"
-                                                        description="File menu item to save the project to MistWarp"
-                                                        id="mw.menuBar.share"
-                                                    />
-                                                )}
-                                            </MenuItem>
-                                            {this.state.mistwarpProject ? (
-                                                <MenuItem onClick={this.handleClickSeeMistWarpPage}>
-                                                    <ExternalLink />
-                                                    <FormattedMessage
-                                                        defaultMessage="See project page"
-                                                        description="File menu item opening the MistWarp project page"
-                                                        id="mw.menuBar.projectPage"
-                                                    />
-                                                </MenuItem>
-                                            ) : null}
-                                        </MenuSection>
-                                    ) : null}
+                                    <MenuSection>
+                                        <MenuItem
+                                            onClick={this.handleClickUploadProject}
+                                        >
+                                            <Globe />
+                                            <FormattedMessage
+                                                defaultMessage="Upload to Turboworkshop"
+                                                description="File menu item to upload project to Turboworkshop"
+                                                id="tw.menuBar.uploadTurboworkshop"
+                                            />
+                                        </MenuItem>
+                                    </MenuSection>
                                     <MenuSection>
                                         <MenuItem
                                             onClick={this.handleClickLoadFromComputer}

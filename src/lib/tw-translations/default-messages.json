@@ -276,6 +276,7 @@
   "tw.menuBar.reportError1": "Some scripts encountered errors.",
   "tw.menuBar.reportError2": "This is a bug. Please report it.",
   "tw.menuBar.newWindow": "New window",
+  "tw.menuBar.uploadTurboworkshop": "Upload to Turboworkshop",
   "mw.menuBar.remix": "Remix to MistWarp",
   "mw.menuBar.share": "Save to MistWarp",
   "mw.menuBar.projectPage": "See project page",
