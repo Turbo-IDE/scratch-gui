@@ -19,6 +19,7 @@ import Button from '../button/button.jsx';
 import CommunityButton from './community-button.jsx';
 import openMistWarpShareWindow from '../../lib/mw/open-mw-share-window.js';
 import uploadProjectToWorkshop from '../../lib/mw/upload-to-workshop.js';
+import {FIT_STEPS, fitStepsAttribute, measureMenuSlack, nextFitLevel} from '../../lib/mw/menu-bar-fit.js';
 import {
     getRememberedPlatformProjectState,
     getMistWarpAction,
@@ -420,6 +421,7 @@ class MenuBar extends React.Component {
             gitRemotes: historyData && Array.isArray(historyData.remotes) ? historyData.remotes : [],
             mwpFileHandle: null,
             menuCollapsed: false,
+            menuFitLevel: 0,
             moreMenuOpen: false,
             exportMenuOpen: false,
             mediaRecorderOpenRequest: 0,
@@ -427,6 +429,10 @@ class MenuBar extends React.Component {
             mistwarpProject: getRememberedPlatformProjectState()
         };
         this.menuBarRef = React.createRef();
+        this.mainMenuRef = React.createRef();
+        this.accountGroupRef = React.createRef();
+        this.menuFitSavings = [];
+        this.menuFitPending = null;
         this.blockCountRef = React.createRef();
         this.blockCountController = null;
         this.mwpSaving = false;
@@ -443,6 +449,7 @@ class MenuBar extends React.Component {
         bindAll(this, [
             'handleDocumentMouseDown',
             'handleToggleMoreMenu',
+            'scheduleMenuFit',
             'handleClickSeeInside',
             'handleClickUploadProject',
             'handleReturnHomePage',
@@ -600,18 +607,40 @@ class MenuBar extends React.Component {
     observeMenuBarWidth () {
         const el = this.menuBarRef.current;
         if (!el || typeof ResizeObserver === 'undefined') return;
-        this.menuResizeObserver = new ResizeObserver(() => {
-            if (this.menuResizeRaf) return;
-            this.menuResizeRaf = requestAnimationFrame(() => {
-                this.menuResizeRaf = null;
-                if (this.unmounted) return;
-                const collapsed = el.getBoundingClientRect().width < COLLAPSE_MENU_WIDTH;
-                if (collapsed !== this.state.menuCollapsed) {
-                    this.setState({menuCollapsed: collapsed, moreMenuOpen: false});
-                }
-            });
+        this.menuResizeObserver = new ResizeObserver(this.scheduleMenuFit);
+        [el, this.mainMenuRef.current, this.accountGroupRef.current, this.blockCountRef.current]
+            .filter(Boolean)
+            .forEach(target => this.menuResizeObserver.observe(target));
+    }
+
+    scheduleMenuFit () {
+        if (this.menuResizeRaf) return;
+        this.menuResizeRaf = requestAnimationFrame(() => {
+            this.menuResizeRaf = null;
+            if (!this.unmounted) this.updateMenuFit();
         });
-        this.menuResizeObserver.observe(el);
+    }
+
+    updateMenuFit () {
+        const bar = this.menuBarRef.current;
+        const menu = this.mainMenuRef.current;
+        if (!bar || !menu) return;
+        const slack = measureMenuSlack(menu);
+        const level = this.state.menuFitLevel;
+        if (this.menuFitPending && this.menuFitPending.level === level) {
+            this.menuFitSavings[level] = slack - this.menuFitPending.slack;
+        }
+        this.menuFitPending = null;
+        const nextLevel = nextFitLevel(level, slack, this.menuFitSavings);
+        if (nextLevel > level) this.menuFitPending = {level: nextLevel, slack};
+        const collapsed = bar.getBoundingClientRect().width < COLLAPSE_MENU_WIDTH ||
+            nextLevel >= FIT_STEPS.length;
+        if (nextLevel === level && collapsed === this.state.menuCollapsed) return;
+        this.setState(prevState => ({
+            menuFitLevel: nextLevel,
+            menuCollapsed: collapsed,
+            moreMenuOpen: collapsed === prevState.menuCollapsed ? prevState.moreMenuOpen : false
+        }), this.scheduleMenuFit);
     }
 
     handleDocumentMouseDown (e) {
@@ -1756,9 +1785,11 @@ class MenuBar extends React.Component {
                         [styles.labelsOnly]: this.state.menuBarSettings.menu_labels === 'labels'
                     }
                 )}
+                data-menu-fit={fitStepsAttribute(this.state.menuFitLevel)}
                 ref={this.menuBarRef}
             >
                 <div
+                    ref={this.mainMenuRef}
                     className={classNames(
                         styles.mainMenu,
                         {
@@ -2382,6 +2413,7 @@ class MenuBar extends React.Component {
                 <div
                     data-mw-item="__account-group"
                     className={styles.accountInfoGroup}
+                    ref={this.accountGroupRef}
                 >
                     <div
                         data-mw-item="save-status"
