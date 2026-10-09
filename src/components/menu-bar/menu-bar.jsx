@@ -1946,29 +1946,43 @@ class MenuBar extends React.Component {
                                             <Upload />
                                             {this.props.intl.formatMessage(sharedMessages.loadFromComputerTitle)}
                                         </MenuItem>
-                                        <MenuItem
-                                            onClick={this.handleClickSaveMwp}
-                                            shortcut={this.state.mistwarpProject ?
-                                                null : shortcutHint('save', this.props.customShortcuts)}
+                                        <SB3Downloader
+                                            showSaveFilePicker={this.props.showSaveFilePicker}
                                         >
-                                            <Save />
-                                            <FormattedMessage
-                                                defaultMessage="Save to your computer"
-                                                description="File menu item to save the .mwp file with full history"
-                                                id="mw.menuBar.saveMwp"
-                                            />
-                                        </MenuItem>
+                                            {(_className, downloadProject) => (
+                                                <MenuItem
+                                                    onClick={this.getSaveToComputerHandler(downloadProject)}
+                                                    shortcut={this.state.mistwarpProject ?
+                                                        null : shortcutHint('save', this.props.customShortcuts)}
+                                                >
+                                                    <Save />
+                                                    <FormattedMessage
+                                                        defaultMessage="Save to your computer"
+                                                        description="File menu item to save the project as .sb3"
+                                                        id="mw.menuBar.saveMwp"
+                                                    />
+                                                </MenuItem>
+                                            )}
+                                        </SB3Downloader>
                                         {this.state.mwpFileHandle ? (
-                                            <MenuItem
-                                                onClick={this.handleClickSaveMwpAs}
+                                            <SB3Downloader
+                                                showSaveFilePicker={this.props.showSaveFilePicker}
                                             >
-                                                <FileInput />
-                                                <FormattedMessage
-                                                    defaultMessage="Save as…"
-                                                    description="File menu item to save a new native project file"
-                                                    id="mw.menuBar.saveMwpAs"
-                                                />
-                                            </MenuItem>
+                                                {(_className, downloadProject, sb3Props) => (
+                                                    <MenuItem
+                                                        onClick={sb3Props && sb3Props.saveAsNew ?
+                                                            sb3Props.saveAsNew :
+                                                            this.getSaveToComputerHandler(downloadProject)}
+                                                    >
+                                                        <FileInput />
+                                                        <FormattedMessage
+                                                            defaultMessage="Save as…"
+                                                            description="File menu item to save a new project file"
+                                                            id="mw.menuBar.saveMwpAs"
+                                                        />
+                                                    </MenuItem>
+                                                )}
+                                            </SB3Downloader>
                                         ) : null}
                                         <SB3Downloader
                                             showSaveFilePicker={this.props.showSaveFilePicker}

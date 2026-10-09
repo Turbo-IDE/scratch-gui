@@ -53,6 +53,9 @@ import twIcon from './tw/tw.svg';
 import patchingIcon from './patching/patching.png';
 import customExtensionIcon from './custom/custom.svg';
 import galleryIcon from './gallery/gallery.svg';
+import turboshareCloudDBIcon from '../../../../TurboWS/Extensions/Banner/CloudDB.png';
+import turboshareWOWEconomyIcon from '../../../../TurboWS/Extensions/Banner/WOWEconomy.png';
+import turboshareEmbedWindowsIcon from '../../../../TurboWS/Extensions/Banner/EmbedWindows.png';
 import {APP_NAME} from '../../constants/brand';
 
 export default [
@@ -413,6 +416,69 @@ export default [
             />
         ),
         helpLink: 'https://scratch.mit.edu/vernier'
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="DANV Cloud DB"
+                description="Name of the DANV Cloud DB extension"
+                id="mw.turboshare.danvCloudDB.name"
+            />
+        ),
+        extensionId: 'danvCloudDB',
+        extensionURL: `${process.env.ROOT || '/'}static/turboshare-extensions/CloudDB.js`,
+        iconURL: turboshareCloudDBIcon,
+        description: (
+            <FormattedMessage
+                defaultMessage="Cloud variables and data storage for multi-player games"
+                description="Description of the DANV Cloud DB extension"
+                id="mw.turboshare.danvCloudDB.description"
+            />
+        ),
+        tags: ['turboshare'],
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="WOW Economy"
+                description="Name of the WOW Economy extension"
+                id="mw.turboshare.danvWowEconomy.name"
+            />
+        ),
+        extensionId: 'danvWowEconomy',
+        extensionURL: `${process.env.ROOT || '/'}static/turboshare-extensions/WOWEconomy.js`,
+        iconURL: turboshareWOWEconomyIcon,
+        description: (
+            <FormattedMessage
+                defaultMessage="WOW energy currency system integration"
+                description="Description of the WOW Economy extension"
+                id="mw.turboshare.danvWowEconomy.description"
+            />
+        ),
+        tags: ['turboshare'],
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="Embed Windows v2"
+                description="Name of the Embed Windows v2 extension"
+                id="mw.turboshare.embedWindowsv2.name"
+            />
+        ),
+        extensionId: 'FakeWindowsv2',
+        extensionURL: `${process.env.ROOT || '/'}static/turboshare-extensions/EmbedWindows.js`,
+        iconURL: turboshareEmbedWindowsIcon,
+        description: (
+            <FormattedMessage
+                defaultMessage="Create fake windows in your project page"
+                description="Description of the Embed Windows v2 extension"
+                id="mw.turboshare.embedWindowsv2.description"
+            />
+        ),
+        tags: ['turboshare'],
+        featured: true
     }
 ];
 

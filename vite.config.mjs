@@ -208,6 +208,7 @@ const pagesAndAssets = (env, root, library, generatedInputs) => {
         ['node_modules/scratch-blocks/media', 'static/blocks-media/high-contrast'],
         ['src/lib/themes/blocks/high-contrast-media/blocks-media', 'static/blocks-media/high-contrast'],
         ['src/examples/extensions', 'static/extensions'],
+        ['TurboWS/Extensions', 'static/turboshare-extensions'],
         ['src/playground/service-worker.js', 'sw.js']
     ];
     const routing = server => {

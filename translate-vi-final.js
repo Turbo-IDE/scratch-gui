@@ -173,7 +173,7 @@ const T = {
     "Start without a backup": "Bắt đầu mà không có bản sao",
     "Could not start a new project. Your current project is still open.": "Không thể bắt đầu dự án mới. Dự án hiện tại của bạn vẫn đang mở.",
     "File > Save to MistWarp": "Tệp > Lưu lên MistWarp",
-    "File > Export > Package project": "Tệp > Xuất khẩu > Đóng gói dự án",
+    "File > Export > Package project": "Tệp > Xuất file > Đóng gói dự án",
     
     // === Collaboration join ===
     "Join the live session?": "Tham gia phiên trực tuyến?",
@@ -830,8 +830,8 @@ const T = {
     "See all backups": "Xem tất cả bản sao",
 
     // === Cloud ===
-    "In the desktop app, cloud variables sync between all desktop app windows on this computer. To sync them for everyone, save the project to MistWarp or package it with File > Export > Package project.": "Trong ứng dụng máy tính để bàn, biến đám mây đồng bộ giữa tất cả cửa sổ ứng dụng trên máy tính này. Để đồng bộ cho mọ người, hãy lưu dự án lên MistWarp hoặc đóng gói nó với Tệp > Xuất khẩu > Đóng gói dự án.",
-    "Cloud variables do not sync while you edit. Save the project to MistWarp and play it from its project page, or package it with File > Export > Package project.": "Biến đám mây không đồng bộ trong khi bạn đang sửa. Hãy lưu dự áp lên MistWarp và chơi từ trang dự án của nó, hoặc đóng gói với Tệp > Xuất khẩu > Đóng gói dự án.",
+    "In the desktop app, cloud variables sync between all desktop app windows on this computer. To sync them for everyone, save the project to MistWarp or package it with File > Export > Package project.": "Trong ứng dụng máy tính để bàn, biến đám mây đồng bộ giữa tất cả cửa sổ ứng dụng trên máy tính này. Để đồng bộ cho mọ người, hãy lưu dự án lên MistWarp hoặc đóng gói nó với Tệp > Xuất file > Đóng gói dự án.",
+    "Cloud variables do not sync while you edit. Save the project to MistWarp and play it from its project page, or package it with File > Export > Package project.": "Biến đám mây không đồng bộ trong khi bạn đang sửa. Hãy lưu dự án lên MistWarp và chơi từ trang dự án của nó, hoặc đóng gói với Tệp > Xuất file > Đóng gói dự án.",
 
     // === Misc ===
     "Sound": "Âm thanh",
@@ -1156,8 +1156,8 @@ const T = {
 
     // === Cloud ===
     "If you make this cloud variable, the project will exceed Scratch's limit of {number} variables, and some variables will not function if you upload the project to Scratch.": "Nếu bạn tạo biến đám mây này, dự án sẽ vượt quá giới hạn {number} biến của Scratch, và một số biến có thể không hoạt động nếu bạn tải dự án lên Scratch.",
-    "In the desktop app, cloud variables sync between all desktop app windows on this computer. To sync them for everyone, save the project to MistWarp or package it with File > Export > Package project.": "Trong ứng dụng máy tính để bàn, biến đám mây đồng bộ giữa tất cả cửa sổ ứng dụng trên máy tính này. Để đồng bộ cho mọ người, hãy lưu dự án lên MistWarp hoặc đóng gói với Tệp > Xuất khẩu > Đóng gói dự án.",
-    "Cloud variables do not sync while you edit. Save the project to MistWarp and play it from its project page, or package it with File > Export > Package project.": "Biến đám mây không đồng bộ trong khi bạn đang sửa. Hãy lưu dự án lên MistWarp và chơi từ trang dự án của nó, hoặc đóng gói với Tệp > Xuất khẩu > Đóng gói dự án.",
+    "In the desktop app, cloud variables sync between all desktop app windows on this computer. To sync them for everyone, save the project to MistWarp or package it with File > Export > Package project.": "Trong ứng dụng máy tính để bàn, biến đám mây đồng bộ giữa tất cả cửa sổ ứng dụng trên máy tính này. Để đồng bộ cho mọ người, hãy lưu dự án lên MistWarp hoặc đóng gói với Tệp > Xuất file > Đóng gói dự án.",
+    "Cloud variables do not sync while you edit. Save the project to MistWarp and play it from its project page, or package it with File > Export > Package project.": "Biến đám mây không đồng bộ trong khi bạn đang sửa. Hãy lưu dự án lên MistWarp và chơi từ trang dự án của nó, hoặc đóng gói với Tệp > Xuất file > Đóng gói dự án.",
 
     // === Shortcuts ===
     "Change shortcut": "Thay đổi phím tắt",
