@@ -1,81 +1,80 @@
 const fs = require('fs');
 
-// === Step 1: Load all available Vietnamese translation sources ===
+// === Bước 1: Nạp tất cả các nguồn bản dịch tiếng Việt có sẵn ===
 
-// Upstream vi translations
+// Bản dịch tiếng Việt từ thượng nguồn (upstream)
 const upstreamSrc = fs.readFileSync(require.resolve('@turbowarp/scratch-l10n/locales/editor-msgs.js'), 'utf8');
 const upstream = JSON.parse(upstreamSrc.slice(upstreamSrc.indexOf('{')).replace(/;?\s*$/, ''));
 const upstreamVi = upstream.vi || {};
 const upstreamEn = upstream.en || {};
 
-// Existing genTrans vi translations
+// Bản dịch tiếng Việt hiện có trong generated-translations
 const genTrans = JSON.parse(fs.readFileSync('src/lib/tw-translations/generated-translations.json', 'utf8'));
 const genVi = genTrans.vi || {};
 
-// Defaults (new messages from MistWarp codebase)
+// Các chuỗi mặc định từ mã nguồn MistWarp
 const defaults = JSON.parse(fs.readFileSync('src/lib/tw-translations/default-messages.json', 'utf8'));
 
-// Find missing keys
+// Tìm các khóa chưa được dịch
 const missingKeys = Object.keys(defaults).filter(k => !(k in upstreamVi) && !(k in genVi));
-console.log('Missing keys to translate:', missingKeys.length);
+console.log('Số lượng khóa cần dịch:', missingKeys.length);
 
-// === Step 2: Build comprehensive en->vi mapping from ALL sources ===
+// === Bước 2: Thiết lập ánh xạ en -> vi từ tất cả các nguồn ===
 const enToVi = {};
 
-// From upstream vi (match by English text)
+// Từ nguồn thượng nguồn (khớp theo chuỗi tiếng Anh)
 for (const [id, viText] of Object.entries(upstreamVi)) {
     const enText = upstreamEn[id];
     if (enText && !enToVi[enText]) enToVi[enText] = viText;
 }
 
-// From existing genTrans vi
+// Từ genTrans tiếng Việt hiện có
 for (const [id, viText] of Object.entries(genVi)) {
     const enText = defaults[id] || upstreamEn[id];
     if (enText && !enToVi[enText]) enToVi[enText] = viText;
 }
 
-// === Step 3: Direct dictionary for common UI terms and phrases ===
+// === Bước 3: Từ điển dịch trực tiếp các thuật ngữ và ngữ cảnh giao diện ===
 const dict = {
-    // Common buttons
+    // Thao tác lưu trữ
     "Save": "Lưu",
     "Save as…": "Lưu thành...",
     "Save as": "Lưu thành",
     "Save changes": "Lưu thay đổi",
-    "Save to": "Lưu tới",
+    "Save to": "Lưu vào",
     "Save to MistWarp": "Lưu lên MistWarp",
-    "Save without a version": "Lưu mà không có phiên bản",
-    "Create version and save": "Tạo phiên bản và lưu",
+    "Save without a version": "Lưu không tạo phiên bản",
+    "Create version and save": "Tạo phiên bản mới và lưu",
     "Saving…": "Đang lưu...",
-    "Saved": "Đã lưu",
+    "Saved": "Đã lưu thành công!",
     "Saving": "Đang lưu",
-    "Not saved": "Chưa lưu",
-    "Unsaved changes": "Thay đổi chưa lưu",
-    "Saved to computer": "Đã lưu vào máy tính",
+    "Not saved": "Chưa được lưu!",
+    "Unsaved changes": "Có thay đổi chưa được lưu!",
+    "Saved to computer": "Đã lưu vào máy tính!",
     "Read-only": "Chỉ đọc",
-    "Saving to your computer": "Đang lưu về máy tính",
-    "Browser autosave is on.": "Tự động lưu trình duyệt đã bật.",
-    "Browser autosave is off.": "Tự động lưu trình duyệt đã tắt.",
-    "Remix to MistWarp": "Remix lên MistWarp",
-    "Save to MistWarp": "Lưu lên MistWarp",
+    "Saving to your computer": "Đang lưu về máy tính của bạn...",
+    "Browser autosave is on.": "Tính năng tự động lưu của trình duyệt đang bật!",
+    "Browser autosave is off.": "Tính năng tự động lưu của trình duyệt đang tắt!",
+    "Remix to MistWarp": "Phối lại lên MistWarp",
     "Upload to TurboWorkshop": "Tải lên TurboWorkshop",
-    "{shortcut} saves a copy to your computer instead.": "{shortcut} lưu một bản sao vào máy tính của bạn thay thế.",
-    "Creates your own copy of this project on MistWarp.": "Tạo bản sao của bạn cho dự án này trên MistWarp.",
-    "Uploads your latest changes to this MistWarp project.": "Tải lên những thay đổi mới nhất của bạn lên dự án MistWarp này.",
-    "Uploads this project to your MistWarp account.": "Tải lên dự án này lên tài khoản MistWarp của bạn.",
-    "Uploads this project to TurboWorkshop.": "Tải lên dự án này lên TurboWorkshop.",
-    "Creates your own copy of this project on MistWarp, and turns it in to a full MistWarp project with version history and collaboration.": "Tạo bản sao của bạn cho dự án này trên MistWarp, đồng thời biến nó thành một dự án MistWarp đầy đủ với lịch sử phiên bản và hợp tác.",
-    "Saves your latest changes. You can still play and share while saving.": "Lưu những thay đổi mới nhất của bạn. Bạn vẫn có thể chơi và chia sẻ trong khi lưu.",
-    "Uploads your latest changes to this MistWarp project, keeping the same project ID.": "Tải lên những thay đổi mới nhất của bạn lên dự án MistWarp này, giữ nguyên ID dự án.",
-    "Uploads this project to your MistWarp account, creating a new project.": "Tải lên dự án này lên tài khoản MistWarp của bạn, tạo dự án mới.",
-    "Uploads this project to TurboWorkshop, creating a new workshop entry.": "Tải lên dự án này lên TurboWorkshop, tạo một mục workshop mới.",
-    "Creates your own copy of this project on MistWarp, keeping the same project ID and collaborators.": "Tạo bản sao của bạn cho dự án này trên MistWarp, giữ nguyên ID dự án và đồng tác giả.",
+    "{shortcut} saves a copy to your computer instead.": "{shortcut} sẽ lưu một bản sao vào máy tính của bạn!",
+    "Creates your own copy of this project on MistWarp.": "Tạo bản sao riêng của bạn cho dự án này trên MistWarp.",
+    "Uploads your latest changes to this MistWarp project.": "Tải các thay đổi mới nhất của bạn lên dự án MistWarp này.",
+    "Uploads this project to your MistWarp account.": "Tải dự án này lên tài khoản MistWarp của bạn.",
+    "Uploads this project to TurboWorkshop.": "Tải dự án này lên hệ thống TurboWorkshop.",
+    "Creates your own copy of this project on MistWarp, and turns it in to a full MistWarp project with version history and collaboration.": "Tạo bản sao dự án trên MistWarp, đồng thời chuyển đổi thành dự án MistWarp hoàn chỉnh với lịch sử phiên bản và tính năng cộng tác trực tuyến!",
+    "Saves your latest changes. You can still play and share while saving.": "Lưu các thay đổi mới nhất của bạn. Bạn vẫn có thể trải nghiệm và chia sẻ dự án trong lúc lưu!",
+    "Uploads your latest changes to this MistWarp project, keeping the same project ID.": "Tải các thay đổi mới nhất lên dự án MistWarp này và giữ nguyên mã định danh dự án.",
+    "Uploads this project to your MistWarp account, creating a new project.": "Tải dự án này lên tài khoản MistWarp của bạn dưới dạng một dự án mới hoàn toàn.",
+    "Uploads this project to TurboWorkshop, creating a new workshop entry.": "Tải dự án này lên TurboWorkshop dưới dạng một mục nội dung mới.",
+    "Creates your own copy of this project on MistWarp, keeping the same project ID and collaborators.": "Tạo bản sao dự án trên MistWarp, giữ nguyên mã định danh dự án và danh sách cộng tác viên.",
 
-    // Common actions
+    // Thao tác chung
     "Cancel": "Hủy",
     "Close": "Đóng",
     "Delete": "Xóa",
-    "Edit": "Sửa",
-    "Remove": "Xóa",
+    "Edit": "Chỉnh sửa",
+    "Remove": "Xóa bỏ",
     "Add": "Thêm",
     "Open": "Mở",
     "New": "Mới",
@@ -83,14 +82,14 @@ const dict = {
     "New folder": "Thư mục mới",
     "New group": "Nhóm mới",
     "Create": "Tạo",
-    "Export": "Xuất khẩu",
-    "Import": "Nhập khẩu",
+    "Export": "Xuất tệp",
+    "Import": "Nhập tệp",
     "Copy": "Sao chép",
     "Share": "Chia sẻ",
     "Sign in": "Đăng nhập",
-    "Sign in with Rotur": "Đăng nhập với Rotur",
+    "Sign in with Rotur": "Đăng nhập bằng Rotur",
     "Sign out": "Đăng xuất",
-    "Switch account": "Chuyển tài khoản",
+    "Switch account": "Chuyển đổi tài khoản",
     "Refresh": "Làm mới",
     "Retry": "Thử lại",
     "Try again": "Thử lại",
@@ -100,26 +99,27 @@ const dict = {
     "Undo": "Hoàn tác",
     "Redo": "Làm lại",
 
-    // Common nouns
+    // Danh từ hệ thống
     "Settings": "Cài đặt",
     "Help": "Trợ giúp",
     "About": "Giới thiệu",
     "File": "Tệp",
     "Tools": "Công cụ",
-    "Code": "Mã",
+    "Code": "Mã lệnh",
     "Stage": "Sân khấu",
-    "Sprites": "Sprite",
+    "Sprites": "Nhân vật",
     "Costumes": "Trang phục",
     "Sounds": "Âm thanh",
     "Scripts": "Kịch bản",
     "Assets": "Tài nguyên",
-    "Extension": "Tiện ích mở rộng",
-    "Extensions": "Tiện ích mở rộng",
-    "Addons": "Plugin",
+    "Extension": "Phần mở rộng",
+    "Extensions": "Phần mở rộng",
+    "Addons": "Tiện ích bổ sung",
     "Debugger": "Công cụ gỡ lỗi",
     "Variable Manager": "Quản lý biến số",
-    "Profile": "Hồ sơ",
+    "Profile": "Hồ sơ cá nhân",
     "Admin": "Quản trị viên",
+    "Admin ({count})": "Quản trị viên ({count})",
     "Leaderboard": "Bảng xếp hạng",
     "Wallet": "Ví",
     "Account settings": "Cài đặt tài khoản",
@@ -129,101 +129,98 @@ const dict = {
     "Views": "Lượt xem",
     "Feedback": "Phản hồi",
     "Send feedback": "Gửi phản hồi",
-    "Documentation": "Tài liệu",
+    "Documentation": "Tài liệu hướng dẫn",
     "Chat": "Trò chuyện",
     "Notifications": "Thông báo",
-    "Analytics": "Phân tích",
+    "Analytics": "Thống kê phân tích",
     "Catalog": "Danh mục",
+    "Project": "Dự án",
 
-    // Common status
+    // Trạng thái hệ thống
     "Error": "Lỗi",
-    "Success": "Thành công",
+    "Success": "Thành công!",
     "Loading": "Đang tải",
     "Loading…": "Đang tải...",
     "Preparing": "Đang chuẩn bị",
     "Checking": "Đang kiểm tra",
-    "Building": "Đang xây dựng",
-    "Parsing": "Đang phân tích",
+    "Building": "Đang biên dịch",
+    "Parsing": "Đang phân tích cú pháp",
     "Downloading": "Đang tải xuống",
     "Uploading": "Đang tải lên",
-    "Computing diff…": "Đang tính diff...",
-    "No extensions loaded": "Chưa có tiện ích mở rộng nào được tải",
-    "1 loaded extension": "1 tiện ích mở rộng đã tải",
-    "{count} loaded extensions": "{count} tiện ích mở rộng đã tải",
+    "Computing diff…": "Đang so sánh điểm khác biệt...",
+    "No extensions loaded": "Chưa có phần mở rộng nào được tải!",
+    "1 loaded extension": "1 phần mở rộng đã nạp",
+    "{count} loaded extensions": "{count} phần mở rộng đã nạp",
 
-    // Common labels
+    // Nhãn giao diện
     "Name": "Tên",
     "Title": "Tiêu đề",
     "Description": "Mô tả",
     "Category": "Danh mục",
-    "Type": "Kiểu",
+    "Type": "Loại",
     "All": "Tất cả",
     "None": "Không có",
     "Yes": "Có",
     "No": "Không",
     "On": "Bật",
     "Off": "Tắt",
-    "Enable": "Bật",
-    "Disable": "Tắt",
-    "Warning": "Cảnh báo",
+    "Enable": "Kích hoạt",
+    "Disable": "Vô hiệu hóa",
+    "Warning": "Cảnh báo!",
     "Info": "Thông tin",
     "Note": "Lưu ý",
 
-    // Common phrases
-    "Are you sure?": "Bạn có chắc không?",
-    "No results": "Không có kết quả",
-    "No results found.": "Không tìm thấy kết quả.",
-    "No matches found.": "Không tìm thấy kết quả.",
-    "No changes.": "Không có thay đổi.",
-    "No bookmarks yet": "Chưa có dấu trang nào",
-    "No products available": "Không có sản phẩm nào khả dụng",
-    "No products defined yet": "Chưa có sản phẩm nào được định nghĩa",
-    "No items defined yet": "Chưa có mục nào được định nghĩa",
-    "No repositories yet.": "Chưa có kho lưu trữ nào.",
-    "No conversations yet.": "Chưa có cuộc trò chuyện nào.",
-    "No recent fonts": "Không có phông chữ gần đây",
-    "No fonts added yet": "Chưa có phông chữ nào được thêm",
+    // Cụm thông báo thông dụng
+    "Are you sure?": "Bạn có chắc chắn không?",
+    "No results": "Không có kết quả!",
+    "No results found.": "Không tìm thấy kết quả phù hợp!",
+    "No matches found.": "Không tìm thấy kết quả trùng khớp!",
+    "No changes.": "Không có thay đổi nào!",
+    "No bookmarks yet": "Chưa có dấu trang nào được lưu!",
+    "No products available": "Hiện không có sản phẩm nào khả dụng!",
+    "No products defined yet": "Chưa có sản phẩm nào được định nghĩa!",
+    "No items defined yet": "Chưa có vật phẩm nào được tạo!",
+    "No repositories yet.": "Chưa có kho lưu trữ nào!",
+    "No conversations yet.": "Chưa có cuộc trò chuyện nào!",
+    "No recent fonts": "Không có phông chữ gần đây!",
+    "No fonts added yet": "Chưa có phông chữ nào được thêm!",
 
-    // Collaboration
-    "Host": "Chủ đề",
+    // Cộng tác trực tuyến
+    "Host": "Chủ phòng",
     "You": "Bạn",
     "Guest": "Khách",
-    "Kick": "Kick",
-    "Watch": "Quan sát",
-    "Editing": "Đang sửa",
-    "Watching": "Đang xem",
-    "Live collaboration": "Hợp tác trực tuyến",
-    "Live session": "Phiên trực tuyến",
-    "Live session available": "Có phiên trực tuyến",
-    "Session open": "Phiên đã mở",
-    "Online status unavailable": "Trạng thái trực tuyến không khả dụng",
-    "Waiting for the host": "Đang chờ người chủ",
-    "Waiting for host": "Đang chờ người chủ",
-    "Waiting for the host to come back…": "Đang chờ người chủ quay lại...",
-    "Waiting for host…": "Đang chờ người chủ...",
+    "Kick": "Mời ra khỏi phòng",
+    "Watch": "Theo dõi",
+    "Editing": "Đang chỉnh sửa",
+    "Watching": "Đang theo dõi",
+    "Live collaboration": "Cộng tác trực tuyến",
+    "Live session": "Phiên làm việc trực tiếp",
+    "Live session available": "Có phiên trực tiếp khả dụng",
+    "Session open": "Phiên làm việc đang mở",
+    "Online status unavailable": "Trạng thái trực tuyến hiện không khả dụng!",
+    "Waiting for the host": "Đang chờ chủ phòng...",
+    "Waiting for host": "Đang chờ chủ phòng...",
+    "Waiting for the host to come back…": "Đang chờ chủ phòng quay lại...",
+    "Waiting for host…": "Đang chờ chủ phòng...",
     "Opening session…": "Đang mở phiên...",
     "Joining session…": "Đang tham gia phiên...",
     "Reconnecting…": "Đang kết nối lại...",
-    "Leaving session…": "Đang rời phiên...",
-    "Session open": "Phiên đã mở",
-    "Live session available": "Có phiên trực tuyến",
-    "{count} on this branch": "{count} trên nhánh này",
-    "Show current collaborators": "Hiển thị đồng tác giả hiện tại",
-    "Show the message you are replying to": "Hiển thị tin nhắn bạn đang trả lời",
-    "Jump to latest": "Chuyển đến mới nhất",
+    "Leaving session…": "Đang rời khỏi phiên...",
+    "{count} on this branch": "{count} người trên nhánh này",
+    "Show current collaborators": "Hiển thị danh sách cộng tác viên hiện tại",
+    "Show the message you are replying to": "Hiển thị tin nhắn bạn đang phản hồi",
+    "Jump to latest": "Chuyển tới tin nhắn mới nhất",
 
-    // Chat
-    "Chat": "Trò chuyện",
+    // Trò chuyện
     "Direct messages": "Tin nhắn trực tiếp",
     "Conversations": "Cuộc trò chuyện",
-    "Message": "Gửi tin nhắn",
+    "Message": "Soạn tin nhắn",
     "Send message": "Gửi tin nhắn",
     "Reply": "Trả lời",
     "Delete message": "Xóa tin nhắn",
-    "Edit message": "Sửa tin nhắn",
+    "Edit message": "Chỉnh sửa tin nhắn",
     "Message options": "Tùy chọn tin nhắn",
-    "Add reaction": "Thêm phản hồi",
-    "Reply": "Trả lời",
+    "Add reaction": "Thêm biểu cảm",
     "More options": "Thêm tùy chọn",
     "Mention": "Nhắc đến",
     "Copy text": "Sao chép văn bản",
@@ -234,376 +231,196 @@ const dict = {
     "Remove {name}": "Xóa {name}",
     "Attach files": "Đính kèm tệp",
     "Send a direct message": "Gửi tin nhắn trực tiếp",
-    "No content": "Không có nội dung",
+    "No content": "Không có nội dung!",
     "Unknown user": "Người dùng không xác định",
-    "Jump to the message this replies to": "Chuyển đến tin nhắn trả lời",
-    "Reveal spoiler": "Tiết lộ spoiler",
-    "Chat ({count} new)": "Trò chuyện ({count} mới)",
+    "Jump to the message this replies to": "Chuyển đến tin nhắn gốc",
+    "Reveal spoiler": "Hiển thị nội dung ẩn",
+    "Chat ({count} new)": "Trò chuyện ({count} tin mới)",
     "Chat spaces": "Không gian trò chuyện",
-    "Dock to the side": "Ghim vào bên",
-    "Pop out into a window": "Mở rộng thành cửa sổ",
-    "Close chat": "Đóng trò chuyện",
-    "Leave chat": "Rời khỏi trò chuyện",
+    "Dock to the side": "Ghim sang bên cạnh",
+    "Pop out into a window": "Tách ra cửa sổ riêng",
+    "Close chat": "Đóng khung trò chuyện",
+    "Leave chat": "Rời khỏi cuộc trò chuyện",
 
-    // Git
-    "Push": "Đẩy",
-    "Pull": "Kéo",
-    "Clone": "Nhân bản",
-    "Merge": "Hòa nhập",
-    "Merge from…": "Hòa nhập từ...",
+    // Quản lý phiên bản Git
+    "Push": "Đẩy lên",
+    "Pull": "Kéo về",
+    "Clone": "Nhân bản kho",
+    "Merge": "Hợp nhất nhánh",
+    "Merge from…": "Hợp nhất từ...",
     "Preview": "Xem trước",
-    "Restore this commit": "Khôi phục commit này",
-    "Download as .sb3": "Tải xu ng as .sb3",
-    "Working changes": "Thay đổi đang làm việc",
-    "Commit message": "Thông điệp commit",
-    "Commit": "Commit",
-    "Undo last commit": "Hoàn tác commit cuối",
-    "No uncommitted changes.": "Không có thay đổi chưa commit.",
-    "Danger zone": "Vùng nguy hiểm",
+    "Restore this commit": "Khôi phục điểm lưu này",
+    "Download as .sb3": "Tải xuống dưới định dạng .sb3",
+    "Working changes": "Các thay đổi đang thực hiện",
+    "Commit message": "Thông điệp ghi nhận thay đổi",
+    "Commit": "Ghi nhận thay đổi",
+    "Undo last commit": "Hoàn tác lần ghi nhận gần nhất",
+    "No uncommitted changes.": "Không có thay đổi nào chưa được ghi nhận!",
+    "Danger zone": "Khu vực nguy hiểm",
     "Delete repository": "Xóa kho lưu trữ",
-    "Select a file to view its changes.": "Chọn một tệp để xem thay đổi.",
-    "No changes in this file.": "Không có thay đổi trong tệp này.",
-    "No uncommitted changes to diff.": "Không có thay đổi chưa commit để so sánh.",
-    "No file-level changes to show.": "Không có thay đổi ở mức tệp để hiển thị.",
+    "Select a file to view its changes.": "Chọn một tệp để kiểm tra các thay đổi.",
+    "No changes in this file.": "Không có thay đổi nào trong tệp này!",
+    "No uncommitted changes to diff.": "Không có thay đổi nào chưa ghi nhận để so sánh!",
+    "No file-level changes to show.": "Không có thay đổi nào ở cấp độ tệp để hiển thị!",
     "Current branch": "Nhánh hiện tại",
     "Create new branch": "Tạo nhánh mới",
     "Create new room": "Tạo phòng mới",
     "Create a room": "Tạo một phòng",
-    "Create a repository": "Tạo kho lưu trữ",
-    "Repository URL": "URL kho lưu trữ",
-    "Token or password for other services (stored locally)": "Mã thông báo hoặc mật khẩu cho các dịch vụ khác (lưu trữ cục bộ)",
-    "Rotur Git does not need this.": "Rotur Git không cần điều này.",
-    "Connections you add here sync...": "Kết nối bạn thêm ở đây sẽ động bộ...",
-    "Clone an existing project": "Nhân bản dự án hiện có",
-    "This project has no pushed history yet.": "Dự án này chưa có lịch sử đẩy nào.",
-    "Start project history": "Bắt đầu lịch sử dự án",
+    "Create a repository": "Tạo kho lưu trữ mới",
+    "Repository URL": "Đường dẫn kho lưu trữ",
+    "Token or password for other services (stored locally)": "Mã xác thực hoặc mật khẩu cho các dịch vụ khác (được lưu cục bộ)",
+    "Rotur Git does not need this.": "Hệ thống Rotur Git không yêu cầu mục này.",
+    "Connections you add here sync...": "Các kết nối được thêm tại đây sẽ tự động đồng bộ...",
+    "Clone an existing project": "Nhân bản một dự án hiện có",
+    "This project has no pushed history yet.": "Dự án này chưa có lịch sử tải lên nào!",
+    "Start project history": "Khởi tạo lịch sử dự án",
     "Your repositories": "Kho lưu trữ của bạn",
-    "Clone any Rotur repo": "Nhân bản bất kỳ kho lưu trữ Rotur nào",
+    "Clone any Rotur repo": "Nhân bản kho lưu trữ Rotur bất kỳ",
     "Clone this repo as your project": "Nhân bản kho lưu trữ này làm dự án của bạn",
-    "Open on git.rotur.dev": "Mở trên git.rotur.dev",
+    "Open on git.rotur.dev": "Mở trên trang git.rotur.dev",
     "Push project to this repo": "Đẩy dự án lên kho lưu trữ này",
-    "Sign in with Rotur to create repos...": "Đăng nhập với Rotur để tạo kho lưu trữ...",
+    "Sign in with Rotur to create repos...": "Đăng nhập bằng Rotur để khởi tạo kho lưu trữ...",
     "Repo name (required)": "Tên kho lưu trữ (bắt buộc)",
 
-    // Sign in with Rotur features
-    "Save from the File menu and restore old versions later.": "Lưu từ menu Tệp và khôi phục phiên bản cũ sau này.",
-    "Open a saved project to your teammates from the Tools menu.": "Mở một dự án đã lưu cho đồng nghiệp của bạn từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, phản hồi, và theo dõi tác giả.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn đi theo bạn ở mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
+    // Tính năng đăng nhập Rotur
+    "Connect MistWarp to Rotur": "Kết nối MistWarp với Rotur",
+    "Reconnect MistWarp to Rotur": "Kết nối lại MistWarp với Rotur",
+    "Rotur in MistWarp": "Dịch vụ Rotur trong MistWarp",
+    "Rotur has a new way to sign in. Reconnect once to stay signed in as {username}.": "Rotur đã cập nhật phương thức đăng nhập mới. Vui lòng kết nối lại một lần để duy trì phiên đăng nhập dưới tên {username}!",
+    "Your Rotur account turns these on across MistWarp.": "Tài khoản Rotur sẽ kích hoạt các tính năng này trên toàn bộ MistWarp.",
+    "One Rotur account turns these on across MistWarp.": "Chỉ một tài khoản Rotur duy nhất sẽ mở khóa toàn bộ tiện ích này trên MistWarp.",
+    "Check your account standing on rotur.dev": "Kiểm tra tình trạng tài khoản của bạn trên trang rotur.dev",
+    "You sign in on {link}, so MistWarp never sees your password.": "Bạn thực hiện xác thực trực tiếp trên {link}, do đó MistWarp hoàn toàn không bao giờ nhìn thấy mật khẩu của bạn.",
+    "Manage account": "Quản lý tài khoản",
+    "Not now": "Để sau",
+    "Waiting for Rotur...": "Đang chờ Rotur phản hồi...",
+    "Reconnect": "Kết nối lại",
+    "Continue with Rotur": "Tiếp tục bằng Rotur",
+    "Sign in to create repos on git.rotur.dev and push your project straight from MistWarp.": "Đăng nhập để tạo kho lưu trữ trên git.rotur.dev và đẩy dự án của bạn trực tiếp từ MistWarp!",
+    "Save from the File menu and restore old versions later.": "Lưu trực tiếp từ trình đơn Tệp và khôi phục các phiên bản cũ bất cứ lúc nào.",
+    "Open a saved project to your teammates from the Tools menu.": "Chia sẻ dự án đã lưu cho các thành viên trong nhóm từ trình đơn Công cụ.",
+    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, tương tác và theo dõi các nhà sáng tạo.",
+    "Join studios and challenges, submit entries, and vote.": "Tham gia các xưởng sáng tạo và thử thách, nộp bài dự thi và bình chọn.",
+    "Themes and settings sync": "Đồng bộ giao diện và cài đặt",
+    "Your theme and settings follow you to every device.": "Giao diện và cài đặt cá nhân sẽ theo bạn trên mọi thiết bị.",
+    "Show what you're editing": "Hiển thị nội dung bạn đang chỉnh sửa",
+    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên trang cá nhân Rotur của bạn.",
+    "Your name in projects": "Tên của bạn trong các dự án",
+    "The username block and cloud variables use your Rotur name.": "Khối lệnh tên người dùng và các biến đám mây sẽ sử dụng tên Rotur của bạn.",
+    "Publish and remix": "Đăng tải và phối lại",
+    "Spaces and challenges": "Không gian sáng tạo và thử thách",
+    "Save from the File menu": "Lưu từ trình đơn Tệp",
+    "and restore old versions later.": "và khôi phục lại các phiên bản cũ sau này.",
+    "Open a saved project": "Mở một dự án đã lưu",
+    "to your teammates": "cho các thành viên trong nhóm của bạn",
+    "from the Tools menu.": "từ trình đơn Công cụ.",
 
-    // Products
-    "Grant to Username": "Cấp cho tên người dùng",
-    "Grant": "Cấp",
-    "Revoke": "Thu hẹn",
-    "Revoke live ownership": "Thu hẹn quyền sở hữu trực tiếp",
-    "Revoke from Username": "Thu hẹn từ tên người dùng",
-    "Confirm revoke": "Xác nhận thu hẹn",
-    "Without refund": "Không hoàn lại",
+    // Quản lý sản phẩm và quyền sở hữu
+    "Grant to Username": "Cấp quyền cho tên người dùng",
+    "Grant": "Cấp quyền",
+    "Revoke": "Thu hồi quyền",
+    "Revoke live ownership": "Thu hồi quyền sở hữu trực tiếp",
+    "Revoke from Username": "Thu hồi quyền từ tên người dùng",
+    "Confirm revoke": "Xác nhận thu hồi quyền",
+    "Without refund": "Không hoàn tiền",
     "Select Product": "Chọn sản phẩm",
     "Product Catalog": "Danh mục sản phẩm",
-    "Users who own \"{productName}\" ({count})": "Người dùng sở hữu \"{productName}\" ({count})",
-    "No users currently own this product.": "Hiện không có người dùng nào sở hữu sản phẩm này.",
+    "Users who own \"{productName}\" ({count})": "Những người dùng sở hữu \"{productName}\" ({count})",
+    "No users currently own this product.": "Hiện chưa có người dùng nào sở hữu sản phẩm này!",
     "Enter a username above to grant ownership.": "Nhập tên người dùng ở trên để cấp quyền sở hữu.",
-    "Project not saved to MistWarp yet": "Dự án chưa được lưu lên MistWarp",
-    "User Entitlements": "Quyền người dùng",
+    "Project not saved to MistWarp yet": "Dự án hiện chưa được lưu lên MistWarp!",
+    "User Entitlements": "Quyền hạn của người dùng",
 
-    // Game Items
-    "Edit Item": "Sửa mục",
-    "Add New Item": "Thêm mục mới",
-    "Item Name": "Tên mục",
-    "Item ID (slug)": "ID mục (slug)",
-    "Item Image (compressed)": "Hình ảnh mục (đã nén)",
-    "Awardable by game code": "Có thể thưởng bởi mã trò chơi",
-    "Blocks can give this item to players": "Các khối có thể cho người chơi vật phẩm này",
-    "Click Add Item to create collectables...": "Nhấn Thêm mục để tạo vật phẩm thu thập...",
-    "Collectable Items": "Vật phẩm thu thập được",
-    "Add Item": "Thêm mục",
-    "Add Item button": "Nút thêm mục",
+    // Vật phẩm trò chơi
+    "Edit Item": "Chỉnh sửa vật phẩm",
+    "Add New Item": "Thêm vật phẩm mới",
+    "Item Name": "Tên vật phẩm",
+    "Item ID (slug)": "Mã định danh vật phẩm",
+    "Item Image (compressed)": "Hình ảnh vật phẩm (đã nén)",
+    "Awardable by game code": "Có thể trao thưởng bằng mã lệnh",
+    "Blocks can give this item to players": "Các khối lệnh có thể trao vật phẩm này cho người chơi",
+    "Click Add Item to create collectables...": "Nhấp Thêm vật phẩm để tạo các vật phẩm có thể thu thập...",
+    "Collectable Items": "Các vật phẩm có thể thu thập",
+    "Add Item": "Thêm vật phẩm",
+    "Add Item button": "Nút thêm vật phẩm",
 
-    // Assets
-    "No preview available": "Không có bản xem trước",
-    "Select a file to preview it": "Chọn một tệp để xem trước",
+    // Quản lý tệp tài nguyên
+    "No preview available": "Không có bản xem trước!",
+    "Select a file to preview it": "Chọn một tệp để xem trước nội dung.",
     "Add files": "Thêm tệp",
-    "New folder": "Thư mục mới",
     "Folder name": "Tên thư mục",
-    "Export": "Xuất khẩu",
-    "Delete": "Xóa",
-    "Assets": "Tài nguyên",
-    "Are you sure you want to delete \"{asset}\"? Blocks that use it will stop working.": "Bạn có chắc muốn xóa \"{asset}\"? Các khối sử dụng nó sẽ ngừng hoạt động.",
-    "Drop files here, paste them, or click Add files. Assets cost nothing until a block loads them.": "Thả tệp ở đây, dán chúng, hoặc nhấn Thêm tệp. Tài nguyên không tốn chi phí cho đến khi một khối tải chúng.",
-    "Adding to {folder}": "Đang thêm vào {folder}",
+    "Are you sure you want to delete \"{asset}\"? Blocks that use it will stop working.": "Bạn có chắc chắn muốn xóa tệp \"{asset}\" không? Các khối lệnh đang dùng tệp này sẽ ngừng hoạt động!",
+    "Drop files here, paste them, or click Add files. Assets cost nothing until a block loads them.": "Kéo thả tệp vào đây, dán từ bảng nhớ tạm hoặc nhấp Thêm tệp. Tài nguyên không làm tốn dung lượng cho đến khi có khối lệnh tải chúng.",
+    "Adding to {folder}": "Đang thêm vào thư mục {folder}...",
 
-    // Welcome
+    // Hướng dẫn mở đầu
     "Getting started": "Bắt đầu",
     "Make your first project": "Tạo dự án đầu tiên của bạn",
-    "Start from a small working project and change it, or open a project from your computer.": "Bắt đầu từ một dự án nhỏ đang hoạt động và thay đổi nó, hoặc mở một dự án từ máy tính của bạn.",
+    "Start from a small working project and change it, or open a project from your computer.": "Bắt đầu chỉnh sửa từ một dự án mẫu đang hoạt động, hoặc mở tệp dự án trực tiếp từ máy tính của bạn.",
     "Open a file": "Mở tệp",
-    "Open your own file": "Mở tệp của bạn",
-    "Documentation": "Tài liệu",
+    "Open your own file": "Mở tệp từ máy tính của bạn",
     "Dismiss starter guide": "Bỏ qua hướng dẫn",
     "Starter project guide": "Hướng dẫn dự án mẫu",
-    "Press {shortcut} to search every command.": "Nhấn {shortcut} để tìm kiếm mọi lệnh.",
+    "Press {shortcut} to search every command.": "Nhấn {shortcut} để tìm kiếm mọi lệnh nhanh chóng.",
 
-    // View counter
-    "Views": "Lượt xem",
-    "Watchers": "Người xem",
-    "Loves": "Yêu thích",
-    "Faves": "Yêu thích",
-    "Remixes": "Remix",
+    // Thống kê tương tác
+    "Watchers": "Người theo dõi",
+    "Loves": "Lượt thích",
+    "Faves": "Lượt yêu thích",
+    "Remixes": "Bản phối lại",
 
-    // Stage controls
+    // Điều khiển sân khấu và ghi hình
     "Take stage screenshot": "Chụp màn hình sân khấu",
-    "Mute project": "Tắt tiếng dự án",
-    "Unmute project": "Bật tiếng dự án",
+    "Mute project": "Tắt âm thanh dự án",
+    "Unmute project": "Bật lại âm thanh dự án",
     "Project volume": "Âm lượng dự án",
     "Stage screenshot": "Ảnh chụp màn hình sân khấu",
-    "Screenshot copied to clipboard.": "Ảnh chụp đã được sao chép vào bảng nhớ tạm.",
-    "Screenshot taken, but your browser did not allow copying it to the clipboard.": "Đã chụp màn hình, nhưng trình duyệt của bạn không cho phép sao chép vào bảng nhớ tạm.",
-    "Resize chat": "Điều chỉnh kích thước trò chuyện",
-    "{count} of {max} clones. The clone limit has been reached.": "{count} trên {max} bản sao. Đã đạt giới hạn bản sao.",
+    "Screenshot copied to clipboard.": "Ảnh chụp màn hình đã được sao chép vào bảng nhớ tạm!",
+    "Screenshot taken, but your browser did not allow copying it to the clipboard.": "Đã chụp màn hình, nhưng trình duyệt của bạn không cho phép sao chép tự động vào bảng nhớ tạm!",
+    "Resize chat": "Thay đổi kích thước khung trò chuyện",
+    "{count} of {max} clones. The clone limit has been reached.": "{count} trên tối đa {max} bản sao. Dự án đã chạm mức giới hạn bản sao!",
     "{count, plural, one {# clone} other {# clones}}": "{count, plural, one {# bản sao} other {# bản sao}}",
 
-    // Errors
-    "Could not save MistWarp project: {error}": "Không thể lưu dự án MistWarp: {error}",
-    "Could not load project": "Không thể tải dự án",
-    "Check your connection and try again.": "Kiểm tra kết nối của bạn và thử lại.",
-    "Could not connect to chat.": "Không thể kết nối đến trò chuyện.",
-    "The editor ran into a problem and stopped.": "Trình soạn thảo gặp sự cố và ngừng hoạt động.",
-    "The project could not be downloaded.": "Không thể tải xuống dự án.",
-    "Download failed": "Tải xuống thất bại",
-    "Push failed. {error}": "Đẩy lên thất bại. {error}",
-    "Pull failed. {error}": "Kéo thất bại. {error}",
-    "Commit failed. {error}": "Commit thất bại. {error}",
-    "Could not start a new project. Your current project is still open.": "Không thể bắt đầu dự án mới. Dự án hiện tại của bạn vẫn đang mở.",
-    "There are no new changes to save.": "Không có thay đổi mới để lưu.",
+    // Thông báo lỗi
+    "Could not save MistWarp project: {error}": "Không thể lưu dự án MistWarp: {error}!",
+    "Could not load project": "Không thể tải dự án!",
+    "Check your connection and try again.": "Vui lòng kiểm tra lại kết nối mạng và thử lại!",
+    "Could not connect to chat.": "Không thể kết nối đến máy chủ trò chuyện!",
+    "The editor ran into a problem and stopped.": "Trình biên tập đã gặp sự cố và phải dừng hoạt động!",
+    "The project could not be downloaded.": "Không thể tải xuống tệp dự án!",
+    "Download failed": "Tải xuống thất bại!",
+    "Push failed. {error}": "Đẩy lên thất bại: {error}!",
+    "Pull failed. {error}": "Kéo về thất bại: {error}!",
+    "Commit failed. {error}": "Ghi nhận thay đổi thất bại: {error}!",
+    "Could not start a new project. Your current project is still open.": "Không thể bắt đầu dự án mới do dự án hiện tại của bạn vẫn đang mở!",
+    "There are no new changes to save.": "Không có thay đổi mới nào để thực hiện lưu!",
 
-    // Share window
+    // Cửa sổ chia sẻ
     "Open project page": "Mở trang dự án",
-    "Save without a version": "Lưu mà không có phiên bản",
-    "Create version and save": "Tạo phiên bản và lưu",
-    "Use current canvas": "Sử dụng canvas hiện tại",
+    "Use current canvas": "Sử dụng khung hình hiện tại",
     "Upload an image": "Tải lên hình ảnh",
-    "Saving…": "Đang lưu...",
-    "Remix": "Remix",
+    "Remix": "Phối lại",
     "Update": "Cập nhật",
-    "Save": "Lưu",
-    "For example: Added a new level": "Ví dụ: Đã thêm cấp độ mới",
+    "For example: Added a new level": "Ví dụ: Đã thêm một màn chơi mới",
 
-    // File menu
+    // Trình đơn Tệp và Đóng gói
     "Save to your computer": "Lưu về máy tính của bạn",
     "File > Save to your computer": "Tệp > Lưu về máy tính của bạn",
-    "File > Export > Package project": "Tệp > Xuất khuất > Đóng gói dự án",
-    "File > Device backups": "Tệp > Bản sao thiết bị",
-    "Export > Package project": "Xuất khẩu > Đóng gói dự áp",
+    "File > Export > Package project": "Tệp > Xuất tệp > Đóng gói dự án",
+    "File > Device backups": "Tệp > Bản sao lưu trên thiết bị",
+    "Export > Package project": "Xuất tệp > Đóng gói dự án",
     "Package project": "Đóng gói dự án",
-    "Load from your computer": "Tải từ máy tính của bạn",
-    "Load project": "Tải dự án",
+    "Load from your computer": "Tải lên từ máy tính của bạn",
+    "Load project": "Tải tệp dự án",
 
-    // Account menu
-    "Sign in": "Đăng nhập",
-    "Sign out": "Đăng xuất",
-    "Switch account": "Chuyển tài khoản",
-    "Account settings": "Cài đặt tài khoản",
-    "Profile": "Hồ sơ",
-    "Admin": "Quản trị viên",
-    "Admin ({count})": "Quản trị viên ({count})",
-    "Leaderboard": "Bảng xếp hạng",
-    "Wallet": "Ví",
-
-    // Rotur login
-    "Connect MistWarp to Rotur": "Kết nối MistWarp với Rotur",
-    "Reconnect MistWarp to Rotur": "Kết nối lại MistWarp với Rotur",
-    "Rotur in MistWarp": "Rotur trong MistWarp",
-    "Sign in with Rotur": "Đăng nhập với Rotur",
-    "Rotur has a new way to sign in. Reconnect once to stay signed in as {username}.": "Rotur có cách đăng nhập mới. Hãy kết nối lại một lần để vẫn đăng nhập với tên {username}.",
-    "Your Rotur account turns these on across MistWarp.": "Tài khoản Rotur của bạn bật các tính năng này trên toàn MistWarp.",
-    "One Rotur account turns these on across MistWarp.": "Một tài khoản Rotur bật các tính năng này trên toàn MistWarp.",
-    "Check your account standing on rotur.dev": "Kiểm tra trạng thái tài khoản trên rotur.dev",
-    "You sign in on {link}, so MistWarp never sees your password.": "Bạn đăng nhập trên {link}, vì vậy MistWarp sẽ không bao giờ thấy mật khẩu của bạn.",
-    "Manage account": "Quản lý tài khoản",
-    "Close": "Đóng",
-    "Not now": "Không ngay",
-    "Waiting for Rotur...": "Đang chờ Rotur...",
-    "Reconnect": "Kết nối lại",
-    "Continue with Rotur": "Tiếp tục với Rotur",
-    "Sign in to create repos on git.rotur.dev and push your project straight from MistWarp.": "Đăng nhập để tạo kho lưu trữ trên git.rotur.dev và đẩy dự án của bạn trực tiếp từ MistWarp.",
-    "Sign in with Rotur to create repos on git.rotur.dev and push your project straight from MistWarp.": "Đăng nhập với Rotur để tạo kho lưu trữ trên git.rotur.dev và đẩy dự án của bạn trực tiếp từ MistWarp.",
-    "Sign in with Rotur to create repos...": "Đăng nhập với Rotur để tạo kho lưu trữ...",
-
-    // Rotur login features (titles)
-    "Save from the File menu and restore old versions later.": "Lưu từ menu Tệp và khôi phục phiên bản cũ sau này.",
-    "Open a saved project to your teammates from the Tools menu.": "Mở một dự án đã lưu cho đồng nghiệp của bạn từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, phản hồi, và theo dõi tác giả.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn đi theo bạn ở mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
-
-    // Rotur login feature titles
-    "Save to MistWarp": "Lưu lên MistWarp",
-    "Live collaboration": "Hợp tác trực tuyến",
-    "Publish and remix": "Đăng tải và remix",
-    "Spaces and challenges": "Không gian và thử thách",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Your name in projects": "Tên của bạn trong dự án",
-
-    // Rotur feature descriptions
-    "Rotur in MistWarp": "Rotur trong MistWarp",
-    "Save from the File menu": "Lưu từ menu Tệp",
-    "and restore old versions later.": "và khôi phục phiên bản cũ sau này.",
-    "Open a saved project": "Mở một dự án đã lưu",
-    "to your teammates": "cho đồng nghiệp của bạn",
-    "from the Tools menu.": "từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, và theo dõi tác giả.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn theo bạn trên mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
-
-    // Rotur login feature details
-    "Save from the File menu and restore old versions later.": "Lưu từ menu Tệp và khôi phục phiên bản cũ sau này.",
-    "Open a saved project to your teammates from the Tools menu.": "Mở một dự án đã lưu cho đồng nghiệp của bạn từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, và theo dõi tác giả.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn theo bạn trên mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
-
-    // Sign in with Rotur feature details
-    "Save from the File menu and restore old versions later.": "Lưu từ menu Tệp và khôi phục phiên bản cũ sau này.",
-    "Open a saved project to your teammates from the Tools menu.": "Mở một dự án đã lưu cho đồng nghiệp của bạn từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, và theo dõi tác giả.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn theo bạn trên mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
-
-    // Sign in with Rotur features
-    "Save from the File menu and restore old versions later.": "Lưu từ menu Tệp và khôi phục phiên bản cũ sau này.",
-    "Open a saved project to your teammates from the Tools menu.": "Mở một dự án đã lưu cho đồng nghiệp của bạn từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, và theo dõi tác giả.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn theo bạn trên mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
-
-    // Sign in with Rotur feature descriptions
-    "Save from the File menu and restore old versions later.": "Lưu từ menu Tệp và khôi phục phiên bản cũ sau này.",
-    "Open a saved project to your teammates from the Tools menu.": "Mở một dự án đã lưu cho đồng nghiệp của bạn từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, và theo dõi tác giụ.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn theo bạn trên mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
-
-    // Share window
-    "Cancel": "Hủy",
-    "Close": "Đóng",
-    "Open project page": "Mở trang dự án",
-    "Save without a version": "Lưu mà không có phiên bản",
-    "Create version and save": "Tạo phiên bản và lưu",
-    "Use current canvas": "Sử dụng canvas hiện tại",
-    "Upload an image": "Tải lên hình ảnh",
-    "Saving…": "Đang lưu...",
-    "Remix": "Remix",
-    "Update": "Cập nhật",
-    "Save": "Lưu",
-    "For example: Added a new level": "Ví dụ: Đã thêm cấp độ mới",
-
-    // File/Tools menu
-    "File": "Tệp",
-    "Tools": "Công cụ",
-    "About": "Giới thiệu",
-
-    // Other common terms
-    "Sign in to create": "Đăng nhập để tạo",
+    // Bổ sung các chuỗi liên kết
+    "Sign in to create": "Đăng nhập để khởi tạo",
     "Sign in to": "Đăng nhập để",
-
-    // Common
-    "Project": "Dự án",
-    "Save to MistWarp": "Lưu lên MistWarp",
-    "Load from your computer": "Tải từ máy tính của bạn",
-    "Export > Package project": "Xuất khẩu > Đóng gói dự án",
-    "File > Device backups": "Tệp > Bản sao thiết bị",
-    "File > Save to your computer": "Tệp > Lưu về máy tĩnh của bạn",
-    "File > Export > Package project": "Tệp > Xuất khẩu > Đóng gói dự án",
-
-    // Other
     "Follow MistWarp on GitHub": "Theo dõi MistWarp trên GitHub",
-    "Project Video Recorder": "Máy ghi video dự án",
-
-    // Common
-    "Save to your computer": "Lưu về máy tính của bạn",
-    "Save to MistWarp": "Lưu lên MistWarp",
-    "Load from your computer": "Tải từ máy tính của bạn",
-    "Export > Package project": "Xuất khẩu > Đóng gói dự án",
-    "File > Device backups": "Tệp > Bản sao thiết bị",
-    "File > Save to your computer": "Tệp > Lưu về máy tính của bạn",
-
-    // Account menu items
-    "Sign in": "Đăng nhập",
-    "Sign out": "Đăng xuất",
-    "Switch account": "Chuyển tài khoản",
-
-    // Account
-    "Account settings": "Cài đặt tài khoản",
-
-    // Rotur
-    "Connect MistWarp to Rotur": "Kết nối MistWarp với Rotur",
-    "Reconnect MistWarp to Rotur": "Kết nối lại MistWarp với Rotur",
-
-    // Sign in with Rotur features
-    "Save from the File menu": "Lưu từ menu Tệp",
-    "and restore old versions later.": "và khôi phục phiên bản cũ sau này.",
-    "Open a saved project": "Mở một dự án đã lưu",
-    "to your teammates": "cho đồng nghiệp của bạn",
-    "from the Tools menu.": "từ menu Công cụ.",
-    "Share projects, comment, react, and follow creators.": "Chia sẻ dự án, bình luận, và theo dõi tác giả.",
-    "Join studios and challenges, submit entries, and vote.": "Tham gia studio và thử thách, nộp bài, và bầu chọn.",
-    "Spaces and challenges": "Không gian và thử thách",
-    "Themes and settings sync": "Đồng bộ chủ đề và cài đặt",
-    "Your theme and settings follow you to every device.": "Chủ đề và cài đặt của bạn đi theo bạn ở mọi thiết bị.",
-    "Show what you're editing": "Hiển thị những gì bạn đang sửa",
-    "Share MistWarp activity on your Rotur profile.": "Chia sẻ hoạt động MistWarp trên hồ sơ Rotur của bạn.",
-    "Your name in projects": "Tên của bạn trong dự án",
-    "The username block and cloud variables use your Rotur name.": "Khối tên người dùng và biến đám mây sử dụng tên Rotur của bạn.",
-
-    // File menu
-    "Save to your computer": "Lưu về máy tính của bạn",
-    "Save to MistWarp": "Lưu lên MistWarp",
-    "Load from your computer": "Tải từ máy tính của bạn",
-    "Export > Package project": "Xuất khẩu > Đóng gói dự án",
-    "File > Device backups": "Tệp > Bản sao thiết bị",
-    "File > Save to your computer": "Tệp > Lưu về máy tĩnh của bạn",
-    "File > Export > Package project": "Tệp > Xuất khẩu > Đóng gói dự áp",
+    "Project Video Recorder": "Bộ ghi hình video dự án"
 };
 
-// Apply translations
+// Áp dụng bản dịch
 const translations = {};
 let matched = 0;
 let unmatched = [];
@@ -612,17 +429,17 @@ for (const key of missingKeys) {
     const enText = defaults[key];
     let viText = null;
 
-    // Try dictionary first
+    // Ưu tiên tra từ điển trực tiếp
     if (dict[enText]) {
         viText = dict[enText];
         matched++;
     }
-    // Try en->vi mapping from upstream
+    // Tra ánh xạ en -> vi từ thượng nguồn
     else if (enToVi[enText]) {
         viText = enToVi[enText];
         matched++;
     }
-    // Try matching by key
+    // Khớp theo tên khóa
     else if (dict[key]) {
         viText = dict[key];
         matched++;
@@ -631,20 +448,20 @@ for (const key of missingKeys) {
     if (viText) {
         translations[key] = viText;
     } else {
-        translations[key] = enText; // Fall back to English
+        translations[key] = enText; // Dự phòng giữ nguyên tiếng Anh nếu chưa có
         unmatched.push(key);
     }
 }
 
-console.log('Total missing keys:', missingKeys.length);
-console.log('Translated (dictionary + upstream match):', matched);
-console.log('Still English (fallback):', unmatched.length);
+console.log('Tổng số khóa còn thiếu:', missingKeys.length);
+console.log('Đã dịch thành công (từ điển + khớp thượng nguồn):', matched);
+console.log('Khóa chưa có bản dịch (dự phòng tiếng Anh):', unmatched.length);
 
-// Save the translations
+// Lưu kết quả dịch vào tệp tạm
 fs.writeFileSync('C:/Users/nbaoh/AppData/Local/Temp/kilo/vi-translations-output.json', JSON.stringify(translations, null, 2));
-console.log('Translations written to temp file.');
+console.log('Đã xuất bản dịch ra tệp tạm thời!');
 
-// Merge into generated-translations.json
+// Hợp nhất vào generated-translations.json
 genTrans.vi = { ...genVi, ...translations };
 fs.writeFileSync('src/lib/tw-translations/generated-translations.json', JSON.stringify(genTrans, null, 2) + '\n');
-console.log('Updated generated-translations.json. Total vi entries:', Object.keys(genTrans.vi).length);
+console.log('Đã cập nhật generated-translations.json. Tổng số mục tiếng Việt:', Object.keys(genTrans.vi).length);
