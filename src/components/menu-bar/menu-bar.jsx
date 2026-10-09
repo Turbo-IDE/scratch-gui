@@ -18,6 +18,7 @@ import Box from '../box/box.jsx';
 import Button from '../button/button.jsx';
 import CommunityButton from './community-button.jsx';
 import openMistWarpShareWindow from '../../lib/mw/open-mw-share-window.js';
+import uploadProjectToWorkshop from '../../lib/mw/upload-to-workshop.js';
 import {
     getRememberedPlatformProjectState,
     getMistWarpAction,
@@ -42,7 +43,6 @@ import TWViewCounter from './tw-view-counter.jsx';
 import ChangeUsername from '../../containers/tw-change-username.jsx';
 import CloudVariablesToggler from '../../containers/tw-cloud-toggler.jsx';
 import TWSaveStatus from './tw-save-status.jsx';
-import TWNews from './tw-news.jsx';
 import CollaborationContainer from '../../containers/collaboration-container.jsx';
 import {
     commitProject,
@@ -68,7 +68,6 @@ import RestorePointAPI from '../../lib/api/restore-points';
 import {getShortcutKey} from '../../lib/shortcuts/registry.js';
 
 import TWDesktopSettings from './tw-desktop-settings.jsx';
-import RoturAccount from './mw-rotur-account.jsx';
 import MwEditorNav from './mw-editor-nav.jsx';
 import {hasRotur} from '../../lib/rotur/availability.js';
 import CollabPresence from './mw-collab-presence.jsx';
@@ -160,7 +159,7 @@ import styles from './menu-bar.css';
 
 import ChevronDown from './ChevronDown.jsx';
 
-import mistwarpLogo from '../../community/assets/mistwarp-logo.png';
+import turboIdeLogo from '../../../TurboWS/Turbo-IDE.png';
 
 import {
     FilePen, PencilRuler, TriangleAlert, Info,
@@ -1506,83 +1505,11 @@ class MenuBar extends React.Component {
     }
     // Authors: katboizz
     async handleClickUploadProject () {
-        try {
-            // 1. Mo tab truoc de trinh duyet khong chan Popup
-            const targetUrl = 'https://danvpr.github.io/workshop/#upload';
-            const workshopTab = window.open(targetUrl, '_blank');
-
-            if (!workshopTab) {
-                // eslint-disable-next-line no-alert
-                alert('Vui long cho phep mo Pop-up tren trinh duyet!');
-                return;
-            }
-            this.props.onRequestCloseFile();
-
-            const vm = this.props.vm;
-
-            // 2. Lay ten tac pham
-            const projectTitle = this.props.projectTitle || 'Du an moi';
-
-            // 3. Chup Thumbnail
-            const thumbDataUrl = await new Promise(resolve => {
-                let isDone = false;
-                const fallbackTimer = setTimeout(() => {
-                    if (!isDone) {
-                        isDone = true;
-                        const fallbackCanvas = vm && vm.renderer && vm.renderer.canvas ?
-                            vm.renderer.canvas : document.querySelector('canvas');
-                        resolve(fallbackCanvas ? fallbackCanvas.toDataURL('image/png') : null);
-                    }
-                }, 1500);
-
-                try {
-                    if (vm && vm.renderer && typeof vm.renderer.requestSnapshot === 'function') {
-                        vm.renderer.requestSnapshot(dataUri => {
-                            if (!isDone) {
-                                isDone = true;
-                                clearTimeout(fallbackTimer);
-                                resolve(dataUri);
-                            }
-                        });
-                        vm.renderer.draw();
-                    } else {
-                        clearTimeout(fallbackTimer);
-                        const fallbackCanvas = document.querySelector('canvas');
-                        resolve(fallbackCanvas ? fallbackCanvas.toDataURL('image/png') : null);
-                    }
-                } catch (e) {
-                    clearTimeout(fallbackTimer);
-                    resolve(null);
-                }
-            });
-
-            // 4. Dong goi file .sb3
-            const sb3Blob = await vm.saveProjectSb3();
-            const sb3ArrayBuffer = await sb3Blob.arrayBuffer();
-
-            // 5. Gui du lieu sang tab Workshop khi san sang
-            let hasSent = false;
-            const messageListener = event => {
-                if (event.data && event.data.type === 'DANV_WORKSHOP_READY' && !hasSent) {
-                    hasSent = true;
-                    workshopTab.postMessage({
-                        type: 'DANV_IMPORT_PROJECT',
-                        title: projectTitle,
-                        sb3Buffer: sb3ArrayBuffer,
-                        fileName: `${projectTitle}.sb3`,
-                        thumbDataUrl: thumbDataUrl
-                    }, '*', [sb3ArrayBuffer]);
-                    window.removeEventListener('message', messageListener);
-                }
-            };
-            window.addEventListener('message', messageListener);
-
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error('Loi khi xuat file du an:', error);
-            // eslint-disable-next-line no-alert
-            alert('Khong the dong goi du an: ' + error.message);
-        }
+        await uploadProjectToWorkshop({
+            vm: this.props.vm,
+            projectTitle: this.props.projectTitle,
+            onOpened: this.props.onRequestCloseFile
+        });
     }
     handleReturnHomePage () {
         const Return = 'https://turbows.pages.dev/';
@@ -1846,13 +1773,10 @@ class MenuBar extends React.Component {
                         data-mw-item="__home"
                     >
                         <img
-                            src={mistwarpLogo}
-                            alt="TurboIDE"
+                            src={turboIdeLogo}
+                            alt="Turbo-IDE"
                             className={styles.homeLogo}
                         />
-                        <span className={styles.homeWordmark}>
-                            {'TurboIDE'}
-                        </span>
                     </a>
                     {this.state.menuCollapsed && (
                         <button
@@ -1977,8 +1901,8 @@ class MenuBar extends React.Component {
                                         >
                                             <Globe />
                                             <FormattedMessage
-                                                defaultMessage="Upload to Turboworkshop"
-                                                description="File menu item to upload project to Turboworkshop"
+                                                defaultMessage="Upload to TurboWorkshop"
+                                                description="File menu item to upload project to TurboWorkshop"
                                                 id="tw.menuBar.uploadTurboworkshop"
                                             />
                                         </MenuItem>
@@ -2487,12 +2411,6 @@ class MenuBar extends React.Component {
                     >
                         <MwEditorNav />
                     </div>
-                    <div
-                        data-mw-item="rotur-account"
-                        className={classNames(styles.menuBarLayoutItem, styles.roturAccountSlot)}
-                    >
-                        <RoturAccount />
-                    </div>
                 </div>
             </Box>
         );
@@ -2507,7 +2425,6 @@ class MenuBar extends React.Component {
                         vm={this.props.vm}
                     />
                 )}
-                <TWNews />
             </React.Fragment>
         );
     }

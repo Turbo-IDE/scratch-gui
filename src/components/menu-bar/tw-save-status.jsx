@@ -13,8 +13,9 @@ import {isProjectOperationActive, PROJECT_OPERATION_EVENT} from '../../lib/proje
 import {getShortcutKey} from '../../lib/shortcuts/registry.js';
 import {isMac} from '../../lib/utils/browser';
 
-import {Cloud, Download, Save} from 'lucide-react';
-import smartSave, {guardSavedCallback} from '../../lib/mw/smart-save.js';
+import {Cloud, Globe} from 'lucide-react';
+import {guardSavedCallback} from '../../lib/mw/smart-save.js';
+import uploadProjectToWorkshop from '../../lib/mw/upload-to-workshop.js';
 import {getSaveFeedback, setSaveFeedback, SAVE_FEEDBACK_EVENT} from '../../lib/mw/save-feedback.js';
 import {getSetting, onSettingsChanged} from '../../lib/mw/autosave-settings.js';
 
@@ -30,6 +31,11 @@ const messages = defineMessages({
         defaultMessage: 'Preparing download…',
         description: 'Menu bar save status while a project file is built for download',
         id: 'mw.saveStatus.preparingDownload'
+    },
+    uploadingToWorkshop: {
+        defaultMessage: 'Uploading to TurboWorkshop…',
+        description: 'Menu bar upload status while the project is sent to TurboWorkshop',
+        id: 'mw.saveStatus.uploadingToWorkshop'
     },
     downloadFailed: {
         defaultMessage: 'Download failed',
@@ -84,8 +90,8 @@ const messages = defineMessages({
         id: 'mw.saveStatus.uploadLabel'
     },
     downloadLabel: {
-        defaultMessage: 'Save to your computer',
-        description: 'Menu bar save button when MistWarp accounts are unavailable',
+        defaultMessage: 'Upload to TurboWorkshop',
+        description: 'Menu bar upload button that sends the project to TurboWorkshop',
         id: 'mw.saveStatus.downloadLabel'
     },
     remixDetail: {
@@ -109,10 +115,10 @@ const messages = defineMessages({
         description: 'Tooltip addition explaining that the save keyboard shortcut downloads a project that is not on MistWarp yet. {shortcut} is a key combination such as Ctrl+S.',
         id: 'mw.saveStatus.shortcutDownloads'
     },
-    downloadDetail: {
-        defaultMessage: 'Downloads a project file to your computer.',
-        description: 'Tooltip on the menu bar save button when it downloads the project',
-        id: 'mw.saveStatus.downloadDetail'
+    uploadWorkshopDetail: {
+        defaultMessage: 'Uploads this project to TurboWorkshop.',
+        description: 'Tooltip on the menu bar button that uploads the project to TurboWorkshop',
+        id: 'mw.saveStatus.uploadWorkshopDetail'
     },
     autosaveOn: {
         defaultMessage: 'Browser autosave is on.',
@@ -128,10 +134,11 @@ const messages = defineMessages({
 
 // Which status the save button shows next to its label. Ordered by urgency:
 // work in progress, then failures, then unsaved edits, then the last success.
-const getSaveStatus = ({busy, downloadError, feedback, isOwner, projectChanged, readOnly}) => {
+const getSaveStatus = ({downloadError, feedback, isOwner, projectChanged, readOnly, uploading}) => {
     if (readOnly) return 'readOnly';
+    if (uploading) return 'uploadingToWorkshop';
     if (feedback === 'uploading') return 'saving';
-    if (busy || feedback === 'downloading') return 'preparingDownload';
+    if (feedback === 'downloading') return 'preparingDownload';
     if (downloadError || feedback === 'downloadFailed') return 'downloadFailed';
     if (projectChanged && feedback === 'cloudFailed') return 'saveFailed';
     if (projectChanged) return 'unsaved';
@@ -142,6 +149,7 @@ const getSaveStatus = ({busy, downloadError, feedback, isOwner, projectChanged, 
 
 const STATUS_TONES = {
     readOnly: 'idle',
+    uploadingToWorkshop: 'busy',
     saving: 'busy',
     preparingDownload: 'busy',
     downloadFailed: 'error',
@@ -169,7 +177,7 @@ const TWSaveStatus = ({
     const [feedback, setFeedback] = useState(() => getSaveFeedback(vm));
     const [autosave, setAutosave] = useState(() => getSetting('enabled'));
     const [downloadError, setDownloadError] = useState(false);
-    const [busy, setBusy] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [operationActive, setOperationActive] = useState(() => isProjectOperationActive(vm));
     const [, refreshPlatform] = useState(0);
     useEffect(() => {
@@ -179,10 +187,10 @@ const TWSaveStatus = ({
             if (event.detail.vm !== vm) return;
             const next = getSaveFeedback(vm);
             setFeedback(next);
-            // Downloads from this button, Ctrl+S and the shortcut all land here,
-            // so show their progress and outcome where the user can see it.
-            // Uploads are reported by the status next to the button instead,
-            // so background autosaves do not flash alerts.
+            // Downloads from Ctrl+S and the save shortcut land here, so show
+            // their progress and outcome where the user can see it. Uploads
+            // are reported by the status next to the button instead, so
+            // background autosaves do not flash alerts.
             if (next === 'downloading') {
                 onShowAlert('savingMwp');
             } else if (next === 'downloaded') {
@@ -218,7 +226,7 @@ const TWSaveStatus = ({
         (isOwner ? 'update' : platformState ? 'remix' : 'save');
     const readOnly = Boolean(platformState && platformState.isOwner === false &&
         !platformState.canSaveDirectly && platformState.canRemix === false);
-    const unavailable = readOnly || busy || operationActive;
+    const unavailable = readOnly || uploading || operationActive;
     const onSaveClick = useCallback(() => {
         // Saves, uploads and project replacements share one lock; a second
         // click while one runs would only fail, so ignore it.
@@ -231,14 +239,14 @@ const TWSaveStatus = ({
                 onPublished: guardSavedCallback(vm, onProjectUnchanged)
             });
         } else {
-            setBusy(true);
-            setDownloadError(false);
-            smartSave({vm, title: projectTitle, onSaved: onProjectUnchanged})
-                .catch(() => setDownloadError(true))
-                .finally(() => setBusy(false));
+            // Same mechanism as File > Upload to TurboWorkshop: the label
+            // promises an upload, so send the project instead of downloading.
+            setUploading(true);
+            uploadProjectToWorkshop({vm, projectTitle})
+                .finally(() => setUploading(false));
         }
     }, [vm, projectTitle, mistwarpAction, onProjectUnchanged, unavailable]);
-    const status = getSaveStatus({busy, downloadError, feedback, isOwner, projectChanged, readOnly});
+    const status = getSaveStatus({downloadError, feedback, isOwner, projectChanged, readOnly, uploading});
     const statusText = status ? intl.formatMessage(messages[status]) : '';
     const label = intl.formatMessage(communityEnabled ?
         (mistwarpAction === 'remix' ? messages.remixLabel :
@@ -248,7 +256,7 @@ const TWSaveStatus = ({
     if (readOnly) {
         detail = intl.formatMessage(messages.readOnlyDetail);
     } else if (!communityEnabled) {
-        detail = intl.formatMessage(messages.downloadDetail);
+        detail = intl.formatMessage(messages.uploadWorkshopDetail);
     } else if (mistwarpAction === 'remix') {
         detail = intl.formatMessage(messages.remixDetail);
     } else if (mistwarpAction === 'update') {
@@ -265,7 +273,7 @@ const TWSaveStatus = ({
     if (isOwner && !readOnly) {
         detail = `${detail} ${intl.formatMessage(autosave ? messages.autosaveOn : messages.autosaveOff)}`;
     }
-    const Icon = communityEnabled ? Cloud : feedback === 'downloaded' ? Download : Save;
+    const Icon = communityEnabled ? Cloud : Globe;
     const tone = status ? STATUS_TONES[status] : null;
     return (
         <React.Fragment>
@@ -273,9 +281,9 @@ const TWSaveStatus = ({
                 type="button"
                 className={classNames(styles.saveNow, {
                     [styles.readOnly]: readOnly,
-                    [styles.busy]: !readOnly && (busy || operationActive)
+                    [styles.busy]: !readOnly && (uploading || operationActive)
                 })}
-                aria-busy={busy || operationActive}
+                aria-busy={uploading || operationActive}
                 aria-disabled={unavailable}
                 aria-label={statusText ? `${label}. ${statusText}. ${detail}` : `${label}. ${detail}`}
                 onClick={onSaveClick}

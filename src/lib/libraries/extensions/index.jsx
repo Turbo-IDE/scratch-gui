@@ -50,71 +50,12 @@ import gdxforConnectionIconURL from './gdxfor/gdxfor-illustration.svg';
 import gdxforConnectionSmallIconURL from './gdxfor/gdxfor-small.svg';
 
 import twIcon from './tw/tw.svg';
-import mistwarpPlayersIcon from './mistwarp-games/players.svg';
-import mistwarpMultiplayerIcon from './mistwarp-games/multiplayer.svg';
-import mistwarpDataIcon from './mistwarp-games/data.svg';
-import mistwarpMarketplaceIcon from './mistwarp-games/marketplace.svg';
-import mistwarpInventoryIcon from './mistwarp-games/inventory.svg';
-import roturAccountIcon from './rotur/account.png';
-import roturEconomyIcon from './rotur/economy.png';
-import roturKeysIcon from './rotur/keys.png';
-import roturStatusIcon from './rotur/status.png';
-import roturSocialIcon from './rotur/social.png';
-import roturShopIcon from './rotur/shop.png';
-import roturGroupsIcon from './rotur/groups.png';
-import roturFilesIcon from './rotur/files.png';
 import patchingIcon from './patching/patching.png';
 import customExtensionIcon from './custom/custom.svg';
 import galleryIcon from './gallery/gallery.svg';
 import {APP_NAME} from '../../constants/brand';
-import {MULTIPLAYER_ENABLED} from '../../mistwarp-games/config.js';
 
 export default [
-    {
-        name: 'Players',
-        extensionId: 'mistwarpPlayers',
-        iconURL: mistwarpPlayersIcon,
-        description: 'Use the signed-in player\'s name, avatar, and profile.',
-        incompatibleWithScratch: true,
-        tags: ['mistwarp-games'],
-        featured: true
-    },
-    ...(MULTIPLAYER_ENABLED ? [{
-        name: 'Multiplayer',
-        extensionId: 'mistwarpMultiplayer',
-        iconURL: mistwarpMultiplayerIcon,
-        description: 'Put players in rooms and share their positions or game state.',
-        incompatibleWithScratch: true,
-        tags: ['mistwarp-games'],
-        featured: true
-    }] : []),
-    {
-        name: 'Game Data',
-        extensionId: 'mistwarpData',
-        iconURL: mistwarpDataIcon,
-        description: 'Load and save each player\'s progress.',
-        incompatibleWithScratch: true,
-        tags: ['mistwarp-games'],
-        featured: true
-    },
-    {
-        name: 'Game Shop',
-        extensionId: 'mistwarpMarketplace',
-        iconURL: mistwarpMarketplaceIcon,
-        description: 'Sell products and open your game\'s shop.',
-        incompatibleWithScratch: true,
-        tags: ['mistwarp-games'],
-        featured: true
-    },
-    {
-        name: 'Player Items',
-        extensionId: 'mistwarpInventory',
-        iconURL: mistwarpInventoryIcon,
-        description: 'Give players items and use items they already own.',
-        incompatibleWithScratch: true,
-        tags: ['mistwarp-games'],
-        featured: true
-    },
     {
         name: (
             <FormattedMessage
@@ -146,78 +87,6 @@ export default [
         description: 'Inject JavaScript into compiled projects.',
         incompatibleWithScratch: true,
         tags: ['mistium'],
-        featured: true
-    },
-    {
-        name: 'Rotur Account',
-        extensionId: 'rotur',
-        iconURL: roturAccountIcon,
-        description: 'Log in with Rotur and read who the player is.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
-        featured: true
-    },
-    {
-        name: 'Rotur Economy',
-        extensionId: 'roturEconomy',
-        iconURL: roturEconomyIcon,
-        description: 'Credits, transfers, and daily rewards.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
-        featured: true
-    },
-    {
-        name: 'Rotur Keys',
-        extensionId: 'roturKeys',
-        iconURL: roturKeysIcon,
-        description: 'Buy, sell, and check Rotur keys.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
-        featured: true
-    },
-    {
-        name: 'Rotur Status',
-        extensionId: 'roturStatus',
-        iconURL: roturStatusIcon,
-        description: 'Read and set Rotur status and presence.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
-        featured: true
-    },
-    {
-        name: 'Rotur Social',
-        extensionId: 'roturSocial',
-        iconURL: roturSocialIcon,
-        description: 'Posts, follows, and friends on Rotur.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
-        featured: true
-    },
-    {
-        name: 'Rotur Shop',
-        extensionId: 'roturShop',
-        iconURL: roturShopIcon,
-        description: 'Items and cosmetics marketplace.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
-        featured: true
-    },
-    {
-        name: 'Rotur Groups',
-        extensionId: 'roturGroups',
-        iconURL: roturGroupsIcon,
-        description: 'Communities, roles, and group economy.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
-        featured: true
-    },
-    {
-        name: 'Rotur Files',
-        extensionId: 'roturFiles',
-        iconURL: roturFilesIcon,
-        description: 'Read and manage your Rotur file storage.',
-        incompatibleWithScratch: true,
-        tags: ['rotur'],
         featured: true
     },
     {

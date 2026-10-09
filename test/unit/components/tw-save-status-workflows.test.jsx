@@ -193,11 +193,12 @@ describe('MistWarp save status', () => {
 });
 
 describe('getSaveStatus', () => {
-    const base = {busy: false, downloadError: false, feedback: null, isOwner: false, projectChanged: false};
+    const base = {downloadError: false, feedback: null, isOwner: false, projectChanged: false, uploading: false};
 
     test('prefers progress, then failures, then unsaved edits, then the last save', () => {
+        expect(getSaveStatus({...base, uploading: true})).toBe('uploadingToWorkshop');
         expect(getSaveStatus({...base, projectChanged: true, feedback: 'uploading'})).toBe('saving');
-        expect(getSaveStatus({...base, busy: true})).toBe('preparingDownload');
+        expect(getSaveStatus({...base, feedback: 'downloading'})).toBe('preparingDownload');
         expect(getSaveStatus({...base, projectChanged: true, feedback: 'cloudFailed'})).toBe('saveFailed');
         expect(getSaveStatus({...base, projectChanged: true, feedback: 'cloud'})).toBe('unsaved');
         expect(getSaveStatus({...base, feedback: 'cloud'})).toBe('saved');
