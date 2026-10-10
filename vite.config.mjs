@@ -409,7 +409,13 @@ export default defineConfig(async ({mode, command}) => {
             host: '0.0.0.0',
             port: Number(env.PORT || 8601),
             cors: true,
-            fs: {allow: [path.dirname(directory)]}
+            fs: {allow: [path.dirname(directory)]},
+            // Nothing serves /docs by default. Point this at a running Docusaurus
+            // dev server to make the Help window render the docs as you edit them,
+            // for example MW_DOCS_DEV_ORIGIN=http://localhost:3000.
+            ...(env.MW_DOCS_DEV_ORIGIN ? {
+                proxy: {'/docs': {target: env.MW_DOCS_DEV_ORIGIN, changeOrigin: true, ws: false}}
+            } : {})
         },
         preview: {port: Number(env.PORT || 8601)},
         optimizeDeps: {

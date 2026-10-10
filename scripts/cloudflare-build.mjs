@@ -15,7 +15,7 @@ const run = (command, args, env = {}) => new Promise((resolve, reject) => {
 
 const docsMaster = async () => {
     const {stdout} = await promisify(execFile)('git',
-        ['ls-remote', 'https://github.com/MistWarp/docs', 'refs/heads/master']);
+        ['ls-remote', 'https://github.com/Turbo-IDE/docs', 'refs/heads/master']);
     return stdout.split(/\s/)[0];
 };
 
@@ -39,7 +39,7 @@ const downloadDocs = async () => {
     fs.writeFileSync(file, archive);
     await run('tar', ['-xzf', file, '-C', output]);
     if (!fs.existsSync(path.join(output, 'index.html'))) throw new Error('the archive has no index.html');
-    console.log(`Using the docs build of MistWarp/docs ${master.slice(0, 8)} from ${docsOrigin}`);
+    console.log(`Using the docs build of Turbo-IDE/docs ${master.slice(0, 8)} from ${docsOrigin}`);
     return output;
 };
 
