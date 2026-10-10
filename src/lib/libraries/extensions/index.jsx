@@ -467,7 +467,7 @@ export default [
                 id="mw.turboshare.embedWindowsv2.name"
             />
         ),
-        extensionId: 'FakeWindowsv2',
+        extensionId: 'EmbedWindowsv2',
         extensionURL: `${process.env.ROOT || '/'}static/turboshare-extensions/EmbedWindows.js`,
         iconURL: turboshareEmbedWindowsIcon,
         description: (

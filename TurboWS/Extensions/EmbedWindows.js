@@ -1,5 +1,5 @@
 // Name: Embed Windows v2
-// ID: FakeWindowsv2
+// ID: EmbedWindowsv2
 // Description: create a fake window in your project page
 // By: TeamDANV <https://turboshare.org.uk/users/StudioDANV/>
 // License: MIT
@@ -9,7 +9,7 @@
 if (!Scratch.extensions.unsandboxed) {
     throw new Error("must be ran unsandboxed");
 }
-const extId = 'FakeWindowsv2';
+const extId = 'EmbedWindowsv2';
 const { BlockType, ArgumentType, vm } = Scratch, runtime = vm.runtime;
   const hasOwn = (object, property) => Object.prototype.hasOwnProperty.call(object, property);
   if (hasOwn(runtime, `ext_${extId}`)) {
@@ -450,10 +450,10 @@ class extensionAPI {
       get padding() { return padding; },
     };
 
-   getInfo() {
-      const getInfo = ({
-        id: extId,
-            name: 'Fake Windows v2',
+getInfo() {
+       const getInfo = ({
+         id: extId,
+             name: 'Embed Windows v2',
             color1: '#2ECC71',
             color2: '#27AE60',
             blocks: [
