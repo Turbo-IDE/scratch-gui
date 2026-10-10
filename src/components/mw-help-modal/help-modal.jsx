@@ -4,7 +4,7 @@ import React from 'react';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
 import Modal from '../../containers/windowed-modal.jsx';
-import {DOCS_BASE, getHelpEntry} from '../../lib/help/index.js';
+import {docsUrl, getHelpEntry} from '../../lib/help/index.js';
 
 import styles from './help-modal.css';
 
@@ -19,9 +19,11 @@ const messages = defineMessages({
 // The docs are built for full-width viewing; zoom out so more fits in the window.
 const HELP_ZOOM = '0.9';
 
+// docsUrl() opens the page in the editor's language; the docs pick up later
+// language changes on their own through the shared localStorage key.
 const helpUrl = selectedId => {
     const entry = getHelpEntry(selectedId);
-    return `${DOCS_BASE}${(entry && entry.docsPath) || ''}/`;
+    return docsUrl(entry ? entry.docsPath : '');
 };
 
 const editorIsDark = () => {

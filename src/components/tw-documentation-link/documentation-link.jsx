@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {DOCS_BASE} from '../../lib/help/index.js';
+import {docsUrl} from '../../lib/help/index.js';
 
 const DOCS_PAGES = {
     'custom-fps': 'advanced/custom-fps',
@@ -14,10 +14,7 @@ const DOCS_PAGES = {
     'warp-timer': 'advanced/warp-timer'
 };
 
-const documentationURL = slug => {
-    const page = DOCS_PAGES[slug];
-    return page ? `${DOCS_BASE}/${page}/` : `${DOCS_BASE}/`;
-};
+const documentationURL = slug => docsUrl(DOCS_PAGES[slug] || '');
 
 const DocumentationLink = ({slug, children}) => (
     <a

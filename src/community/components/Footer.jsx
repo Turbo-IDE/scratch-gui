@@ -5,6 +5,7 @@ import {Github} from 'lucide-react';
 import {editorUrl} from '../api';
 import {DISCORD_INVITE} from '../../lib/originchats/links.js';
 import {BUILD_ID, BUILD_TIME, shortId} from '../../lib/build-version.js';
+import {docsUrl} from '../../lib/help/index.js';
 import logo from '../assets/mistwarp-logo.png';
 import styles from './Footer.module.css';
 
@@ -55,7 +56,7 @@ const Footer = () => {
                 <div className={styles.column}>
                     <span className={styles.columnTitle}>{communityText('More')}</span>
                     <Link to="/perks">{communityText('Memberships')}</Link>
-                    <a href="/docs/">{communityText('Documentation')}</a>
+                    <a href={docsUrl()}>{communityText('Documentation')}</a>
                     <a href="https://packager.warp.mistium.com/">{communityText('Packager')}</a>
                     <a
                         href="https://github.com/mistwarp"

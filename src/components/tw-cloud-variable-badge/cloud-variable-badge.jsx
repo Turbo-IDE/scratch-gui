@@ -5,7 +5,7 @@ import cloudIcon from './clouddata.svg';
 import CloudServerButton from './cloud-server-button.jsx';
 import styles from './cloud-variable-badge.css';
 import {APP_NAME} from '../../lib/constants/brand';
-import {DOCS_BASE} from '../../lib/help/index.js';
+import {docsUrl} from '../../lib/help/index.js';
 
 const hosts = [
     {
@@ -119,7 +119,7 @@ const CloudVariableBadge = props => {
             <a
                 target="_blank"
                 rel="noreferrer"
-                href={`${DOCS_BASE}/advanced/cloud-variables/`}
+                href={docsUrl('/advanced/cloud-variables')}
             >
                 <FormattedMessage
                     defaultMessage="Learn more about cloud variables."

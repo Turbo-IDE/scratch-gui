@@ -6,7 +6,7 @@ import {X} from 'lucide-react';
 
 import {STARTERS} from '../../lib/starter-projects';
 import fog from '../../lib/default-project/fog.svg';
-import {DOCS_BASE} from '../../lib/help/index.js';
+import {docsUrl} from '../../lib/help/index.js';
 import {getCommandPaletteKey} from '../../lib/shortcuts/command-palette.js';
 import {getIsShowingWithoutId} from '../../reducers/project-state';
 import {
@@ -102,7 +102,7 @@ const EditorWelcome = ({
     }, []);
 
     const handleDocs = useCallback(() => {
-        window.open(`${DOCS_BASE}/`, '_blank', 'noopener,noreferrer');
+        window.open(docsUrl(), '_blank', 'noopener,noreferrer');
     }, []);
 
     if (!visible) return null;

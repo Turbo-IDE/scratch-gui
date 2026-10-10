@@ -38,7 +38,7 @@ import FeaturedProjects from '../components/tw-featured-projects/featured-projec
 import Description from '../components/tw-description/description.jsx';
 import BrowserModal from '../components/browser-modal/browser-modal.jsx';
 import CloudVariableBadge from '../containers/tw-cloud-variable-badge.jsx';
-import {DOCS_BASE} from '../lib/help/index.js';
+import {docsUrl} from '../lib/help/index.js';
 import {isBrowserSupported} from '../lib/utils/tw-environment-support-prober';
 import AddonChannels from '../addons/channels';
 import {loadServiceWorker} from './load-service-worker';
@@ -239,21 +239,21 @@ const Footer = () => (
                         {/* Do not translate */}
                         {'MistWarp Packager'}
                     </a>
-                    <a href={`${DOCS_BASE}/advanced/embedding/`}>
+                    <a href={docsUrl('/advanced/embedding')}>
                         <FormattedMessage
                             defaultMessage="Embedding"
                             description="Link in footer to embedding documentation for embedding link"
                             id="tw.footer.embed"
                         />
                     </a>
-                    <a href={`${DOCS_BASE}/advanced/url-parameters/`}>
+                    <a href={docsUrl('/advanced/url-parameters')}>
                         <FormattedMessage
                             defaultMessage="URL Parameters"
                             description="Link in footer to URL parameters documentation"
                             id="tw.footer.parameters"
                         />
                     </a>
-                    <a href={`${DOCS_BASE}/`}>
+                    <a href={docsUrl()}>
                         <FormattedMessage
                             defaultMessage="Documentation"
                             description="Link in footer to additional documentation"
@@ -392,11 +392,11 @@ class Interface extends React.Component {
                                             values={{
                                                 link: (
                                                     <a
-                                                        href="https://mistwarp.org/docs/advanced/unshared-projects/"
+                                                        href="https://turbo-ide.org/docs/advanced/unshared-projects/"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
-                                                        {'https://mistwarp.org/docs/advanced/unshared-projects/'}
+                                                        {'https://turbo-ide.org/docs/advanced/unshared-projects/'}
                                                     </a>
                                                 )
                                             }}

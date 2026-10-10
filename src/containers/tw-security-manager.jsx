@@ -5,7 +5,7 @@ import bindAll from 'lodash.bindall';
 import log from '../lib/utils/log.js';
 import SecurityManagerModal from '../components/tw-security-manager-modal/security-manager-modal.jsx';
 import SecurityModals from '../lib/constants/security-manager.js';
-import {getPersistedUnsandboxed, setPersistedUnsandboxed} from '../lib/persistence/tw-unsandboxed.js';
+import {setPersistedUnsandboxed} from '../lib/persistence/tw-unsandboxed.js';
 import isTrustedExtensionUrl, {isGalleryExtensionUrl} from '../lib/trusted-extension.js';
 import {getRememberedPlatformProjectState} from '../lib/community/publish.js';
 import {extensionSourceUrl, hashExtensionUrl} from '../lib/community/api.js';
@@ -316,16 +316,6 @@ class TWSecurityManagerComponent extends React.Component {
         return url;
     }
 
-    handleChangeUnsandboxed (e) {
-        const checked = e.target.checked;
-        this.setState(oldState => ({
-            data: {
-                ...oldState.data,
-                unsandboxed: checked
-            }
-        }));
-    }
-
     /**
      * @param {string} url The extension's URL
      * @returns {Promise<boolean>} Whether the extension can be loaded
@@ -361,14 +351,9 @@ class TWSecurityManagerComponent extends React.Component {
         }
         if (this.props.vm.runtime._mwProjectTrusted === true) return allowProjectExtension();
         const {showModal} = await this.acquireModalLock();
-        let unsandboxed = getPersistedUnsandboxed();
         const allowed = await showModal(SecurityModals.LoadExtension, {
             url,
-            unsandboxed,
-            onChangeUnsandboxed: e => {
-                unsandboxed = e.target.checked;
-                this.handleChangeUnsandboxed(e);
-            }
+            unsandboxed: true
         });
         if (!allowed) return false;
 
@@ -376,10 +361,8 @@ class TWSecurityManagerComponent extends React.Component {
             return allowProjectExtension();
         }
 
-        setPersistedUnsandboxed(unsandboxed);
-        if (unsandboxed) {
-            manuallyTrustExtension(url);
-        }
+        setPersistedUnsandboxed(true);
+        manuallyTrustExtension(url);
         return allowProjectExtension();
     }
 

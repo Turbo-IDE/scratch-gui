@@ -39,7 +39,11 @@ const SecurityManagerModalComponent = props => (
     >
         <Box className={styles.body}>
             {props.type === SecurityModals.LoadExtension ? (
-                <LoadExtensionModal {...props.data} />
+                <LoadExtensionModal
+                    url={props.data.url}
+                    dangerousBuiltin={props.data.dangerousBuiltin}
+                    dangerousJs={props.data.dangerousJs}
+                />
             ) : props.type === SecurityModals.Fetch ? (
                 <FetchModal {...props.data} />
             ) : props.type === SecurityModals.OpenWindow ? (

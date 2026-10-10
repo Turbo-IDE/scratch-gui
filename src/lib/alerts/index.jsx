@@ -3,7 +3,7 @@ import {FormattedMessage} from 'react-intl';
 import keyMirror from 'keymirror';
 
 import successImage from '../assets/icon--success.svg';
-import {DOCS_BASE} from '../help/index.js';
+import {docsUrl} from '../help/index.js';
 
 const AlertTypes = keyMirror({
     STANDARD: null,
@@ -521,7 +521,7 @@ const alerts = [
                 values={{
                     learnMoreLink: (
                         <a
-                            href={`${DOCS_BASE}/advanced/cloud-variables/`}
+                            href={docsUrl('/advanced/cloud-variables')}
                             rel="noopener noreferrer"
                             target="_blank"
                         >

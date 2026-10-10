@@ -1,5 +1,28 @@
 /* eslint-disable max-len */
+import matchLocale from '../utils/match-locale.js';
+import {LANGUAGE_KEY} from '../utils/detect-locale.js';
+
 const DOCS_BASE = '/docs';
+
+// Languages the documentation is published in (mirrors the docs' i18n locales);
+// every other editor language falls back to English.
+const DOCS_LOCALES = ['en', 'vi'];
+
+// The editor's current language. <html lang> mirrors it (set at startup and on
+// every change), so prefer that and fall back to the stored selection.
+const editorDocsLocale = () => {
+    try {
+        const locale = document.documentElement.lang ||
+            window.localStorage.getItem(LANGUAGE_KEY);
+        return matchLocale(locale, DOCS_LOCALES) || 'en';
+    } catch (e) {
+        return 'en';
+    }
+};
+
+// Link to a docs page in the editor's language, so the Help window and every
+// docs link follow the language chosen in Settings (or the ?locale= parameter).
+const docsUrl = (path = '') => `${DOCS_BASE}${path.replace(/\/+$/, '')}/?locale=${editorDocsLocale()}`;
 
 const HELP_CATEGORIES = [
     'Editor',
@@ -29,7 +52,7 @@ const HELP_ENTRIES = [
         keywords: ['file', 'edit', 'project', 'help', 'top bar'],
         short: 'The menu bar holds the File, Edit, Project, and Help menus and the Settings button. Saving and project tools start here.',
         howTo: [
-            'File holds New, Load from your computer, Save to your computer (.mwp, with history), Export (Scratch project and Package project), and Device backups. When you are signed in it also holds Save to MistWarp.',
+            'File holds New, Load from your computer, Save to your computer (.mwp, with history), Export (Scratch project and Package project), and Device backups. When you are signed in it also holds Save to Turbo-IDE.',
             'Edit holds Restore, Undo, Redo, Turbo Mode, and Addons. Project holds Project history, Live Collaboration, Project metadata, the Debugger, the Variable Manager, and extensions.',
             'Help opens this help, the documentation, the keyboard shortcuts, the command palette, and feedback.'
         ],
@@ -135,7 +158,7 @@ const HELP_ENTRIES = [
         howTo: [
             'Click Make a Block in the My Blocks category and add label text and inputs.',
             'Tick "Run without screen refresh" to run the whole block in one frame.',
-            'MistWarp also supports return values so a custom block can report a result.'
+            'Turbo-IDE also supports return values so a custom block can report a result.'
         ],
         docsPath: '/blocks/my-blocks'
     },
@@ -183,7 +206,7 @@ const HELP_ENTRIES = [
         title: 'Themes and appearance',
         category: 'Editor',
         keywords: ['dark mode', 'accent', 'custom theme', 'colors'],
-        short: 'MistWarp lets you restyle the editor and the blocks. Settings has pages for the light or dark theme, the accent color, block colors, custom themes, wallpaper, and fonts.',
+        short: 'Turbo-IDE lets you restyle the editor and the blocks. Settings has pages for the light or dark theme, the accent color, block colors, custom themes, wallpaper, and fonts.',
         howTo: [
             'Choose light or dark mode and an accent color on the Theme page of Settings.',
             'Choose a block color scheme, such as High Contrast, on the Blocks page of Settings.',
@@ -235,10 +258,10 @@ const HELP_ENTRIES = [
         title: 'Project history (like git push)',
         category: 'Editor',
         keywords: ['git', 'commit', 'push', 'pull', 'diff', 'history'],
-        short: 'Saving to MistWarp pushes your history, like git push. You get a full pushed history with commits and restores. .mwp files carry that same history for export.',
+        short: 'Saving to Turbo-IDE pushes your history, like git push. You get a full pushed history with commits and restores. .mwp files carry that same history for export.',
         howTo: [
             'Open Project history from the Project menu.',
-            'Save a version with a message to push it to MistWarp.',
+            'Save a version with a message to push it to Turbo-IDE.',
             'Device backups stay local and are separate from pushed history.'
         ],
         docsPath: '/editor/git'
@@ -287,7 +310,7 @@ const HELP_ENTRIES = [
         title: 'Keyboard shortcuts',
         category: 'Editor',
         keywords: ['hotkeys', 'keybindings', 'command palette', 'ctrl+k'],
-        short: 'MistWarp has keyboard shortcuts for common actions, a command palette that searches every command, and a Keyboard Shortcuts page where you can view and change them.',
+        short: 'Turbo-IDE has keyboard shortcuts for common actions, a command palette that searches every command, and a Keyboard Shortcuts page where you can view and change them.',
         howTo: [
             'Save with Ctrl/Cmd plus S and open a project with Ctrl/Cmd plus O.',
             'Choose Keyboard shortcuts in the Help menu, or Keyboard Shortcuts in Settings, to see the full list.',
@@ -304,7 +327,7 @@ const HELP_ENTRIES = [
         short: 'Motion blocks move and rotate sprites: move, turn, go to a position, glide, and point in a direction.',
         howTo: [
             'Motion blocks only affect sprites, not the stage.',
-            'MistWarp adds point-towards-x/y for pointing at an exact coordinate.',
+            'Turbo-IDE adds point-towards-x/y for pointing at an exact coordinate.',
             'Combine with a forever loop to create continuous movement.'
         ],
         docsPath: '/blocks/motion'
@@ -357,7 +380,7 @@ const HELP_ENTRIES = [
         howTo: [
             'Use repeat, forever, and if to structure logic.',
             'Clones let one sprite spawn copies of itself at runtime.',
-            'MistWarp adds while, for each, switch/case, and all at once.'
+            'Turbo-IDE adds while, for each, switch/case, and all at once.'
         ],
         docsPath: '/blocks/control'
     },
@@ -383,7 +406,7 @@ const HELP_ENTRIES = [
         howTo: [
             'Nest operators to build larger expressions.',
             'Use join, letter of, and length for text handling.',
-            'MistWarp adds replace, trim, clamp, min, max, pi, and more.'
+            'Turbo-IDE adds replace, trim, clamp, min, max, pi, and more.'
         ],
         docsPath: '/blocks/operators'
     },
@@ -405,7 +428,7 @@ const HELP_ENTRIES = [
         title: 'My Blocks',
         category: 'Blocks',
         keywords: ['custom blocks', 'define', 'procedures'],
-        short: 'My Blocks are the custom blocks you define. They can take inputs, run without screen refresh, and in MistWarp report a return value.',
+        short: 'My Blocks are the custom blocks you define. They can take inputs, run without screen refresh, and in Turbo-IDE report a return value.',
         howTo: [
             'Define a block, then call it like any other block.',
             'Read inputs inside the definition with the argument reporters.',
@@ -414,17 +437,17 @@ const HELP_ENTRIES = [
         docsPath: '/blocks/my-blocks'
     },
     {
-        id: 'blocks-mistwarp-extras',
-        title: 'MistWarp extra blocks',
+        id: 'blocks-turbo-ide-extras',
+        title: 'Turbo-IDE extra blocks',
         category: 'Blocks',
         keywords: ['turbowarp', 'extra', 'added blocks'],
-        short: 'MistWarp and TurboWarp add blocks across several categories that vanilla Scratch does not have, such as while loops, switch/case, and extra text operators.',
+        short: 'Turbo-IDE and TurboWarp add blocks across several categories that vanilla Scratch does not have, such as while loops, switch/case, and extra text operators.',
         howTo: [
             'Extra blocks appear inline in their normal categories.',
-            'They save into standard sb3 projects and run anywhere MistWarp runs.',
+            'They save into standard sb3 projects and run anywhere Turbo-IDE runs.',
             'See the reference for the full list and how each behaves.'
         ],
-        docsPath: '/blocks/mistwarp-extras'
+        docsPath: '/blocks/turbo-ide-extras'
     },
     {
         id: 'ext-overview',
@@ -440,17 +463,17 @@ const HELP_ENTRIES = [
         docsPath: '/extensions/overview'
     },
     {
-        id: 'ext-mistwarp-blocks',
-        title: 'MistWarp Blocks',
+        id: 'ext-turbo-ide-blocks',
+        title: 'Turbo-IDE Blocks',
         category: 'Extensions',
         keywords: ['tw', 'last key', 'mouse button'],
-        short: 'The MistWarp Blocks extension adds utility blocks such as the last key pressed and whether a specific mouse button is down.',
+        short: 'The Turbo-IDE Blocks extension adds utility blocks such as the last key pressed and whether a specific mouse button is down.',
         howTo: [
             'Add it from the extension library.',
             'Use last key pressed to react to any key without naming it.',
             'Check individual mouse buttons, including right and middle click.'
         ],
-        docsPath: '/extensions/mistwarp-blocks'
+        docsPath: '/extensions/turbo-ide-blocks'
     },
     {
         id: 'ext-patching',
@@ -652,7 +675,7 @@ const HELP_ENTRIES = [
         title: 'JavaScript and the compiler',
         category: 'Advanced',
         keywords: ['performance', 'compile', 'window.vm'],
-        short: 'MistWarp compiles blocks into JavaScript for speed. Advanced users can also access the running project through window.vm.',
+        short: 'Turbo-IDE compiles blocks into JavaScript for speed. Advanced users can also access the running project through window.vm.',
         howTo: [
             'The compiler runs automatically. To compare behavior, turn on Disable compiler in editor on the Editor page of Settings.',
             'Open the browser console and use window.vm to inspect the running project.',
@@ -678,7 +701,7 @@ const HELP_ENTRIES = [
         title: 'Embedding projects',
         category: 'Advanced',
         keywords: ['iframe', 'website', 'embed', 'postmessage'],
-        short: 'You can embed a MistWarp project in another web page and, optionally, communicate with it from the surrounding page.',
+        short: 'You can embed a Turbo-IDE project in another web page and, optionally, communicate with it from the surrounding page.',
         howTo: [
             'Embed the player in an iframe on your site.',
             'Adjust size and controls with URL parameters.',
@@ -716,7 +739,7 @@ const validateHelpRegistry = () => {
 };
 
 export {
-    DOCS_BASE,
+    docsUrl,
     HELP_CATEGORIES,
     HELP_ENTRIES,
     getHelpEntry,

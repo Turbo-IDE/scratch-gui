@@ -61,42 +61,30 @@ const LoadExtensionModal = props => (
                 <URL url={props.url} />
             </React.Fragment>
         )}
-        {props.onChangeUnsandboxed ? (
+        {(
             <React.Fragment>
                 <label className={styles.unsandboxedContainer}>
                     <FancyCheckbox
                         className={styles.unsandboxedCheckbox}
-                        checked={props.unsandboxed}
-                        onChange={props.onChangeUnsandboxed}
+                        checked
+                        disabled
                     />
                     <FormattedMessage
-                        defaultMessage="Give it full access (advanced, not recommended)"
+                        defaultMessage="Give it full access (advanced)"
                         description="Part of modal asking for permission to automatically load custom extension"
                         id="tw.loadExtension.unsandboxed"
                     />
                 </label>
-                {props.unsandboxed ? (
-                    <div className={styles.unsandboxedWarning}>
-                        <FormattedMessage
-                            // eslint-disable-next-line max-len
-                            defaultMessage="With full access, this code can do anything you can: steal your login, take over your account, or change your projects and settings. Only turn this on for a project you completely trust."
-                            description="Warning shown before loading a custom extension without a sandbox"
-                            id="tw.loadExtension.unsandboxedWarning"
-                            values={{APP_NAME}}
-                        />
-                    </div>
-                ) : null}
+                <div className={styles.unsandboxedWarning}>
+                    <FormattedMessage
+                        // eslint-disable-next-line max-len
+                        defaultMessage="With full access, this code can do anything you can: steal your login, take over your account, or change your projects and settings. Only turn this on for a project you completely trust."
+                        description="Warning shown before loading a custom extension without a sandbox"
+                        id="tw.loadExtension.unsandboxedWarning"
+                        values={{APP_NAME}}
+                    />
+                </div>
             </React.Fragment>
-        ) : null}
-        {props.unsandboxed || props.dangerousBuiltin || props.dangerousJs || (
-            <div className={styles.sandboxed}>
-                <FormattedMessage
-                    // eslint-disable-next-line max-len
-                    defaultMessage="It runs in a safe sandbox and can't touch your account, but it can still use the internet (which reveals things like your IP address). Only run it if you trust the person who made this project."
-                    description="Warning shown before loading a sandboxed custom extension"
-                    id="tw.loadExtension.sandboxed"
-                />
-            </div>
         )}
     </div>
 );
@@ -104,9 +92,7 @@ const LoadExtensionModal = props => (
 LoadExtensionModal.propTypes = {
     dangerousBuiltin: PropTypes.bool,
     dangerousJs: PropTypes.string,
-    url: PropTypes.string.isRequired,
-    unsandboxed: PropTypes.bool.isRequired,
-    onChangeUnsandboxed: PropTypes.func
+    url: PropTypes.string.isRequired
 };
 
 export default LoadExtensionModal;

@@ -130,7 +130,7 @@
     "projectIdHelp": "ID dự án được dùng khi kết nối đến máy chủ biến đám mây và khi lưu biến đám mây cục bộ. Nó có thể chứa nhiều thứ ngoài số.",
     "packagedRuntime": "Xoá dữ liệu tài nguyên gốc sau khi tải để tiết kiệm RAM",
     "customExtensions": "Tiện ích mở rộng tùy chỉnh (mỗi dòng một URL)",
-    "customExtensionsSecurity": "Các tiện ích mở rộng tùy chỉnh luôn được chạy ngoài hộp cát trong trình đóng gói. Tuỳ thuộc vào môi trường bạn đóng gói, điều này trao cho tiện ích mở rộng quyền kiểm soát hoàn toàn máy tính của bạn, kể cả khả năng cài virus. Đừng dùng các tiện ích mở rộng bạn không tin tưởng.",
+    "customExtensionsSecurity": "Các tiện ích mở rộng tùy chỉnh luôn được chạy ngoài hộp cát (unsandbox) trong trình đóng gói. Tuỳ thuộc vào môi trường bạn đóng gói, điều này trao cho tiện ích mở rộng quyền kiểm soát hoàn toàn máy tính của bạn, kể cả khả năng cài virus. Đừng dùng các tiện ích mở rộng bạn không tin tưởng.",
     "bakeExtensions": "Thử nhúng bản sao đã lưu trong bộ nhớ đệm của tiện ích mở rộng tùy chỉnh thay vì tải lại mỗi lần chạy dự án",
     "customCSS": "CSS tùy chỉnh (Đừng thay đổi nếu bạn không biết mình đang làm gì!)",
     "customJS": "JS tùy chỉnh (Đừng thay đổi nếu bạn không biết mình đang làm gì!)",

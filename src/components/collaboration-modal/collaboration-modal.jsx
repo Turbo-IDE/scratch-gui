@@ -772,7 +772,7 @@ class CollaborationModal extends Component {
                     <AlertTriangle size={16} />
                 </div>
                 <div className={styles.bannerContent}>
-                    {'Collaboration is experimental. Keep a downloaded backup before a shared editing session.'}
+                    {'Tính năng cộng tác hiện đang trong giai đoạn thử nghiệm. Vui lòng lưu bản sao dự phòng trước khi bắt đầu phiên chỉnh sửa cộng tác.'}
                 </div>
             </div>
         );
