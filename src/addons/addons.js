@@ -65,7 +65,8 @@ const addons = [
     'no-category-text',
     'green-flag-order',
     'remove-extension-button',
-    'merge-operators'
+    'merge-operators',
+    'lazy-workspace-loading'
 ];
 
 const newAddons = [
@@ -73,7 +74,8 @@ const newAddons = [
     'green-flag-order',
     'remove-extension-button',
     'tab-styles',
-    'merge-operators'
+    'merge-operators',
+    'lazy-workspace-loading'
 ];
 
 // eslint-disable-next-line import/no-commonjs

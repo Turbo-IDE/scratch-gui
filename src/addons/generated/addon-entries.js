@@ -1,3 +1,4 @@
+import * as bundledModule62 from "../addons/lazy-workspace-loading/_runtime_entry.js";
 import * as bundledModule0 from "../addons/editor-devtools/_runtime_entry.js";
 import * as bundledModule1 from "../addons/reorder-custom-inputs/_runtime_entry.js";
 import * as bundledModule2 from "../addons/editor-searchable-dropdowns/_runtime_entry.js";
@@ -119,4 +120,5 @@ export default {
   "no-category-text": () => Promise.resolve(bundledModule59),
   "green-flag-order": () => Promise.resolve(bundledModule60),
   "merge-operators": () => Promise.resolve(bundledModule61),
+  "lazy-workspace-loading": () => Promise.resolve(bundledModule62)
 };

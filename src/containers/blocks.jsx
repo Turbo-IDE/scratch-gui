@@ -33,6 +33,21 @@ import defineDynamicBlock from '../lib/utils/define-dynamic-block';
 import {Theme} from '../lib/themes';
 import {injectExtensionBlockTheme, injectExtensionCategoryTheme} from '../lib/themes/blockHelpers';
 
+// When this addon is off (the default) building a sprite's blocks is fully
+// synchronous, like TurboWarp: every block appears in one go. When it is on,
+// mw-load-workspace may stream scripts in progressively instead.
+const DEFERRED_WORKSPACE_ADDON = 'lazy-workspace-loading';
+const shouldDeferWorkspaceLoad = vm => {
+    let enabled = false;
+    try {
+        enabled = SettingsStore.getAddonEnabled(DEFERRED_WORKSPACE_ADDON);
+    } catch (e) {
+        // Addon not registered; fall back to the synchronous loader.
+        enabled = false;
+    }
+    return enabled && !vm.editingCommands?.handler;
+};
+
 import {connect} from 'react-redux';
 import {updateToolbox} from '../reducers/toolbox';
 import {activateColorPicker} from '../reducers/color-picker';
@@ -683,6 +698,16 @@ class Blocks extends React.Component {
     handleAddonSettingChanged (e) {
         const detail = e && e.detail;
         if (!detail) return;
+        // Toggling deferred loading applies to the sprite that is open right
+        // now, so rebuild the workspace in the newly chosen mode immediately.
+        if (detail.addonId === DEFERRED_WORKSPACE_ADDON && detail.settingId === 'enabled') {
+            try {
+                this.props.vm.emitWorkspaceUpdate();
+            } catch (e2) {
+                // ignore
+            }
+            return;
+        }
         if (detail.addonId !== 'hide-flyout') return;
         if (detail.settingId !== 'enabled') return;
 
@@ -1176,7 +1201,7 @@ class Blocks extends React.Component {
                 onDone: () => {
                     this.deferredWorkspaceLoad = null;
                 }
-            }, !this.props.vm.editingCommands?.handler);
+            }, shouldDeferWorkspaceLoad(this.props.vm));
         } catch (error) {
             // The workspace is likely incomplete. What did update should be
             // functional.
