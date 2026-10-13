@@ -394,11 +394,11 @@ class Interface extends React.Component {
                                             values={{
                                                 link: (
                                                     <a
-                                                        href="https://turbo-ide.org/docs/advanced/unshared-projects/"
+                                                        href="https://turboshare.org.uk/docs/advanced/unshared-projects/"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
-                                                        {'https://turbo-ide.org/docs/advanced/unshared-projects/'}
+                                                        {'https://turboshare.org.uk/docs/advanced/unshared-projects/'}
                                                     </a>
                                                 )
                                             }}

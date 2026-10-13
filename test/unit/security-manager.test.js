@@ -64,6 +64,16 @@ test('only official or explicitly trusted extensions run unsandboxed', () => {
     expect(isTrustedExtension(custom)).toBe(true);
 });
 
+test('turboshare extensions are only trusted from the editor\'s own origin', () => {
+    const origin = window.location.origin;
+    expect(isTrustedExtension(`${origin}/static/turboshare-extensions/CloudDB.js`)).toBe(true);
+    expect(isTrustedExtension('/static/turboshare-extensions/CloudDB.js')).toBe(true);
+    expect(isTrustedExtension('https://editor.turboshare.org.uk/static/turboshare-extensions/CloudDB.js')).toBe(false);
+    expect(isTrustedExtension('https://example.com/static/turboshare-extensions/CloudDB.js')).toBe(false);
+    manuallyTrustExtension('https://editor.turboshare.org.uk/static/turboshare-extensions/CloudDB.js');
+    expect(isTrustedExtension('https://editor.turboshare.org.uk/static/turboshare-extensions/CloudDB.js')).toBe(true);
+});
+
 test('only the verified owner gets the bypass option', () => {
     window.history.replaceState(null, '', '/editor#mw-project-1');
     rememberPlatformProject({id: 'project-1', isOwner: false});
