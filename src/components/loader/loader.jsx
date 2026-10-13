@@ -399,14 +399,14 @@ class LoaderComponent extends React.Component {
                     {settings.showGithub ? (
                         <a
                             className={styles.githubCta}
-                            href="https://github.com/mistwarp"
+                            href="https://github.com/Turbo-IDE"
                             rel="noopener noreferrer"
                             target="_blank"
                         >
                             <Github size={14} />
                             <FormattedMessage
-                                defaultMessage="Follow MistWarp on GitHub"
-                                description="Link on the loading screen to the MistWarp GitHub organisation"
+                                defaultMessage="Turbo-IDE"
+                                description="Link on the loading screen to the Turbo-IDE GitHub organisation"
                                 id="mw.loader.github"
                             />
                         </a>
