@@ -222,8 +222,8 @@ importers:
         specifier: ^7.28.6
         version: 7.29.7
       '@babel/eslint-parser':
-        specifier: ^7.28.6
-        version: 7.29.7(@babel/core@7.29.7)(eslint@8.55.0)
+        specifier: ^7.29.9
+        version: 7.29.9(@babel/core@7.29.7)(eslint@8.55.0)
       '@babel/parser':
         specifier: ^7.29.7
         version: 7.29.7
@@ -274,7 +274,7 @@ importers:
         version: 8.55.0
       eslint-config-scratch:
         specifier: 9.0.3
-        version: 9.0.3(@babel/eslint-parser@7.29.7(@babel/core@7.29.7)(eslint@8.55.0))(eslint@8.55.0)
+        version: 9.0.3(@babel/eslint-parser@7.29.9(@babel/core@7.29.7)(eslint@8.55.0))(eslint@8.55.0)
       eslint-plugin-import:
         specifier: ^2.32.0
         version: 2.32.0(eslint@8.55.0)
@@ -348,8 +348,8 @@ packages:
     resolution: {integrity: sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/eslint-parser@7.29.7':
-    resolution: {integrity: sha512-zxt+UJTOMKvUt3yOg+D58MLuz334pHp93qifMFcjIIO+9hN6t+ufw2gi7vDPMpxvfnHRR+3VVXvIjineCcgyXw==}
+  '@babel/eslint-parser@7.29.9':
+    resolution: {integrity: sha512-GmrJTAtiRbNip+eKFqeuSvoHMJhKlH36j8U0yE3Gqn45B+SIO7NvsEiHtsmzkBqV1hLSMqYr41dI1aZLTkJ37g==}
     engines: {node: ^10.13.0 || ^12.13.0 || >=14.0.0}
     peerDependencies:
       '@babel/core': ^7.11.0
@@ -1754,6 +1754,11 @@ packages:
 
   acorn@8.17.0:
     resolution: {integrity: sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
+  acorn@8.19.0:
+    resolution: {integrity: sha512-oJlA3XiRm7Cyk6qFD2Jn8ak9B7jSy0qy00ADO3+8dpT0LSjFihQYv4C02LFCSYJV3Q37xYwwRy5m+IpIiUzqWw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -4587,8 +4592,8 @@ packages:
   multipipe@0.3.1:
     resolution: {integrity: sha512-ZUcepNdMeKBRn/ksm2XTxFnhBaqnBJSZNqwajmiem6b7Rp3fNAAq+twYn3kqw9YMY7HJuc7I7OObX9cMgB1ANg==}
 
-  nan@2.28.0:
-    resolution: {integrity: sha512-fTsDz99OTq2sVePhGdp4qQhggZFtKr64ZNVyVajRKtMOkJxYekplBh577PiJB12v/D3s2E5cGtOI45LWp6rnLQ==}
+  nan@2.29.0:
+    resolution: {integrity: sha512-GlGk3HIvitbvs+LT3g6XUP1kpirKNvmDFwF/bmo6XNWSb/eYEs/O4bfgIEIXCZ+lIOTS5xNwDvSGMw6FJdAhtA==}
 
   nanoid@3.3.18:
     resolution: {integrity: sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==}
@@ -6456,7 +6461,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/eslint-parser@7.29.7(@babel/core@7.29.7)(eslint@8.55.0)':
+  '@babel/eslint-parser@7.29.9(@babel/core@7.29.7)(eslint@8.55.0)':
     dependencies:
       '@babel/core': 7.29.7
       '@nicolo-ribaudo/eslint-scope-5-internals': 5.1.1-v1
@@ -8031,6 +8036,8 @@ snapshots:
 
   acorn@8.17.0: {}
 
+  acorn@8.19.0: {}
+
   adm-zip@0.5.18: {}
 
   agent-base@6.0.2:
@@ -9582,9 +9589,9 @@ snapshots:
       eslint: 8.55.0
       yargs: 13.3.2
 
-  eslint-config-scratch@9.0.3(@babel/eslint-parser@7.29.7(@babel/core@7.29.7)(eslint@8.55.0))(eslint@8.55.0):
+  eslint-config-scratch@9.0.3(@babel/eslint-parser@7.29.9(@babel/core@7.29.7)(eslint@8.55.0))(eslint@8.55.0):
     dependencies:
-      '@babel/eslint-parser': 7.29.7(@babel/core@7.29.7)(eslint@8.55.0)
+      '@babel/eslint-parser': 7.29.9(@babel/core@7.29.7)(eslint@8.55.0)
       eslint: 8.55.0
     optionalDependencies:
       eslint-plugin-react: 7.33.2(eslint@8.55.0)
@@ -10026,7 +10033,7 @@ snapshots:
   fsevents@1.2.13:
     dependencies:
       bindings: 1.5.0
-      nan: 2.28.0
+      nan: 2.29.0
     optional: true
 
   fsevents@2.3.3:
@@ -11512,7 +11519,7 @@ snapshots:
     dependencies:
       duplexer2: 0.1.4
 
-  nan@2.28.0:
+  nan@2.29.0:
     optional: true
 
   nanoid@3.3.18: {}
@@ -13142,7 +13149,7 @@ snapshots:
 
   terser@4.8.1:
     dependencies:
-      acorn: 8.17.0
+      acorn: 8.19.0
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -13150,7 +13157,7 @@ snapshots:
   terser@5.49.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.17.0
+      acorn: 8.19.0
       commander: 2.20.3
       source-map-support: 0.5.21
     optional: true
