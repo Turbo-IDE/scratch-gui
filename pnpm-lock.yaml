@@ -285,8 +285,8 @@ importers:
         specifier: 7.33.2
         version: 7.33.2(eslint@8.55.0)
       intl-messageformat-parser:
-        specifier: ^1.8.1
-        version: 1.8.1
+        specifier: ^6.4.4
+        version: 6.4.4
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@26.1.1)
@@ -1183,6 +1183,9 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
+  '@formatjs/ecma402-abstract@1.6.4':
+    resolution: {integrity: sha512-ukFjGD9dLsxcD9D5AEshJqQElPQeUAlTALT/lzIV6OcYojyuU81gw/uXDUOrs6XW79jtOJwQDkLqHbCJBJMOTw==}
+
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
@@ -1754,6 +1757,11 @@ packages:
 
   acorn@8.17.0:
     resolution: {integrity: sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
+  acorn@8.19.0:
+    resolution: {integrity: sha512-oJlA3XiRm7Cyk6qFD2Jn8ak9B7jSy0qy00ADO3+8dpT0LSjFihQYv4C02LFCSYJV3Q37xYwwRy5m+IpIiUzqWw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -3716,6 +3724,10 @@ packages:
     resolution: {integrity: sha512-IMSCKVf0USrM/959vj3xac7s8f87sc+80Y/ipBzdKy4ifBv5Gsj2tZ41EAaURVg01QU71fYr77uA8Meh6kELbg==}
     deprecated: We've written a new parser that's 6x faster and is backwards compatible. Please use @formatjs/icu-messageformat-parser
 
+  intl-messageformat-parser@6.4.4:
+    resolution: {integrity: sha512-7AaFKNZEfzLQR6+jivOuz9e7yA8ka5KrmLebgY4QHTRLf8r64dp3LjnW98LkBWjdk8GK0sawD2dHDqW++A/pXA==}
+    deprecated: We've written a new parser that's 6x faster and is backwards compatible. Please use @formatjs/icu-messageformat-parser
+
   intl-messageformat@2.2.0:
     resolution: {integrity: sha512-I+tSvHnXqJYjDfNmY95tpFMj30yoakC6OXAo+wu/wTMy6tA/4Fd4mvV7Uzs4cqK/Ap29sHhwjcY+78a8eifcXw==}
 
@@ -4587,8 +4599,8 @@ packages:
   multipipe@0.3.1:
     resolution: {integrity: sha512-ZUcepNdMeKBRn/ksm2XTxFnhBaqnBJSZNqwajmiem6b7Rp3fNAAq+twYn3kqw9YMY7HJuc7I7OObX9cMgB1ANg==}
 
-  nan@2.28.0:
-    resolution: {integrity: sha512-fTsDz99OTq2sVePhGdp4qQhggZFtKr64ZNVyVajRKtMOkJxYekplBh577PiJB12v/D3s2E5cGtOI45LWp6rnLQ==}
+  nan@2.29.0:
+    resolution: {integrity: sha512-GlGk3HIvitbvs+LT3g6XUP1kpirKNvmDFwF/bmo6XNWSb/eYEs/O4bfgIEIXCZ+lIOTS5xNwDvSGMw6FJdAhtA==}
 
   nanoid@3.3.18:
     resolution: {integrity: sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==}
@@ -7365,6 +7377,10 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
+  '@formatjs/ecma402-abstract@1.6.4':
+    dependencies:
+      tslib: 2.8.1
+
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
@@ -8030,6 +8046,8 @@ snapshots:
   acorn@7.4.1: {}
 
   acorn@8.17.0: {}
+
+  acorn@8.19.0: {}
 
   adm-zip@0.5.18: {}
 
@@ -10026,7 +10044,7 @@ snapshots:
   fsevents@1.2.13:
     dependencies:
       bindings: 1.5.0
-      nan: 2.28.0
+      nan: 2.29.0
     optional: true
 
   fsevents@2.3.3:
@@ -10418,6 +10436,11 @@ snapshots:
   intl-messageformat-parser@1.4.0: {}
 
   intl-messageformat-parser@1.8.1: {}
+
+  intl-messageformat-parser@6.4.4:
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.6.4
+      tslib: 2.8.1
 
   intl-messageformat@2.2.0:
     dependencies:
@@ -11512,7 +11535,7 @@ snapshots:
     dependencies:
       duplexer2: 0.1.4
 
-  nan@2.28.0:
+  nan@2.29.0:
     optional: true
 
   nanoid@3.3.18: {}
@@ -13142,7 +13165,7 @@ snapshots:
 
   terser@4.8.1:
     dependencies:
-      acorn: 8.17.0
+      acorn: 8.19.0
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -13150,7 +13173,7 @@ snapshots:
   terser@5.49.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.17.0
+      acorn: 8.19.0
       commander: 2.20.3
       source-map-support: 0.5.21
     optional: true
