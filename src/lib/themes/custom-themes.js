@@ -253,7 +253,7 @@ class GradientUtils {
         return [
             {
                 name: 'Sunset',
-                colors: ['#ff6b6b', '#feca57', '#ff9ff3'],
+                colors: ['#ffd700', '#feca57', '#ff9ff3'],
                 direction: 90
             },
             {
@@ -350,7 +350,7 @@ class CustomTheme extends Theme {
         const resolved = isGradientData ?
             GradientUtils.createGradientAccent(
                 accent.colors,
-                accent.colors[0] ? accent.colors[0].color : '#ff6b6b',
+                accent.colors[0] ? accent.colors[0].color : '#ffd700',
                 {direction: accent.direction || '90'}
             ) :
             accent;
@@ -678,13 +678,13 @@ class CustomTheme extends Theme {
         // Handle null/undefined accent - create a default accent
         if (!accentToUse) {
             accentToUse = {
-                guiColors: GradientUtils.generateAccentColors('#ff6b6b')
+                guiColors: GradientUtils.generateAccentColors('#ffd700')
             };
         } else if (accentToUse && typeof accentToUse === 'object' && Array.isArray(accentToUse.colors)) {
             // Check if accent is in gradient format (colors array)
             const colors = accentToUse.colors;
             const direction = accentToUse.direction || '90';
-            const primaryColor = colors[0] ? colors[0].color : '#ff6b6b';
+            const primaryColor = colors[0] ? colors[0].color : '#ffd700';
             accentToUse = GradientUtils.createGradientAccent(colors, primaryColor, {direction});
         }
 
@@ -1065,7 +1065,7 @@ class CustomThemeManager {
                 color = `#${rHex}${gHex}${bHex}`;
                 position = pos ? parseFloat(pos) : (index / (stopMatches.length - 1)) * 100;
             } else {
-                // Check for hex format: #ff6b6b 50%
+                // Check for hex format: #ffd700 50%
                 const hexMatch = stopString.match(/#([a-fA-F0-9]{3,8})/);
                 const posMatch = stopString.match(/([\d.]+)%/);
                 
@@ -1089,7 +1089,7 @@ class CustomThemeManager {
         colorStops.sort((a, b) => a.position - b.position);
 
         // Try to extract primary color from accent colors
-        let primaryColor = '#ff6b6b'; // fallback
+        let primaryColor = '#ffd700'; // fallback
         if (theme.customAccent.guiColors['motion-primary']) {
             primaryColor = theme.customAccent.guiColors['motion-primary'];
         }
@@ -1155,7 +1155,7 @@ class CustomThemeManager {
             const description = '';
 
             // Nitrobolt format provides a few colors; treat primary as the accent base.
-            const primaryColor = typeof nitrobolt.primaryColor === 'string' ? nitrobolt.primaryColor : '#ff6b6b';
+            const primaryColor = typeof nitrobolt.primaryColor === 'string' ? nitrobolt.primaryColor : '#ffd700';
 
             const gradient = nitrobolt.gradient;
             const hasGradient = Boolean(nitrobolt.isGradient) &&

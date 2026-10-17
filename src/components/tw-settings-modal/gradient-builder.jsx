@@ -52,11 +52,11 @@ const GradientBuilder = props => {
     const [name, setName] = React.useState(props.initialName || '');
     const [description, setDescription] = React.useState(props.initialDescription || '');
     const [gradientColors, setGradientColors] = React.useState(props.initialGradientColors || [
-        {color: '#ff6b6b', position: 0},
+        {color: '#ffd700', position: 0},
         {color: '#4ecdc4', position: 100}
     ]);
     const [direction, setDirection] = React.useState(props.initialDirection || 90);
-    const [primaryColor, setPrimaryColor] = React.useState(props.initialPrimaryColor || '#ff6b6b');
+    const [primaryColor, setPrimaryColor] = React.useState(props.initialPrimaryColor || '#ffd700');
     const [selectedPreset, setSelectedPreset] = React.useState('');
     const [isDragging, setIsDragging] = React.useState(null);
     const [isPreviewActive, setIsPreviewActive] = React.useState(false);

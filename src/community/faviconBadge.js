@@ -19,7 +19,7 @@ const setFaviconBadge = show => {
     if (show === badged) return;
     badged = show;
     if (!show) {
-        getLink().href = '/favicon.ico';
+        getLink().href = '/favicon.png';
         return;
     }
     const img = new Image();
