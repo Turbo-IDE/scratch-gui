@@ -16,7 +16,7 @@
   var BEABEA_AVATAR = 'https://raw.githubusercontent.com/danvPR/workshop/refs/heads/main/Assets/BeaBea.jpg';
   var EXT_ICON_URL = 'https://files.catbox.moe/diofi9.png';
 
-  var ICONS = {
+var ICONS = {
     close: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></svg>',
     send: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>',
     download: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>',
@@ -25,12 +25,24 @@
     sun: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line></svg>',
     moon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
     scan: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line><line x1="12" y1="7" x2="12" y2="17"></line></svg>',
-    magic: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5 4 4"></path><path d="M13 7 8.7 2.7a2.41 2.41 0 0 0-3.4 0L2.7 5.3a2.41 2.41 0 0 0 0 3.4L7 13"></path><path d="m8 6 2-2"></path><path d="m18 16 2-2"></path><path d="m17 11 4.3 4.3c.94.94.94 2.46 0 3.4l-2.6 2.6c-.94.94-2.46.94-3.4 0L11 17"></path></svg>',
+    magic: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15 5L10 10L15 15L12 18L9 15L4 10L9 5L12 2Z"></path><path d="M19 12L22 15L17 20L22 25L19 28L14 23L19 18L14 13L19 12Z"></path></svg>',
     settings: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>',
     sprite: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>',
     chevronDown: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>',
     turboforge: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h2z"></path><path d="M2 12a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2z"></path><path d="M22 12a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2z"></path><path d="M12 22a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2z"></path></svg>',
-    trash: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>'
+    trash: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>',
+    code: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
+    ask: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>',
+    debug: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.32 5H6.68a4 4 0 0 0-3.97 4.35L2.5 14.65A4 4 0 0 0 6.68 19H17.32a4 4 0 0 0 3.97-4.35L21.5 9.35a4 4 0 0 0-3.97-4.35Z"></path><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg>',
+    plan: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="15" x2="15" y2="15"></line><line x1="9" y1="12" x2="15" y2="12"></line></svg>',
+    sparkle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path></svg>',
+    brain: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-3 3c0 1.5 1.5 2 3 2s3-.5 3-2a3 3 0 1 0-3-3z"></path><path d="M12 19a3 3 0 1 0 3-3c0 1.5-1.5 2-3 2s-3-.5-3-2a3 3 0 1 0 3 3z"></path><path d="M5 12a7 7 0 1 1 14 0"></path></svg>',
+    check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+    play: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>',
+    stop: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>',
+    forward: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon><line x1="19" y1="3" x2="19" y2="21"></line></svg>',
+    auto: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>',
+    multiSelect: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>'
   };
 
   // ==========================================
@@ -51,7 +63,7 @@
       retryAttempt: 'Thử lại lần $1/$2',
       maxRetriesReached: 'Đã thử $1 lần, không thể kết nối. Vui lòng thử lại sau.',
       promptPlaceholder: 'Hỏi BeaBea về code, sprite, hoặc yêu cầu sửa dự án... (@sprite_name để tham chiếu)',
-      welcomeMsg: 'Hế lô bạn nha! ✨ Mình là **BeaBea** 🐾, AI Agent của bạn trong TurboWarp. Mình có thể đọc/viết biến, list, chạy script, giúp debug, refactor... Cứ nhờ mình nhé! 🌸',
+      welcomeMsg: 'Hế lô bạn nha! ✨ Mình là **BeaBea** 🐾, AI Agent của bạn trong Turbo-IDE. Mình có thể đọc/viết biến, list, chạy script, giúp debug, refactor... Cứ nhờ mình nhé! 🌸',
       scanProjectBtn: ICONS.scan + ' Quét toàn bộ dự án',
       scanComplete: 'Đã quét xong $1 sprite(s)',
       spriteSelected: 'Đã chọn sprite: $1',
@@ -71,14 +83,43 @@
       actionExecuted: '✅ Đã thực hiện: $1',
       actionFailed: '❌ Thất bại: $1',
       confirmAction: 'Bạn có chắc chắn muốn $1?',
-      reasoningTitle: '🧠 Suy nghĩ của BeaBea',
+      reasoningTitle: ICONS.brain + ' Suy nghĩ của BeaBea',
       copiedContext: '📋 Đã sao chép ngữ cảnh sprite!',
       noReduxStore: 'Không truy cập được Redux store. Dùng menu Tiện ích mở rộng trên toolbar.',
       errorPrefix: 'Lỗi: ',
       actionAccept: 'Chấp nhận',
-      actionRevise: 'Sửa lại'
+      actionRevise: 'Sửa lại',
+      // Autonomous mode translations
+      autoMode: 'Tự động',
+      autoModeOn: ICONS.auto + ' Tự động: BẬT',
+      autoModeOff: ICONS.auto + ' Tự động: TẮT',
+      planOnly: ICONS.plan + ' Lập kế hoạch',
+      stepOnce: ICONS.forward + ' Bước tiếp theo',
+      stopAuto: ICONS.stop + ' Dừng tự động',
+      taskGoal: 'Mục tiêu tác vụ',
+      taskPlan: 'Kế hoạch',
+      taskProgress: 'Tiến độ',
+      stepStatus: 'Trạng thái',
+      stepCompleted: 'Hoàn thành',
+      stepExecuting: 'Đang thực hiện',
+      stepPending: 'Chờ thực hiện',
+      stepFailed: 'Thất bại',
+      maxStepsReached: 'Đã đạt giới hạn bước tự động',
+      taskCompleted: 'Tác vụ hoàn thành',
+      taskFailed: 'Tác vụ thất bại',
+      taskStopped: 'Tác vụ đã dừng',
+      noActiveTask: 'Không có tác vụ nào đang chạy',
+      confirmAutoMode: 'Bật chế độ tự động? BeaBea sẽ thực hiện các bước mà không cần xác nhận.',
+      autoConfirmActions: 'Tự động xác nhận hành động',
+      autoConfirmOn: 'Bật',
+      autoConfirmOff: 'Tắt',
+      // Mode selector
+      modeCode: 'Viết Code',
+      modeAsk: 'Hỏi đáp',
+      modeDebug: 'Gỡ lỗi',
+      modePlan: 'Lập kế hoạch'
     },
-    en: {
+en: {
       title: 'BeaBea Coding Agent',
       openStudio: 'Open BeaBea Coding Agent',
       tabChat: 'Agent',
@@ -92,7 +133,7 @@
       retryAttempt: 'Retry attempt $1/$2',
       maxRetriesReached: 'Failed after $1 retries. Please try again later.',
       promptPlaceholder: 'Ask BeaBea about code, sprites, or request project changes... (@sprite_name to reference)',
-      welcomeMsg: 'Hi there! I am **BeaBea** 🐾, your AI Agent in TurboWarp. I can read/write variables, lists, run scripts, help debug, refactor... Just ask! 🌸',
+      welcomeMsg: 'Hi there! I am **BeaBea**, your AI Agent in Turbo-IDE. I can read/write variables, lists, run scripts, help debug, refactor... Just ask!',
       scanProjectBtn: ICONS.scan + ' Scan Entire Project',
       scanComplete: 'Scanned $1 sprite(s)',
       spriteSelected: 'Selected sprite: $1',
@@ -112,12 +153,41 @@
       actionExecuted: '✅ Executed: $1',
       actionFailed: '❌ Failed: $1',
       confirmAction: 'Are you sure you want to $1?',
-      reasoningTitle: '🧠 BeaBea\'s Reasoning',
+      reasoningTitle: ICONS.brain + ' BeaBea\'s Reasoning',
       copiedContext: '📋 Context copied!',
       noReduxStore: 'Cannot access Redux store. Use Extensions menu on toolbar.',
       errorPrefix: 'Error: ',
       actionAccept: 'Accept',
-      actionRevise: 'Revise'
+      actionRevise: 'Revise',
+      // Autonomous mode translations
+      autoMode: 'Auto',
+      autoModeOn: ICONS.auto + ' Auto: ON',
+      autoModeOff: ICONS.auto + ' Auto: OFF',
+      planOnly: ICONS.plan + ' Plan',
+      stepOnce: ICONS.forward + ' Step',
+      stopAuto: ICONS.stop + ' Stop Auto',
+      taskGoal: 'Task Goal',
+      taskPlan: 'Plan',
+      taskProgress: 'Progress',
+      stepStatus: 'Status',
+      stepCompleted: 'Completed',
+      stepExecuting: 'Executing',
+      stepPending: 'Pending',
+      stepFailed: 'Failed',
+      maxStepsReached: 'Max auto steps reached',
+      taskCompleted: 'Task Completed',
+      taskFailed: 'Task Failed',
+      taskStopped: 'Task Stopped',
+      noActiveTask: 'No active task',
+      confirmAutoMode: 'Enable auto mode? BeaBea will execute steps without confirmation.',
+      autoConfirmActions: 'Auto-confirm actions',
+      autoConfirmOn: 'On',
+      autoConfirmOff: 'Off',
+      // Mode selector
+      modeCode: 'Write Code',
+      modeAsk: 'Ask',
+      modeDebug: 'Debug',
+      modePlan: 'Plan'
     }
   };
 
@@ -154,7 +224,21 @@
   var cssInjected = false;
   var selectedSpriteName = null;
   var currentProvider = safeGet('beabea_provider', 'pollinations');
-  var currentModel = safeGet('beabea_model', 'openai');
+  var currentModel = safeGet('beabea_model', 'openai-reasoning');
+  var autoConfirmActions = safeGet('beabea_auto_confirm', 'false') === 'true';
+  var savedMaxAutoSteps = parseInt(safeGet('beabea_max_auto_steps', '10'), 10);
+  maxAutoSteps = isNaN(savedMaxAutoSteps) ? 10 : savedMaxAutoSteps;
+
+  // Load task queue from localStorage
+  var taskQueue = [];
+  try {
+    var savedTasks = localStorage.getItem('beabea_task_queue');
+    if (savedTasks) taskQueue = JSON.parse(savedTasks);
+  } catch (e) {}
+
+  // Mode state
+  var currentMode = 'plan'; // 'code' | 'ask' | 'debug' | 'plan'
+  var selectedSpriteNames = []; // For multi-sprite selection
 
   // Autocomplete state
   var mentionDropdown = null;
@@ -165,6 +249,15 @@
 
   // Agent state
   var actionHistory = [];
+
+  // Task/Autonomous state
+  var currentTask = null;
+  var taskQueue = [];
+  var isAutonomousMode = false;
+  var maxAutoSteps = 10;
+  var autoStepCount = 0;
+  var consecutiveFailures = 0;
+  var maxConsecutiveFailures = 3;
 
   // Extension knowledge base
   var KNOWN_EXTENSIONS = {
@@ -322,6 +415,17 @@
       '- OBSERVE: Wait for tool result\n' +
       '- REPEAT: As needed per user message\n' +
       '- CONFIRM: Ask before destructive changes (delete, overwrite)\n\n' +
+      'AUTONOMOUS PLANNING & EXECUTION:\n' +
+      'When given a complex goal, create a structured plan:\n' +
+      '<plan>[\n' +
+      '  {"step":1,"tool":"get_sprite_data","args":{"sprite_name":"Player"},"description":"Read Player sprite structure","expected":"sprite blocks, variables, lists"},\n' +
+      '  {"step":2,"tool":"set_variable","args":{"sprite_name":"Player","name":"score","value":0},"description":"Initialize score variable","expected":"score = 0"}\n' +
+      ']</plan>\n\n' +
+      'During execution, after each tool result, decide next action:\n' +
+      '<decision>{"action":"continue|replan|finish","reason":"..."}</decision>\n' +
+      '- "continue": proceed to next planned step\n' +
+      '- "replan": current plan needs adjustment, provide reason\n' +
+      '- "finish": goal achieved or cannot continue\n\n' +
       'When user mentions @sprite_name, that sprite context is provided automatically.\n' +
       'KNOWN EXTENSIONS (for coordination):\n' + extList + '\n\n' +
       'FORMAT: Use markdown for code blocks, tables, lists. Show reasoning before actions.';
@@ -445,7 +549,14 @@
   function parseSpriteReferences(text) {
     var matches = text.match(/@([\p{L}\p{N}_]+)/gu);
     if (!matches) return [];
-    return matches.map(function (m) { return m.slice(1); });
+    var names = matches.map(function (m) { return m.slice(1); });
+    // Add to multi-select
+    names.forEach(function (name) {
+      if (selectedSpriteNames.indexOf(name) === -1) {
+        selectedSpriteNames.push(name);
+      }
+    });
+    return names;
   }
 
   // ==========================================
@@ -515,6 +626,106 @@
     hideMentionDropdown();
   }
 
+  // Multi-sprite selector dropdown
+  var multiSpriteDropdown = null;
+  function showMultiSpriteSelector(contentEl) {
+    if (multiSpriteDropdown) {
+      hideMultiSpriteDropdown();
+      return;
+    }
+    var sprites = getAllSpritesData();
+    if (!sprites.length) return;
+
+    multiSpriteDropdown = document.createElement('div');
+    multiSpriteDropdown.className = 'bb-multi-sprite-dropdown';
+    multiSpriteDropdown.id = 'beabea-multi-sprite-dropdown';
+
+    var rect = contentEl.querySelector('#multiSelectBtn').getBoundingClientRect();
+    multiSpriteDropdown.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+    multiSpriteDropdown.style.left = (rect.left + window.scrollX) + 'px';
+
+    sprites.forEach(function (sprite) {
+      var isSelected = selectedSpriteNames.indexOf(sprite.name) !== -1;
+      var item = document.createElement('div');
+      item.className = 'bb-multi-sprite-item' + (isSelected ? ' selected' : '');
+      item.dataset.name = sprite.name;
+      item.innerHTML =
+        '<div class="sprite-icon">' + ICONS.sprite + '</div>' +
+        '<span class="sprite-name">' + escHtml(sprite.name) + '</span>' +
+        '<span class="sprite-type">' + (sprite.isStage ? 'Stage' : 'Sprite') + '</span>' +
+        '<span class="sprite-check">' + (isSelected ? ICONS.check : '') + '</span>';
+      item.onclick = function () {
+        toggleSpriteSelection(sprite.name);
+      };
+      multiSpriteDropdown.appendChild(item);
+    });
+
+    // Add "Select All" / "Clear All" buttons
+    var actionsDiv = document.createElement('div');
+    actionsDiv.className = 'bb-multi-sprite-actions';
+    actionsDiv.style.cssText = 'display:flex;gap:8px;padding:8px;border-top:1px solid var(--bb-line)';
+    actionsDiv.innerHTML =
+      '<button class="bb-btn bb-btn-secondary" id="selectAllBtn" style="flex:1;font-size:11px;padding:6px">Chọn tất cả</button>' +
+      '<button class="bb-btn bb-btn-secondary" id="clearAllBtn" style="flex:1;font-size:11px;padding:6px">Bỏ chọn tất cả</button>';
+    multiSpriteDropdown.appendChild(actionsDiv);
+
+    document.body.appendChild(multiSpriteDropdown);
+
+    // Bind action buttons
+    var selectAllBtn = multiSpriteDropdown.querySelector('#selectAllBtn');
+    var clearAllBtn = multiSpriteDropdown.querySelector('#clearAllBtn');
+    if (selectAllBtn) selectAllBtn.onclick = function () { selectAllSprites(); };
+    if (clearAllBtn) clearAllBtn.onclick = function () { clearAllSprites(); };
+  }
+
+  function hideMultiSpriteDropdown() {
+    if (multiSpriteDropdown) {
+      multiSpriteDropdown.remove();
+      multiSpriteDropdown = null;
+    }
+  }
+
+  function toggleSpriteSelection(spriteName) {
+    var idx = selectedSpriteNames.indexOf(spriteName);
+    if (idx === -1) {
+      selectedSpriteNames.push(spriteName);
+    } else {
+      selectedSpriteNames.splice(idx, 1);
+    }
+    // Also update single selection for backward compatibility
+    if (selectedSpriteNames.length === 1) {
+      selectedSpriteName = selectedSpriteNames[0];
+    } else {
+      selectedSpriteName = null;
+    }
+    if (beabeaWindow) {
+      var contentEl = beabeaWindow.getContentElement();
+      if (contentEl) updateContextPane(contentEl);
+    }
+    showMultiSpriteSelector(beabeaWindow.getContentElement()); // Refresh dropdown
+  }
+
+  function selectAllSprites() {
+    var sprites = getAllSpritesData();
+    selectedSpriteNames = sprites.map(function (s) { return s.name; });
+    selectedSpriteName = null;
+    if (beabeaWindow) {
+      var contentEl = beabeaWindow.getContentElement();
+      if (contentEl) updateContextPane(contentEl);
+    }
+    hideMultiSpriteDropdown();
+  }
+
+  function clearAllSprites() {
+    selectedSpriteNames = [];
+    selectedSpriteName = null;
+    if (beabeaWindow) {
+      var contentEl = beabeaWindow.getContentElement();
+      if (contentEl) updateContextPane(contentEl);
+    }
+    hideMultiSpriteDropdown();
+  }
+
   function selectMentionItem(inputEl, spriteName) {
     var val = inputEl.value;
     var pos = inputEl.selectionStart;
@@ -525,6 +736,15 @@
       var start = pos - match[0].length;
       inputEl.value = val.slice(0, start) + '@' + spriteName + ' ' + after;
       inputEl.selectionStart = inputEl.selectionEnd = start + spriteName.length + 2;
+    }
+    // Add to multi-select
+    if (selectedSpriteNames.indexOf(spriteName) === -1) {
+      selectedSpriteNames.push(spriteName);
+    }
+    selectedSpriteName = spriteName;
+    if (beabeaWindow) {
+      var contentEl = beabeaWindow.getContentElement();
+      if (contentEl) updateContextPane(contentEl);
     }
     hideMentionDropdown();
     inputEl.focus();
@@ -744,52 +964,433 @@
   }
 
   // ==========================================
-  // 7. POLLINATIONS API WITH TIMEOUT & RETRY
+  // 6d. PLAN & DECISION PARSING
   // ==========================================
-  function callPollinations(messages, model) {
-    console.log('[BeaBea] Calling Pollinations API with model:', model, 'messages:', messages.length);
+  function parsePlan(text) {
+    var match = text.match(/<plan>([\s\S]*?)<\/plan>/);
+    if (!match) return { steps: [], isComplete: false };
+    try {
+      var cleanJson = match[1].replace(/```json/g, '').replace(/```/g, '').trim();
+      var steps = JSON.parse(cleanJson);
+      if (!Array.isArray(steps)) return { steps: [], isComplete: false };
+      // Validate each step
+      var validSteps = steps.filter(function (s) {
+        return s && s.tool && s.args && s.description;
+      });
+      return { steps: validSteps, isComplete: validSteps.length > 0 };
+    } catch (e) {
+      console.error('[BeaBea] Plan parse error:', e);
+      return { steps: [], isComplete: false };
+    }
+  }
+
+  function parseDecision(text) {
+    var match = text.match(/<decision>([\s\S]*?)<\/decision>/);
+    if (!match) return { action: 'continue', reason: '' };
+    try {
+      var cleanJson = match[1].replace(/```json/g, '').replace(/```/g, '').trim();
+      var decision = JSON.parse(cleanJson);
+      if (decision && (decision.action === 'continue' || decision.action === 'replan' || decision.action === 'finish')) {
+        return decision;
+      }
+      return { action: 'continue', reason: '' };
+    } catch (e) {
+      console.error('[BeaBea] Decision parse error:', e);
+      return { action: 'continue', reason: '' };
+    }
+  }
+
+  function extractPlanAndDecision(text) {
+    var planResult = parsePlan(text);
+    var decisionResult = parseDecision(text);
+    // Remove plan and decision tags from content for display
+    var cleanContent = text
+      .replace(/<plan>[\s\S]*?<\/plan>/g, '')
+      .replace(/<decision>[\s\S]*?<\/decision>/g, '')
+      .trim();
+    return {
+      content: cleanContent,
+      plan: planResult,
+      decision: decisionResult
+    };
+  }
+
+  // ==========================================
+  // 6e. AUTONOMOUS EXECUTION ENGINE
+  // ==========================================
+  function runAutonomousLoop(goal, contentEl) {
+    console.log('[BeaBea] Starting autonomous loop for goal:', goal);
+    isAutonomousMode = true;
+    autoStepCount = 0;
+    consecutiveFailures = 0;
+    currentTask = {
+      id: Date.now(),
+      goal: goal,
+      plan: [],
+      currentStep: 0,
+      status: 'planning',
+      startTime: Date.now()
+    };
+    renderChat(contentEl); // Update UI to show planning status
+
+    // Phase 1: Generate plan via AI
+    requestPlan(goal).then(function (planResult) {
+      if (!beabeaWindow) return; // Window closed
+      if (!planResult.plan.isComplete || !planResult.plan.steps.length) {
+        finishTask('no_plan', 'Không thể tạo kế hoạch. Vui lòng thử lại với mục tiêu rõ ràng hơn.');
+        return;
+      }
+      currentTask.plan = planResult.plan.steps;
+      currentTask.status = 'executing';
+      currentTask.planReasoning = planResult.reasoning;
+      executeNextStep(contentEl);
+    }).catch(function (err) {
+      console.error('[BeaBea] Plan request failed:', err);
+      finishTask('plan_failed', 'Lỗi khi lập kế hoạch: ' + err.message);
+    });
+  }
+
+  function requestPlan(goal) {
+    var messages = [
+      { role: 'system', content: buildSystemPrompt() },
+      { role: 'user', content: 'MỤC TIÊU: ' + goal + '\n\nHãy tạo kế hoạch chi tiết để hoàn thành mục tiêu này. Trả về JSON trong thẻ <plan>.' }
+    ];
+    return sendToAI('', { stream: false, messages: messages }).then(function (parsed) {
+      var extracted = extractPlanAndDecision(parsed.content);
+      return {
+        plan: extracted.plan,
+        reasoning: extracted.plan.steps.length ? 'Đã tạo kế hoạch ' + extracted.plan.steps.length + ' bước' : '',
+        content: extracted.content
+      };
+    });
+  }
+
+  function requestReplan(reason) {
+    var messages = [
+      { role: 'system', content: buildSystemPrompt() },
+      { role: 'user', content: 'Kế hoạch trước đó thất bại hoặc cần điều chỉnh. Lý do: ' + reason + '\nMục tiêu gốc: ' + currentTask.goal + '\n\nHãy tạo kế hoạch mới hoặc điều chỉnh. Trả về JSON trong thẻ <plan>.' }
+    ];
+    return sendToAI('', { stream: false, messages: messages }).then(function (parsed) {
+      var extracted = extractPlanAndDecision(parsed.content);
+      return extracted.plan;
+    });
+  }
+
+  function executeNextStep(contentEl) {
+    if (!beabeaWindow || !currentTask) return;
+    if (autoStepCount >= maxAutoSteps) {
+      finishTask('max_steps', 'Đã đạt giới hạn ' + maxAutoSteps + ' bước tự động. Hãy bật chế độ tự động lại để tiếp tục.');
+      return;
+    }
+    if (currentTask.currentStep >= currentTask.plan.length) {
+      finishTask('completed', 'Hoàn thành mục tiêu!');
+      return;
+    }
+
+    var step = currentTask.plan[currentTask.currentStep];
+    step.status = 'executing';
+    currentTask.status = 'executing';
+    renderChat(contentEl); // Update UI with current step
+
+    console.log('[BeaBea] Executing step', currentTask.currentStep + 1, '/', currentTask.plan.length, ':', step.tool);
+
+    executeAction({ type: step.tool, args: step.args }).then(function (result) {
+      if (!beabeaWindow || !currentTask) return;
+
+      step.result = result;
+      step.status = result.success ? 'completed' : 'failed';
+      currentTask.currentStep++;
+      autoStepCount++;
+
+      if (result.success) {
+        consecutiveFailures = 0;
+        // Feed observation to AI for next decision
+        sendObservationToAI(step, result).then(function (decisionResult) {
+          if (!beabeaWindow || !currentTask) return;
+
+          var decision = decisionResult.decision;
+          if (decision.action === 'continue') {
+            executeNextStep(contentEl);
+          } else if (decision.action === 'replan') {
+            requestReplan(decision.reason).then(function (newPlan) {
+              if (!beabeaWindow || !currentTask) return;
+              if (newPlan.isComplete && newPlan.steps.length) {
+                currentTask.plan = newPlan.steps;
+                currentTask.currentStep = 0;
+                executeNextStep(contentEl);
+              } else {
+                finishTask('replan_failed', 'Không thể lập kế hoạch lại: ' + decision.reason);
+              }
+            }).catch(function (err) {
+              finishTask('replan_error', 'Lỗi lập kế hoạch lại: ' + err.message);
+            });
+          } else if (decision.action === 'finish') {
+            finishTask('completed', decision.reason || 'Mục tiêu đã hoàn thành');
+          }
+        }).catch(function (err) {
+          console.error('[BeaBea] Observation error:', err);
+          // Continue anyway on observation error
+          executeNextStep(contentEl);
+        });
+      } else {
+        consecutiveFailures++;
+        handleStepError(result.error || 'Unknown error', step, contentEl);
+      }
+    }).catch(function (err) {
+      console.error('[BeaBea] Step execution error:', err);
+      consecutiveFailures++;
+      handleStepError(err.message, step, contentEl);
+    });
+  }
+
+  function sendObservationToAI(step, result) {
+    var observationMsg = 'Bước ' + (currentTask.currentStep) + '/' + currentTask.plan.length + ' hoàn thành:\n' +
+      'Hành động: ' + step.tool + '\n' +
+      'Mô tả: ' + step.description + '\n' +
+      'Kết quả: ' + (result.success ? 'Thành công' : 'Thất bại') + '\n' +
+      (result.message ? 'Thông báo: ' + result.message : '') + '\n' +
+      (result.value !== undefined ? 'Giá trị: ' + JSON.stringify(result.value) : '') + '\n' +
+      (result.error ? 'Lỗi: ' + result.error : '');
+
+    var messages = [
+      { role: 'system', content: buildSystemPrompt() },
+      { role: 'user', content: observationMsg + '\n\nQuyết định tiếp theo? Trả về JSON trong thẻ <decision>: {"action":"continue|replan|finish","reason":"..."}' }
+    ];
+    return sendToAI('', { stream: false, messages: messages }).then(function (parsed) {
+      var extracted = extractPlanAndDecision(parsed.content);
+      return { decision: extracted.decision };
+    });
+  }
+
+  function handleStepError(errorMsg, step, contentEl) {
+    console.error('[BeaBea] Step error:', errorMsg);
+    step.error = errorMsg;
+    step.status = 'failed';
+
+    if (consecutiveFailures >= maxConsecutiveFailures) {
+      finishTask('max_failures', 'Quá nhiều lỗi liên tiếp (' + consecutiveFailures + '). Dừng thực hiện tự động.');
+      return;
+    }
+
+    // Ask AI whether to retry, skip, or replan
+    var messages = [
+      { role: 'system', content: buildSystemPrompt() },
+      { role: 'user', content: 'Bước ' + (currentTask.currentStep + 1) + ' thất bại: ' + errorMsg + '\n\nBạn muốn: retry (thử lại), skip (bỏ qua), hoặc replan (lập kế hoạch lại)? Trả về JSON trong thẻ <decision>.' }
+    ];
+    sendToAI('', { stream: false, messages: messages }).then(function (parsed) {
+      var extracted = extractPlanAndDecision(parsed.content);
+      var decision = extracted.decision;
+
+      if (decision.action === 'replan') {
+        requestReplan('Bước thất bại: ' + errorMsg + '. ' + decision.reason).then(function (newPlan) {
+          if (newPlan.isComplete && newPlan.steps.length) {
+            currentTask.plan = newPlan.steps;
+            currentTask.currentStep = 0;
+            executeNextStep(contentEl);
+          } else {
+            finishTask('replan_failed', 'Không thể lập kế hoạch lại');
+          }
+        });
+      } else if (decision.action === 'finish') {
+        finishTask('completed', 'Dừng do lỗi: ' + errorMsg);
+      } else {
+        // Default: skip this step and continue
+        currentTask.currentStep++;
+        autoStepCount++;
+        executeNextStep(contentEl);
+      }
+    }).catch(function (err) {
+      // On AI error, skip step and continue
+      currentTask.currentStep++;
+      autoStepCount++;
+      executeNextStep(contentEl);
+    });
+  }
+
+  function finishTask(status, message) {
+    console.log('[BeaBea] Task finished:', status, message);
+    if (!currentTask) return;
+
+    currentTask.status = status;
+    currentTask.endTime = Date.now();
+    currentTask.message = message;
+    isAutonomousMode = false;
+    autoStepCount = 0;
+
+    // Add completion message to chat
+    var statusIcon = status === 'completed' ? '✅' : '⚠️';
+    var finalMsg = statusIcon + ' **Kết thúc tác vụ**: ' + message;
+    if (currentTask.plan.length) {
+      finalMsg += '\n\n**Tóm tắt**: ' + currentTask.plan.filter(function (s) { return s.status === 'completed'; }).length + '/' + currentTask.plan.length + ' bước thành công';
+    }
+    chatHistory.push({ role: 'assistant', content: finalMsg });
+
+    if (beabeaWindow) {
+      var contentEl = beabeaWindow.getContentElement();
+      if (contentEl) renderChat(contentEl);
+    }
+
+    // Save to task history
+    taskQueue.push(currentTask);
+    // Persist to localStorage (keep last 50 tasks)
+    try {
+      var toSave = taskQueue.slice(-50);
+      localStorage.setItem('beabea_task_queue', JSON.stringify(toSave));
+    } catch (e) {}
+    currentTask = null;
+  }
+
+  function stopAutonomousMode() {
+    isAutonomousMode = false;
+    autoStepCount = 0;
+    if (currentTask) {
+      currentTask.status = 'stopped';
+      taskQueue.push(currentTask);
+      try {
+        var toSave = taskQueue.slice(-50);
+        localStorage.setItem('beabea_task_queue', JSON.stringify(toSave));
+      } catch (e) {}
+      currentTask = null;
+    }
+    if (beabeaWindow) {
+      var contentEl = beabeaWindow.getContentElement();
+      if (contentEl) renderChat(contentEl);
+    }
+  }
+
+  function stepOnce(contentEl) {
+    if (!currentTask || currentTask.status !== 'executing') return;
+    isAutonomousMode = true;
+    executeNextStep(contentEl);
+  }
+
+  // ==========================================
+  // 7. POLLINATIONS API (OpenAI-compatible, streaming)
+  // ==========================================
+  function callPollinations(messages, model, onChunk) {
+    var useModel = model || currentModel || 'openai-reasoning';
+    console.log('[BeaBea] Calling Pollinations API with model:', useModel, 'messages:', messages.length, 'stream:', !!onChunk);
+    
     var safeSeed = Math.floor(Math.random() * 2147483647);
-    return fetch('https://text.pollinations.ai/', {
+    var body = {
+      messages: messages,
+      model: useModel,
+      seed: safeSeed,
+      stream: !!onChunk,
+      reasoning_effort: 'medium'
+    };
+
+    return fetch('https://gen.pollinations.ai/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: messages, model: model || 'openai', seed: safeSeed })
+      body: JSON.stringify(body)
     }).then(function (res) {
       console.log('[BeaBea] Pollinations response status:', res.status, res.statusText);
       if (!res.ok) throw new Error('Pollinations HTTP ' + res.status);
-      return res.text();
-    }).then(function (text) {
-      console.log('[BeaBea] Pollinations raw response length:', text.length);
-      return text;
+      
+      if (onChunk && res.body) {
+        return handleStreamingResponse(res, onChunk);
+      }
+      return res.json();
+    }).then(function (data) {
+      if (onChunk) return data; // Streaming handled via callback
+      console.log('[BeaBea] Pollinations response:', data);
+      var content = data.choices?.[0]?.message?.content || '';
+      var reasoning = data.choices?.[0]?.message?.reasoning_content || data.choices?.[0]?.message?.reasoning || '';
+      return { content: content, reasoning: reasoning };
     }).catch(function (e) {
       console.error('[BeaBea] Pollinations error:', e);
       throw e;
     });
   }
 
-  function sendToAI(userText) {
-    console.log('[BeaBea] sendToAI called with:', userText);
-    var spriteRefs = parseSpriteReferences(userText);
-    var contextMd = '';
-    if (spriteRefs.length > 0) {
-      spriteRefs.forEach(function (name) {
-        var ctx = extractSpriteContext(name);
-        if (ctx) contextMd += formatSpriteDataForAI(ctx) + '\n---\n';
+  function handleStreamingResponse(res, onChunk) {
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+    var fullContent = '';
+    var fullReasoning = '';
+    var reasoningStarted = false;
+    
+    return new Promise(function (resolve, reject) {
+      function read() {
+        reader.read().then(function (result) {
+          if (result.done) {
+            onChunk({ done: true, content: fullContent, reasoning: fullReasoning });
+            resolve({ content: fullContent, reasoning: fullReasoning });
+            return;
+          }
+          buffer += decoder.decode(result.value, { stream: true });
+          var lines = buffer.split('\n');
+          buffer = lines.pop();
+          lines.forEach(function (line) {
+            if (line.startsWith('data: ')) {
+              var data = line.slice(6).trim();
+              if (data === '[DONE]') return;
+              try {
+                var parsed = JSON.parse(data);
+                var delta = parsed.choices?.[0]?.delta;
+                if (delta) {
+                  if (delta.reasoning_content) {
+                    fullReasoning += delta.reasoning_content;
+                    onChunk({ reasoning: delta.reasoning_content, reasoningAccumulated: fullReasoning });
+                  }
+                  if (delta.content) {
+                    fullContent += delta.content;
+                    onChunk({ content: delta.content, contentAccumulated: fullContent });
+                  }
+                }
+              } catch (e) {}
+            }
+          });
+          read();
+        }).catch(reject);
+      }
+      read();
+    });
+  }
+
+  function sendToAI(userText, options) {
+    options = options || {};
+    var isStreaming = options.stream !== false; // default true
+    var onChunk = options.onChunk;
+    var customMessages = options.messages; // For internal calls (planning, replanning, etc.)
+    
+    console.log('[BeaBea] sendToAI called with:', userText || '(custom messages)', 'streaming:', isStreaming);
+    
+    var messages;
+    if (customMessages) {
+      messages = customMessages;
+    } else {
+      var spriteRefs = parseSpriteReferences(userText);
+      
+      // Build context from multi-selected sprites (if any) or from @mentions
+      var spritesToUse = selectedSpriteNames.length > 0 ? selectedSpriteNames : spriteRefs;
+      var contextMd = '';
+      if (spritesToUse.length > 0) {
+        spritesToUse.forEach(function (name) {
+          var ctx = extractSpriteContext(name);
+          if (ctx) contextMd += formatSpriteDataForAI(ctx) + '\n---\n';
+        });
+        // Update legacy single selection for backward compatibility
+        selectedSpriteName = spritesToUse[spritesToUse.length - 1];
+      }
+
+      messages = [{ role: 'system', content: buildSystemPrompt() + (contextMd ? '\n\nSPRITE CONTEXT:\n' + contextMd : '') }];
+      chatHistory.forEach(function (m) {
+        if (!m.isThinking) {
+          messages.push({ role: m.role, content: m.content });
+        }
       });
-      selectedSpriteName = spriteRefs[spriteRefs.length - 1];
     }
 
-    var messages = [{ role: 'system', content: buildSystemPrompt() + (contextMd ? '\n\nSPRITE CONTEXT:\n' + contextMd : '') }];
-    chatHistory.forEach(function (m) {
-      if (!m.isThinking) {
-        messages.push({ role: m.role, content: m.content });
-      }
-    });
-
-    return callPollinations(messages, currentModel)
+    return callPollinations(messages, currentModel, isStreaming ? onChunk : null)
       .then(function (reply) {
-        var parsed = parseAiReply(reply);
+        if (onChunk) return reply; // Already handled via callback
+        var parsed = parseAiReply(reply.content || reply);
+        parsed.reasoning = parsed.reasoning || reply.reasoning || '';
         console.log('[BeaBea] AI response received, content length:', (parsed.content || '').length);
-        return parsed; // return full parsed object with action
+        return parsed;
       });
   }
 
@@ -818,7 +1419,7 @@
   }
 
   // ==========================================
-  // 9. CHAT SEND WITH RETRY LOOP
+  // 9. CHAT SEND WITH RETRY LOOP (Streaming)
   // ==========================================
   function doSend(userText, contentEl) {
     console.log('[BeaBea] doSend called, isProcessing:', isProcessing);
@@ -835,9 +1436,58 @@
       chatHistory.push({ role: 'assistant', content: thinkingMsg, isThinking: true });
       renderChat(contentEl);
 
-      sendToAI(userText).then(function (parsed) {
-        if (!beabeaWindow) { isProcessing = false; return; } // Window closed while loading
-        console.log('[BeaBea] sendToAI succeeded');
+      var streamingMsgIndex = chatHistory.length - 1;
+      var streamingContent = '';
+      var streamingReasoning = '';
+      var reasoningComplete = false;
+
+      sendToAI(userText, {
+        stream: true,
+        onChunk: function (chunk) {
+          if (!beabeaWindow) { isProcessing = false; return; }
+          
+          if (chunk.done) {
+            // Streaming complete
+            chatHistory[streamingMsgIndex] = {
+              role: 'assistant',
+              content: streamingContent,
+              reasoning: streamingReasoning,
+              isThinking: false
+            };
+            renderChat(contentEl);
+            bindActionButtons(contentEl);
+            isProcessing = false;
+            hideBlockingOverlay();
+            return;
+          }
+          
+          if (chunk.reasoning) {
+            streamingReasoning = chunk.reasoningAccumulated || streamingReasoning;
+            chatHistory[streamingMsgIndex] = {
+              role: 'assistant',
+              content: streamingContent,
+              reasoning: streamingReasoning,
+              isThinking: true,
+              streaming: true
+            };
+            renderChat(contentEl);
+          }
+          
+          if (chunk.content) {
+            streamingContent = chunk.contentAccumulated || streamingContent;
+            chatHistory[streamingMsgIndex] = {
+              role: 'assistant',
+              content: streamingContent,
+              reasoning: streamingReasoning,
+              isThinking: false,
+              streaming: true
+            };
+            renderChat(contentEl);
+          }
+        }
+      }).then(function (parsed) {
+        if (!beabeaWindow) { isProcessing = false; return; }
+        console.log('[BeaBea] sendToAI succeeded (non-streaming fallback)');
         chatHistory.pop(); // remove thinking message
         var finalContent = parsed.content.replace(/<action>[\s\S]*?<\/action>/g, '').trim();
         chatHistory.push({ role: 'assistant', content: finalContent || parsed.content, reasoning: parsed.reasoning });
@@ -846,7 +1496,7 @@
         isProcessing = false;
         hideBlockingOverlay();
       }).catch(function (err) {
-        if (!beabeaWindow) { isProcessing = false; return; } // Window closed while loading
+        if (!beabeaWindow) { isProcessing = false; return; }
         console.error('[BeaBea] sendToAI failed:', err);
         chatHistory.pop(); // remove thinking message
         
@@ -958,6 +1608,17 @@
   CSS_TEXT += '.bb-mention-item .sprite-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}';
   CSS_TEXT += '.bb-mention-item .sprite-type{font-size:11px;color:var(--bb-mut);text-transform:uppercase}';
   CSS_TEXT += '.bb-mention-empty{padding:12px;text-align:center;color:var(--bb-mut);font-size:12px}';
+  // Multi-sprite dropdown
+  CSS_TEXT += '.bb-multi-sprite-dropdown{position:absolute;background:var(--bb-card);border:1px solid var(--bb-line);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:10000;min-width:220px;max-width:300px;max-height:300px;overflow-y:auto}';
+  CSS_TEXT += '.bb-multi-sprite-item{padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--bb-text);transition:background .1s}';
+  CSS_TEXT += '.bb-multi-sprite-item:hover,.bb-multi-sprite-item.selected{background:var(--bb-line)}';
+  CSS_TEXT += '.bb-multi-sprite-item .sprite-icon{width:24px;height:24px;border-radius:4px;background:var(--bb-code);display:flex;align-items:center;justify-content:center}';
+  CSS_TEXT += '.bb-multi-sprite-item .sprite-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}';
+  CSS_TEXT += '.bb-multi-sprite-item .sprite-type{font-size:11px;color:var(--bb-mut);text-transform:uppercase}';
+  CSS_TEXT += '.bb-multi-sprite-item .sprite-check{color:var(--bb-accent);font-weight:bold}';
+  CSS_TEXT += '.bb-multi-sprite-actions{display:flex;gap:8px;padding:8px;border-top:1px solid var(--bb-line)}';
+  // Mode selector
+  CSS_TEXT += '.bb-mode-select{appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}';
   // Reasoning panel
   CSS_TEXT += '.bb-reasoning-panel{margin-top:8px;border:1px solid var(--bb-line);border-left:3px solid var(--bb-accent);border-radius:8px;background:var(--bb-card);overflow:hidden}';
   CSS_TEXT += '.bb-reasoning-header{cursor:pointer;padding:8px 12px;font-size:12px;color:var(--bb-accent);font-weight:600;display:flex;align-items:center;gap:6px;user-select:none;background:rgba(217,56,58,.1)}';
@@ -965,6 +1626,11 @@
   CSS_TEXT += '.bb-reasoning-header::before{content:"\\25B8";display:inline-block;transition:transform .15s;font-size:10px}';
   CSS_TEXT += '.bb-reasoning-panel[open] .bb-reasoning-header::before{transform:rotate(90deg)}';
   CSS_TEXT += '.bb-reasoning-body{padding:10px 12px;font-size:11px;line-height:1.5;color:var(--bb-mut);white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,monospace;max-height:200px;overflow-y:auto;border-top:1px solid var(--bb-line)}';
+  // Inline reasoning (streaming)
+  CSS_TEXT += '.bb-reasoning-inline{font-size:11px;line-height:1.5;color:var(--bb-mut);font-style:italic;font-family:ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;margin-bottom:8px;padding:6px 10px;background:rgba(0,0,0,.05);border-radius:6px;border-left:2px solid var(--bb-mut)}';
+  CSS_TEXT += '.bb-reasoning-inline.streaming{border-left-color:var(--bb-accent);background:rgba(217,56,58,.05)}';
+  CSS_TEXT += '.bb-streaming-cursor{display:inline-block;animation:bbCursorBlink 1s infinite;color:var(--bb-accent);margin-left:2px}';
+  CSS_TEXT += '@keyframes bbCursorBlink{0%,50%{opacity:1}51%,100%{opacity:0}}';
   // Status indicator
   CSS_TEXT += '.bb-status-indicator{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:500;margin-bottom:8px}';
   CSS_TEXT += '.bb-status-indicator.idle{background:rgba(96,236,150,.15);color:#60ec96}';
@@ -973,6 +1639,14 @@
   CSS_TEXT += '.bb-status-dots{display:inline-flex;gap:3px}';
   CSS_TEXT += '.bb-status-dots span{width:5px;height:5px;border-radius:50%;background:currentColor;animation:bbDot 1.1s infinite ease-in-out}';
   CSS_TEXT += '.bb-status-dots span:nth-child(2){animation-delay:.12s}.bb-status-dots span:nth-child(3){animation-delay:.24s}';
+  // Task panel styles
+  CSS_TEXT += '.bb-task-panel{animation:bbSlideDown .25s ease-out}';
+  CSS_TEXT += '@keyframes bbSlideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}';
+  CSS_TEXT += '.bb-task-step{transition:all .2s ease}';
+  CSS_TEXT += '.bb-task-step.completed{border-left-color:var(--bb-codetx)}';
+  CSS_TEXT += '.bb-task-step.executing{border-left-color:var(--bb-accent);animation:bbPulseBorder 1s infinite ease-in-out}';
+  CSS_TEXT += '.bb-task-step.failed{border-left-color:#d9383a}';
+  CSS_TEXT += '.bb-task-step.pending{border-left-color:var(--bb-mut)}';
 
   function injectCSS() {
     if (cssInjected) return;
@@ -1088,10 +1762,16 @@
     if (m.isThinking) {
       return '<div class="bb-chat-row"><img class="bb-avatar bb-avatar-pulse" src="' + BEABEA_AVATAR + '"><div class="bb-thinking-bubble"><span class="bb-thinking-label">' + escHtml(m.content) + '</span><span class="bb-thinking-dots"><span></span><span></span><span></span></span></div></div>';
     }
+    
+    // Render reasoning inline (grey/italic text above content)
     var reasoningHtml = '';
     if (m.reasoning) {
-      reasoningHtml = '<details class="bb-reasoning-panel" style="margin-top:8px"><summary class="bb-reasoning-header">' + ICONS.magic + ' ' + escHtml(t('reasoningTitle')) + '</summary><div class="bb-reasoning-body">' + escHtml(m.reasoning) + '</div></details>';
+      var reasoningDisplay = m.streaming 
+        ? '<div class="bb-reasoning-inline streaming">' + escHtml(m.reasoning) + '<span class="bb-streaming-cursor">▌</span></div>'
+        : '<div class="bb-reasoning-inline">' + escHtml(m.reasoning) + '</div>';
+      reasoningHtml = reasoningDisplay;
     }
+    
     var action = extractAction(m.content);
     var actionHtml = '';
     if (action) {
@@ -1105,7 +1785,7 @@
       else { title = 'Hành động: ' + action.type; desc = JSON.stringify(action.args); }
       actionHtml = '<div class="bb-action-card" style="margin-top:10px;padding:12px;border:1px dashed var(--bb-accent);border-radius:10px;background:var(--bb-win)"><div style="font-size:12px;color:var(--bb-accent);font-weight:600">' + escHtml(title) + '</div><div style="font-family:monospace;font-size:11px;white-space:pre-wrap;color:var(--bb-mut)">' + escHtml(desc) + '</div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="bb-btn bb-btn-secondary" data-action-revise="1">' + escHtml(t('actionRevise')) + '</button><button class="bb-btn" data-action-exec="' + escHtml(encodeURIComponent(JSON.stringify(action))) + '">' + escHtml(t('actionAccept')) + '</button></div></div>';
     }
-    return '<div class="bb-chat-row"><img class="bb-avatar" src="' + BEABEA_AVATAR + '"><div class="bb-bubble bb-bubble-bot">' + renderMarkdown(m.content) + reasoningHtml + actionHtml + '</div></div>';
+    return '<div class="bb-chat-row"><img class="bb-avatar" src="' + BEABEA_AVATAR + '"><div class="bb-bubble bb-bubble-bot">' + reasoningHtml + renderMarkdown(m.content) + actionHtml + '</div></div>';
   }
 
   function renderChatTab(content) {
@@ -1117,24 +1797,83 @@
       ? '<div class="bb-selected-sprite">' + ICONS.sprite + ' ' + escHtml(t('spriteSelected', selectedSpriteName)) + '</div>'
       : '';
 
+    // Build task panel HTML if there's an active task
+    var taskPanelHtml = '';
+    if (currentTask) {
+      var progress = currentTask.plan.length > 0 
+        ? Math.round((currentTask.currentStep / currentTask.plan.length) * 100) 
+        : 0;
+      var stepsHtml = currentTask.plan.map(function (step, idx) {
+        var statusClass = 'pending';
+        var statusIcon = '⏳';
+        var statusText = t('stepPending');
+        if (step.status === 'completed') { statusClass = 'completed'; statusIcon = '✅'; statusText = t('stepCompleted'); }
+        else if (step.status === 'executing') { statusClass = 'executing'; statusIcon = '◐'; statusText = t('stepExecuting'); }
+        else if (step.status === 'failed') { statusClass = 'failed'; statusIcon = '❌'; statusText = t('stepFailed'); }
+        return '<div class="bb-task-step ' + statusClass + '" style="padding:8px 12px;margin:4px 0;border-radius:6px;background:var(--bb-card);border-left:3px solid ' + 
+          (statusClass === 'completed' ? 'var(--bb-codetx)' : statusClass === 'executing' ? 'var(--bb-accent)' : statusClass === 'failed' ? '#d9383a' : 'var(--bb-mut)') + ';">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+          '<span style="font-weight:600;font-size:12px">' + statusIcon + ' Bước ' + (idx + 1) + ': ' + escHtml(step.description) + '</span>' +
+          '<span style="font-size:11px;color:var(--bb-mut)">' + escHtml(step.tool) + '</span>' +
+          '</div>' +
+          (step.result ? '<div style="font-size:11px;color:var(--bb-mut);margin-top:4px;font-family:monospace">' + escHtml(JSON.stringify(step.result).slice(0, 200)) + '</div>' : '') +
+          '</div>';
+      }).join('');
+      
+      taskPanelHtml = 
+        '<div class="bb-task-panel" style="background:var(--bb-card);border:1px solid var(--bb-line);border-radius:10px;padding:12px;margin-bottom:12px;">' +
+        '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+        '    <span style="font-weight:600;color:var(--bb-accent)">' + ICONS.magic + ' ' + escHtml(t('taskGoal')) + '</span>' +
+        '    <button class="bb-icon-btn" id="closeTaskBtn" title="Close task panel">' + ICONS.close + '</button>' +
+        '  </div>' +
+        '  <div style="font-size:13px;color:var(--bb-text);margin-bottom:10px;word-break:break-word">' + escHtml(currentTask.goal) + '</div>' +
+        '  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
+        '    <div style="flex:1;min-width:120px">' +
+        '      <div style="font-size:11px;color:var(--bb-mut);margin-bottom:4px">' + escHtml(t('taskProgress')) + '</div>' +
+        '      <div style="height:6px;background:var(--bb-code);border-radius:3px;overflow:hidden">' +
+        '        <div style="width:' + progress + '%;height:100%;background:var(--bb-accent);transition:width .3s"></div>' +
+        '      </div>' +
+        '      <div style="font-size:11px;color:var(--bb-mut);text-align:right;margin-top:2px">' + currentTask.currentStep + '/' + currentTask.plan.length + ' ' + escHtml(t('stepStatus')) + '</div>' +
+        '    </div>' +
+        '  </div>' +
+        '  <div class="bb-task-steps" style="max-height:200px;overflow-y:auto">' + stepsHtml + '</div>' +
+        '</div>';
+    }
+
     var statusHtml = isProcessing
       ? '<div class="bb-status-indicator processing">' + ICONS.magic + ' ' + escHtml(t('aiThinking')) + ' <span class="bb-status-dots"><span></span><span></span><span></span></span></div>'
-      : '<div class="bb-status-indicator idle">' + ICONS.magic + ' Sẵn sàng</div>';
+      : isAutonomousMode
+        ? '<div class="bb-status-indicator acting">' + ICONS.magic + ' ' + escHtml(t('autoModeOn')) + ' (' + autoStepCount + '/' + maxAutoSteps + ')</div>'
+        : '<div class="bb-status-indicator idle">' + ICONS.magic + ' Sẵn sàng</div>';
 
     content.innerHTML =
       '<div class="bb-split">' +
       '  <div class="bb-chat-pane">' +
       '    <div class="bb-chat-messages" id="chatBox">' + chatHtml + '</div>' +
       '    ' + selectedSpriteHtml +
+      '    ' + taskPanelHtml +
       '    ' + statusHtml +
-      '    <div style="display:flex;gap:8px;margin-top:8px;flex-shrink:0">' +
-      '      <input id="chatInput" type="text" placeholder="' + escHtml(t('promptPlaceholder')) + '" style="flex:1" autocomplete="off">' +
+      '    <div style="display:flex;gap:8px;margin-top:8px;flex-shrink:0;flex-wrap:wrap;align-items:center">' +
+      '      <div class="bb-mode-selector" style="display:flex;align-items:center;gap:6px">' +
+      '        <select id="modeSelect" class="bb-mode-select" style="padding:6px 10px;border-radius:6px;background:var(--bb-input);border:1px solid var(--bb-line);color:var(--bb-text);font-size:12px;min-width:130px">' +
+      '          <option value="code"' + (currentMode === 'code' ? ' selected' : '') + '>' + ICONS.code + ' ' + escHtml(t('modeCode')) + '</option>' +
+      '          <option value="ask"' + (currentMode === 'ask' ? ' selected' : '') + '>' + ICONS.ask + ' ' + escHtml(t('modeAsk')) + '</option>' +
+      '          <option value="debug"' + (currentMode === 'debug' ? ' selected' : '') + '>' + ICONS.debug + ' ' + escHtml(t('modeDebug')) + '</option>' +
+      '          <option value="plan"' + (currentMode === 'plan' ? ' selected' : '') + '>' + ICONS.plan + ' ' + escHtml(t('modePlan')) + '</option>' +
+      '        </select>' +
+      '      </div>' +
+      '      <input id="chatInput" type="text" placeholder="' + escHtml(t('promptPlaceholder')) + '" style="flex:1;min-width:200px" autocomplete="off">' +
       '      <button class="bb-btn" id="sendBtn" title="Send" ' + (isProcessing ? 'disabled' : '') + '>' + ICONS.send + '</button>' +
+      (isAutonomousMode 
+        ? '<button class="bb-btn bb-btn-secondary" id="stopAutoBtn" title="' + escHtml(t('stopAuto')) + '">' + escHtml(t('stopAuto')) + '</button>' +
+          '<button class="bb-btn bb-btn-secondary" id="stepOnceBtn" title="' + escHtml(t('stepOnce')) + '">' + escHtml(t('stepOnce')) + '</button>'
+        : '<button class="bb-btn bb-btn-secondary" id="autoModeBtn" title="' + escHtml(t('autoMode')) + '">' + escHtml(t('autoModeOff')) + '</button>') +
       '    </div>' +
       '  </div>' +
       '  <div class="bb-context-pane" id="contextPane">' +
       '    <div class="bb-context-header">' +
       '      <span style="font-size:12px;font-weight:600;color:var(--bb-accent)">' + ICONS.sprite + ' Sprite Context</span>' +
+      '      <button class="bb-icon-btn" id="multiSelectBtn" title="Chọn nhiều sprite">' + ICONS.multiSelect + '</button>' +
       '    </div>' +
       '    <div class="bb-context-content" id="contextContent"></div>' +
       '  </div>' +
@@ -1150,6 +1889,17 @@
       inp.value = '';
       chatHistory.push({ role: 'user', content: txt });
       renderChat(content);
+      
+      // Check if user wants to start autonomous task (e.g., "tự động: ..." or "auto: ...")
+      var isAutoRequest = /^(tự động|auto|tự động làm|tự động thực hiện|autonomous|auto:)/i.test(txt);
+      if (isAutoRequest && !currentTask) {
+        var goal = txt.replace(/^(tự động|auto|tự động làm|tự động thực hiện|autonomous|auto:)\s*/i, '');
+        if (goal) {
+          runAutonomousLoop(goal, content);
+          return;
+        }
+      }
+      
       doSend(txt, content);
     }
 
@@ -1161,31 +1911,109 @@
       chatInput.focus();
       setupMentionAutocomplete(chatInput);
     }
+    
+    // Mode selector handler
+    var modeSelect = content.querySelector('#modeSelect');
+    if (modeSelect) {
+      modeSelect.onchange = function (e) {
+        currentMode = e.target.value;
+      };
+    }
+    
+    // Multi-select sprites button handler
+    var multiSelectBtn = content.querySelector('#multiSelectBtn');
+    if (multiSelectBtn) {
+      multiSelectBtn.onclick = function () {
+        showMultiSpriteSelector(content);
+      };
+    }
+    
+    // Autonomous mode button handlers
+    var autoModeBtn = content.querySelector('#autoModeBtn');
+    if (autoModeBtn) {
+      autoModeBtn.onclick = function () {
+        var inp = content.querySelector('#chatInput');
+        var txt = inp.value.trim();
+        if (!txt) {
+          alert('Vui lòng nhập mục tiêu tác vụ trước khi bật chế độ tự động.');
+          inp.focus();
+          return;
+        }
+        if (confirm(t('confirmAutoMode'))) {
+          runAutonomousLoop(txt, content);
+        }
+      };
+    }
+    
+    var stopAutoBtn = content.querySelector('#stopAutoBtn');
+    if (stopAutoBtn) {
+      stopAutoBtn.onclick = function () {
+        stopAutonomousMode();
+        chatHistory.push({ role: 'assistant', content: '⏹ **Đã dừng chế độ tự động**' });
+        renderChat(content);
+      };
+    }
+    
+    var stepOnceBtn = content.querySelector('#stepOnceBtn');
+    if (stepOnceBtn) {
+      stepOnceBtn.onclick = function () {
+        stepOnce(content);
+      };
+    }
+    
+    var closeTaskBtn = content.querySelector('#closeTaskBtn');
+    if (closeTaskBtn) {
+      closeTaskBtn.onclick = function () {
+        // Just hide the task panel by clearing currentTask display (but keep task running)
+        // For now, we'll stop the task
+        stopAutonomousMode();
+      };
+    }
+    
     updateContextPane(content);
   }
 
   function updateContextPane(content) {
     var contextContent = content.querySelector('#contextContent');
     if (!contextContent) return;
-    if (selectedSpriteName) {
-      var ctx = extractSpriteContext(selectedSpriteName);
-      if (ctx) {
-        contextContent.innerHTML = '<div class="bb-sprite-card">' +
-          '<div class="bb-sprite-info">' +
-          '  <div class="bb-sprite-name">' + escHtml(ctx.name) + (ctx.isStage ? ' (Stage)' : '') + '</div>' +
-          '  <div class="bb-sprite-meta">' +
+    
+    // Use multi-select if available, otherwise fall back to single selection
+    var spritesToShow = selectedSpriteNames.length > 0 ? selectedSpriteNames : (selectedSpriteName ? [selectedSpriteName] : []);
+    
+    if (spritesToShow.length > 0) {
+      var cardsHtml = spritesToShow.map(function (spriteName) {
+        var ctx = extractSpriteContext(spriteName);
+        if (!ctx) return '';
+        return '<div class="bb-sprite-card" style="margin-bottom:8px">' +
+          '<div class="bb-sprite-info" style="display:flex;justify-content:space-between;align-items:flex-start">' +
+          '  <div>' +
+          '    <div class="bb-sprite-name">' + escHtml(ctx.name) + (ctx.isStage ? ' (Stage)' : '') + '</div>' +
+          '    <div class="bb-sprite-meta" style="margin-top:4px">' +
           (ctx.blocks.length ? '<span class="bb-sprite-badge">' + ctx.blocks.length + ' blocks</span>' : '') +
           (ctx.variables.length ? '<span class="bb-sprite-badge">' + ctx.variables.length + ' vars</span>' : '') +
           (ctx.lists.length ? '<span class="bb-sprite-badge">' + ctx.lists.length + ' lists</span>' : '') +
           (ctx.costumes.length ? '<span class="bb-sprite-badge">' + ctx.costumes.length + ' costumes</span>' : '') +
+          '    </div>' +
           '  </div>' +
+          '  <button class="bb-icon-btn bb-remove-sprite" data-sprite="' + escHtml(spriteName) + '" title="Xóa sprite này">' + ICONS.close + '</button>' +
           '</div>' +
           '</div>';
-      } else {
-        contextContent.innerHTML = '<div style="color:var(--bb-mut);font-size:12px;padding:10px">Sprite not found</div>';
+      }).join('');
+      
+      contextContent.innerHTML = cardsHtml || '<div style="color:var(--bb-mut);font-size:12px;padding:10px">Sprite not found</div>';
+      
+      // Bind remove buttons
+      var removeBtns = contextContent.querySelectorAll('.bb-remove-sprite');
+      for (var i = 0; i < removeBtns.length; i++) {
+        removeBtns[i].onclick = function () {
+          var name = this.getAttribute('data-sprite');
+          selectedSpriteNames = selectedSpriteNames.filter(function (n) { return n !== name; });
+          if (selectedSpriteName === name) selectedSpriteName = null;
+          updateContextPane(content);
+        };
       }
     } else {
-      contextContent.innerHTML = '<div style="color:var(--bb-mut);font-size:12px;padding:10px;text-align:center">Chọn @sprite_name trong chat để xem ngữ cảnh</div>';
+      contextContent.innerHTML = '<div style="color:var(--bb-mut);font-size:12px;padding:10px;text-align:center">Chọn @sprite_name trong chat hoặc dùng nút ' + ICONS.multiSelect + ' để chọn nhiều sprite</div>';
     }
   }
 
@@ -1200,6 +2028,67 @@
       box.innerHTML = chatHtml;
       box.scrollTop = box.scrollHeight;
     }
+    
+    // Update task panel if exists
+    var taskPanel = tabContent.querySelector('.bb-task-panel');
+    if (taskPanel && currentTask) {
+      var progress = currentTask.plan.length > 0 
+        ? Math.round((currentTask.currentStep / currentTask.plan.length) * 100) 
+        : 0;
+      var stepsHtml = currentTask.plan.map(function (step, idx) {
+        var statusClass = 'pending';
+        var statusIcon = '⏳';
+        var statusText = t('stepPending');
+        if (step.status === 'completed') { statusClass = 'completed'; statusIcon = '✅'; statusText = t('stepCompleted'); }
+        else if (step.status === 'executing') { statusClass = 'executing'; statusIcon = '◐'; statusText = t('stepExecuting'); }
+        else if (step.status === 'failed') { statusClass = 'failed'; statusIcon = '❌'; statusText = t('stepFailed'); }
+        return '<div class="bb-task-step ' + statusClass + '" style="padding:8px 12px;margin:4px 0;border-radius:6px;background:var(--bb-card);border-left:3px solid ' + 
+          (statusClass === 'completed' ? 'var(--bb-codetx)' : statusClass === 'executing' ? 'var(--bb-accent)' : statusClass === 'failed' ? '#d9383a' : 'var(--bb-mut)') + ';">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+          '<span style="font-weight:600;font-size:12px">' + statusIcon + ' Bước ' + (idx + 1) + ': ' + escHtml(step.description) + '</span>' +
+          '<span style="font-size:11px;color:var(--bb-mut)">' + escHtml(step.tool) + '</span>' +
+          '</div>' +
+          (step.result ? '<div style="font-size:11px;color:var(--bb-mut);margin-top:4px;font-family:monospace">' + escHtml(JSON.stringify(step.result).slice(0, 200)) + '</div>' : '') +
+          '</div>';
+      }).join('');
+      
+      taskPanel.innerHTML = 
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+        '  <span style="font-weight:600;color:var(--bb-accent)">' + ICONS.magic + ' ' + escHtml(t('taskGoal')) + '</span>' +
+        '  <button class="bb-icon-btn" id="closeTaskBtn" title="Close task panel">' + ICONS.close + '</button>' +
+        '</div>' +
+        '<div style="font-size:13px;color:var(--bb-text);margin-bottom:10px;word-break:break-word">' + escHtml(currentTask.goal) + '</div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
+        '  <div style="flex:1;min-width:120px">' +
+        '    <div style="font-size:11px;color:var(--bb-mut);margin-bottom:4px">' + escHtml(t('taskProgress')) + '</div>' +
+        '    <div style="height:6px;background:var(--bb-code);border-radius:3px;overflow:hidden">' +
+        '      <div style="width:' + progress + '%;height:100%;background:var(--bb-accent);transition:width .3s"></div>' +
+        '    </div>' +
+        '    <div style="font-size:11px;color:var(--bb-mut);text-align:right;margin-top:2px">' + currentTask.currentStep + '/' + currentTask.plan.length + ' ' + escHtml(t('stepStatus')) + '</div>' +
+        '  </div>' +
+        '</div>' +
+        '<div class="bb-task-steps" style="max-height:200px;overflow-y:auto">' + stepsHtml + '</div>';
+      
+      // Re-bind close button
+      var closeBtn = taskPanel.querySelector('#closeTaskBtn');
+      if (closeBtn) closeBtn.onclick = function () { stopAutonomousMode(); };
+    }
+    
+    // Update status indicator
+    var statusEl = tabContent.querySelector('.bb-status-indicator');
+    if (statusEl) {
+      if (isProcessing) {
+        statusEl.className = 'bb-status-indicator processing';
+        statusEl.innerHTML = ICONS.magic + ' ' + escHtml(t('aiThinking')) + ' <span class="bb-status-dots"><span></span><span></span><span></span></span>';
+      } else if (isAutonomousMode) {
+        statusEl.className = 'bb-status-indicator acting';
+        statusEl.innerHTML = ICONS.magic + ' ' + escHtml(t('autoModeOn')) + ' (' + autoStepCount + '/' + maxAutoSteps + ')';
+      } else {
+        statusEl.className = 'bb-status-indicator idle';
+        statusEl.innerHTML = ICONS.magic + ' Sẵn sàng';
+      }
+    }
+    
     updateContextPane(tabContent);
   }
 
@@ -1244,7 +2133,7 @@
 
   function renderSettingsTab(content) {
     var providers = [
-      { value: 'pollinations', label: t('modelPollinations'), models: ['openai', 'gpt-4o', 'gpt-4o-mini'] },
+      { value: 'pollinations', label: t('modelPollinations'), models: ['openai-reasoning', 'openai', 'gpt-4o', 'gpt-4o-mini'] },
       { value: 'deepseek', label: t('modelDeepSeek'), models: ['deepseek-chat', 'deepseek-reasoner'] },
       { value: 'groq', label: t('modelGroq'), models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'] }
     ];
@@ -1266,6 +2155,13 @@
       '  <select id="provSelect" style="width:100%">' + provHtml + '</select></div>' +
       '<div style="margin-bottom:16px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">' + escHtml(t('aiModel')) + '</label>' +
       '  <select id="modelSelect" style="width:100%">' + modelHtml + '</select></div>' +
+      '<div style="margin-bottom:16px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">' + escHtml(t('autoConfirmActions')) + '</label>' +
+      '  <select id="autoConfirmSelect" style="width:100%">' +
+      '    <option value="true"' + (autoConfirmActions ? ' selected' : '') + '>' + escHtml(t('autoConfirmOn')) + '</option>' +
+      '    <option value="false"' + (!autoConfirmActions ? ' selected' : '') + '>' + escHtml(t('autoConfirmOff')) + '</option>' +
+      '  </select></div>' +
+      '<div style="margin-bottom:16px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Max Auto Steps</label>' +
+      '  <input id="maxAutoStepsInput" type="number" min="1" max="50" value="' + maxAutoSteps + '" style="width:100%"></div>' +
       '<button class="bb-btn" id="saveSettings" style="width:100%">' + escHtml(t('settingsSaved')) + '</button>';
 
     var themeSelect = content.querySelector('#themeSelect');
@@ -1274,6 +2170,10 @@
     if (provSelect) provSelect.onchange = function (e) { currentProvider = e.target.value; safeSet('beabea_provider', currentProvider); renderWindowContent(); };
     var modelSelect = content.querySelector('#modelSelect');
     if (modelSelect) modelSelect.onchange = function (e) { currentModel = e.target.value; safeSet('beabea_model', currentModel); };
+    var autoConfirmSelect = content.querySelector('#autoConfirmSelect');
+    if (autoConfirmSelect) autoConfirmSelect.onchange = function (e) { autoConfirmActions = e.target.value === 'true'; safeSet('beabea_auto_confirm', autoConfirmActions); };
+    var maxAutoStepsInput = content.querySelector('#maxAutoStepsInput');
+    if (maxAutoStepsInput) maxAutoStepsInput.onchange = function (e) { var v = parseInt(e.target.value, 10); if (!isNaN(v) && v >= 1 && v <= 50) { maxAutoSteps = v; safeSet('beabea_max_auto_steps', v); } };
     var saveBtn = content.querySelector('#saveSettings');
     if (saveBtn) saveBtn.onclick = function () { alert(t('settingsSaved')); };
   }
@@ -1284,6 +2184,7 @@
       ? formatSpriteDataForAI(extractSpriteContext(selectedSpriteName))
       : formatAllSpritesForAI(getAllSpritesData());
     var actionJson = JSON.stringify(actionHistory, null, 2);
+    var taskJson = JSON.stringify(taskQueue, null, 2);
 
     content.innerHTML =
       '<div style="display:flex;flex-direction:column;gap:12px;height:100%">' +
@@ -1291,6 +2192,7 @@
       '    <button class="bb-btn" id="exportChatBtn">' + escHtml(t('exportChat')) + '</button>' +
       '    <button class="bb-btn bb-btn-secondary" id="exportContextBtn">' + escHtml(t('exportContext')) + '</button>' +
       '    <button class="bb-btn bb-btn-secondary" id="exportActionsBtn">' + ICONS.download + ' Xuất hành động</button>' +
+      '    <button class="bb-btn bb-btn-secondary" id="exportTasksBtn">' + ICONS.download + ' Xuất tác vụ</button>' +
       '    <button class="bb-btn bb-btn-secondary" id="clearHistoryBtn">' + escHtml(t('clearHistory')) + '</button>' +
       '    <button class="bb-btn bb-btn-secondary" id="openTurboForgeBtn">' + escHtml(t('openInTurboForge')) + '</button>' +
       '  </div>' +
@@ -1302,6 +2204,10 @@
       '    <div style="flex:1;display:flex;flex-direction:column;min-height:0">' +
       '      <h4 style="margin:0 0 8px;font-size:13px;color:var(--bb-mut)">Action History</h4>' +
       '      <pre id="actionPreview" style="flex:1;background:var(--bb-code);color:var(--bb-codetx);padding:12px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,monospace;font-size:11px;overflow:auto;border:1px solid var(--bb-line);white-space:pre-wrap;word-wrap:break-word;min-height:150px">' + escHtml(actionJson) + '</pre>' +
+      '    </div>' +
+      '    <div style="flex:1;display:flex;flex-direction:column;min-height:0">' +
+      '      <h4 style="margin:0 0 8px;font-size:13px;color:var(--bb-mut)">Task History</h4>' +
+      '      <pre id="taskPreview" style="flex:1;background:var(--bb-code);color:var(--bb-codetx);padding:12px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,monospace;font-size:11px;overflow:auto;border:1px solid var(--bb-line);white-space:pre-wrap;word-wrap:break-word;min-height:150px">' + escHtml(taskJson) + '</pre>' +
       '    </div>' +
       '    <div style="flex:1;display:flex;flex-direction:column;min-height:0">' +
       '      <h4 style="margin:0 0 8px;font-size:13px;color:var(--bb-mut)">Current Sprite Context</h4>' +
@@ -1330,6 +2236,16 @@
         a.click();
       };
     }
+    var exportTasksBtn = content.querySelector('#exportTasksBtn');
+    if (exportTasksBtn) {
+      exportTasksBtn.onclick = function () {
+        var blob = new Blob([taskJson], { type: 'application/json' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'beabea-task-history.json';
+        a.click();
+      };
+    }
     var exportContextBtn = content.querySelector('#exportContextBtn');
     if (exportContextBtn) {
       exportContextBtn.onclick = function () {
@@ -1346,6 +2262,7 @@
         if (confirm(t('confirmAction', 'xóa toàn bộ lịch sử hội thoại?'))) {
           chatHistory = [];
           actionHistory = [];
+          taskQueue = [];
           renderWindowContent();
         }
       };
