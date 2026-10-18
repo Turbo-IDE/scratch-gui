@@ -345,6 +345,7 @@
               // Finalize reasoning
               reasoningStream = reasoningStream.map(function (r) { return { ...r, streaming: false }; });
               chatHistory.push({ role: 'assistant', content: parsed.content, reasoning: parsed.reasoning });
+              renderWindowContent(); // render response cuối cùng
               resolve(parsed.content);
               return;
             }
@@ -362,14 +363,23 @@
                     if (delta.reasoning_content) {
                       currentReasoningText += delta.reasoning_content;
                       var now = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                      // Update or add streaming reasoning
                       var lastIdx = reasoningStream.length - 1;
                       if (lastIdx >= 0 && reasoningStream[lastIdx].streaming) {
                         reasoningStream[lastIdx].text = currentReasoningText;
                       } else {
                         reasoningStream.push({ text: currentReasoningText, timestamp: now, source: 'reasoning_content', streaming: true });
                       }
-                      renderWindowContent(); // real-time update
+                      renderWindowContent();
+                    }
+                    if (delta.content) {
+                      // Stream content real-time vào chat bubble cuối cùng
+                      var lastMsg = chatHistory[chatHistory.length - 1];
+                      if (lastMsg && lastMsg.role === 'assistant') {
+                        lastMsg.content += delta.content;
+                      } else {
+                        chatHistory.push({ role: 'assistant', content: delta.content, reasoning: '' });
+                      }
+                      renderWindowContent();
                     }
                   }
                 } catch (e) {}
