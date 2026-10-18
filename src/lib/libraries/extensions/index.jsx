@@ -56,6 +56,7 @@ import galleryIcon from './gallery/gallery.svg';
 import turboshareCloudDBIcon from '../../../../TurboWS/Extensions/Banner/CloudDB.png';
 import turboshareWOWEconomyIcon from '../../../../TurboWS/Extensions/Banner/WOWEconomy.png';
 import turboshareEmbedWindowsIcon from '../../../../TurboWS/Extensions/Banner/EmbedWindows.png';
+import turboforgeBannerIcon from '../../../../TurboWS/Extensions/Banner/TurboForge.png';
 import {APP_NAME} from '../../constants/brand';
 
 export default [
@@ -475,6 +476,27 @@ export default [
                 defaultMessage="Create fake windows in your project page"
                 description="Description of the Embed Windows v2 extension"
                 id="mw.turboshare.embedWindowsv2.description"
+            />
+        ),
+        tags: ['turboshare'],
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="TurboForge Studio"
+                description="Name of the TurboForge Studio extension"
+                id="mw.turboshare.turboforge.name"
+            />
+        ),
+        extensionId: 'turboforge',
+        extensionURL: `${process.env.ROOT || '/'}static/turboshare-extensions/TurboForge.js`,
+        iconURL: turboforgeBannerIcon,
+        description: (
+            <FormattedMessage
+                defaultMessage="Build custom extensions with AI BeaBea"
+                description="Description of the TurboForge Studio extension"
+                id="mw.turboshare.turboforge.description"
             />
         ),
         tags: ['turboshare'],

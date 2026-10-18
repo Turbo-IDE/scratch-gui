@@ -1561,6 +1561,8 @@
   "mw.turboshare.danvWowEconomy.description": "WOW energy currency system integration",
   "mw.turboshare.embedWindowsv2.name": "Embed Windows v2",
   "mw.turboshare.embedWindowsv2.description": "Create fake windows in your project page",
+  "mw.turboshare.turboforge.name": "TurboForge Studio",
+  "mw.turboshare.turboforge.description": "Build custom extensions with AI BeaBea",
   "mw.extensionGallery.name": "More extensions from TurboWarp",
   "mw.extensionGallery.loading": "Loading extensions from the TurboWarp extension gallery…",
   "mw.extensionGallery.more": "Opens the TurboWarp extension gallery website in a new tab. Its extensions are also listed under TurboWarp.",
