@@ -57,6 +57,7 @@ import turboshareCloudDBIcon from '../../../../TurboWS/Extensions/Banner/CloudDB
 import turboshareWOWEconomyIcon from '../../../../TurboWS/Extensions/Banner/WOWEconomy.png';
 import turboshareEmbedWindowsIcon from '../../../../TurboWS/Extensions/Banner/EmbedWindows.png';
 import turboforgeBannerIcon from '../../../../TurboWS/Extensions/Banner/TurboForge.png';
+import beabeaBannerIcon from '../../../../TurboWS/Extensions/Banner/BeaBeaCodingAgent.png';
 import {APP_NAME} from '../../constants/brand';
 
 export default [
@@ -497,6 +498,27 @@ export default [
                 defaultMessage="Build custom extensions with AI BeaBea"
                 description="Description of the TurboForge Studio extension"
                 id="mw.turboshare.turboforge.description"
+            />
+        ),
+        tags: ['turboshare'],
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="BeaBea Coding Agent"
+                description="Name of the BeaBea Coding Agent extension"
+                id="mw.turboshare.beabeaCodingAgent.name"
+            />
+        ),
+        extensionId: 'beabeaCodingAgent',
+        extensionURL: `${process.env.ROOT || '/'}static/turboshare-extensions/BeaBeaCodingAgent.js`,
+        iconURL: beabeaBannerIcon,
+        description: (
+            <FormattedMessage
+                defaultMessage="AI-powered coding agent studio with BeaBea"
+                description="Description of the BeaBea Coding Agent extension"
+                id="mw.turboshare.beabeaCodingAgent.description"
             />
         ),
         tags: ['turboshare'],
