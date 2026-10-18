@@ -71,7 +71,12 @@
       actionExecuted: '✅ Đã thực hiện: $1',
       actionFailed: '❌ Thất bại: $1',
       confirmAction: 'Bạn có chắc chắn muốn $1?',
-      reasoningTitle: '🧠 Suy nghĩ của BeaBea'
+      reasoningTitle: '🧠 Suy nghĩ của BeaBea',
+      copiedContext: '📋 Đã sao chép ngữ cảnh sprite!',
+      noReduxStore: 'Không truy cập được Redux store. Dùng menu Tiện ích mở rộng trên toolbar.',
+      errorPrefix: 'Lỗi: ',
+      actionAccept: 'Chấp nhận',
+      actionRevise: 'Sửa lại'
     },
     en: {
       title: 'BeaBea Coding Agent',
@@ -107,7 +112,12 @@
       actionExecuted: '✅ Executed: $1',
       actionFailed: '❌ Failed: $1',
       confirmAction: 'Are you sure you want to $1?',
-      reasoningTitle: '🧠 BeaBea\'s Reasoning'
+      reasoningTitle: '🧠 BeaBea\'s Reasoning',
+      copiedContext: '📋 Context copied!',
+      noReduxStore: 'Cannot access Redux store. Use Extensions menu on toolbar.',
+      errorPrefix: 'Error: ',
+      actionAccept: 'Accept',
+      actionRevise: 'Revise'
     }
   };
 
@@ -155,8 +165,6 @@
 
   // Agent state
   var actionHistory = [];
-  var maxToolCalls = 5;
-  var currentToolCalls = 0;
 
   // Extension knowledge base
   var KNOWN_EXTENSIONS = {
@@ -177,7 +185,7 @@
       .replace(/</g, '<')
       .replace(/>/g, '>')
       .replace(/"/g, '"')
-      .replace(/'/g, '&apos;');
+      .replace(/'/g, "&apos;");
   }
   function inlineFormat(str) {
     if (!str) return '';
@@ -257,6 +265,14 @@
     }
     return { content: raw, reasoning: '' };
   }
+  function extractAction(content) {
+    var m = String(content || '').match(/<action>([\s\S]*?)<\/action>/);
+    if (!m) return null;
+    try { 
+      var cleanJson = m[1].replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleanJson); 
+    } catch (e) { return null; }
+  }
 
   // ==========================================
   // 5. SYSTEM PROMPT BUILDER
@@ -299,14 +315,12 @@
       '5. get_list - Get list contents\n' +
       '   Args: {sprite_name?: string, name: string}\n' +
       '6. list_sprites - List all sprites in project\n' +
-      '   Args: {}\n' +
-      '7. run_script - Execute blocks (limited support)\n' +
-      '   Args: {sprite_name?: string, blocks: array}\n\n' +
+      '   Args: {}\n\n' +
       'WORKFLOW:\n' +
       '- PLAN: Think about what tools you need\n' +
       '- ACT: Call ONE tool per <action> tag\n' +
       '- OBSERVE: Wait for tool result\n' +
-      '- REPEAT: Max ' + maxToolCalls + ' tool calls per user message\n' +
+      '- REPEAT: As needed per user message\n' +
       '- CONFIRM: Ask before destructive changes (delete, overwrite)\n\n' +
       'When user mentions @sprite_name, that sprite context is provided automatically.\n' +
       'KNOWN EXTENSIONS (for coordination):\n' + extList + '\n\n' +
@@ -429,7 +443,7 @@
 
   // Parse @sprite_name from user input
   function parseSpriteReferences(text) {
-    var matches = text.match(/@(\w+)/g);
+    var matches = text.match(/@([\p{L}\p{N}_]+)/gu);
     if (!matches) return [];
     return matches.map(function (m) { return m.slice(1); });
   }
@@ -497,6 +511,10 @@
     mentionFilter = '';
   }
 
+  function cleanupMentionDropdown() {
+    hideMentionDropdown();
+  }
+
   function selectMentionItem(inputEl, spriteName) {
     var val = inputEl.value;
     var pos = inputEl.selectionStart;
@@ -549,7 +567,7 @@
     inputEl.addEventListener('input', function (e) {
       var pos = e.target.selectionStart;
       var text = e.target.value.slice(0, pos);
-      var match = text.match(/@(\w*)$/);
+      var match = text.match(/@([\p{L}\p{N}_]*)$/u);
       if (match && (pos === e.target.value.length || e.target.value.charAt(pos) === ' ')) {
         showMentionDropdown(e.target, match[1]);
       } else {
@@ -568,7 +586,7 @@
     inputEl.addEventListener('focus', function (e) {
       var pos = e.target.selectionStart;
       var text = e.target.value.slice(0, pos);
-      var match = text.match(/@(\w*)$/);
+      var match = text.match(/@([\p{L}\p{N}_]*)$/u);
       if (match) {
         showMentionDropdown(e.target, match[1]);
       }
@@ -625,6 +643,11 @@
       if (!variable) return { error: 'Variable not found: ' + args.name };
       variable.value = args.value;
       target.variables[variable.id] = variable;
+      // Notify VM of variable change
+      if (Scratch.vm && Scratch.vm.runtime) {
+        Scratch.vm.runtime.emit('variableChange', { targetId: target.id, name: args.name, value: args.value });
+        Scratch.vm.runtime.requestRedraw();
+      }
       return { success: true, message: 'Set ' + spriteName + '.' + args.name + ' = ' + args.value };
     },
 
@@ -635,8 +658,18 @@
       if (!target) return { error: 'Sprite not found: ' + spriteName };
       var list = getList(target, args.name);
       if (!list) return { error: 'List not found: ' + args.name };
-      list.value = args.value; // should be array
+      
+      if (!Array.isArray(args.value)) {
+        return { error: 'CRITICAL: "value" argument must be a JSON Array. Prevented engine crash.' };
+      }
+      
+      list.value = args.value;
       target.variables[list.id] = list;
+      // Notify VM of list change
+      if (Scratch.vm && Scratch.vm.runtime) {
+        Scratch.vm.runtime.emit('listChange', { targetId: target.id, name: args.name, value: args.value });
+        Scratch.vm.runtime.requestRedraw();
+      }
       return { success: true, message: 'Updated list ' + spriteName + '.' + args.name + ' (' + args.value.length + ' items)' };
     },
 
@@ -714,25 +747,27 @@
   // 7. POLLINATIONS API WITH TIMEOUT & RETRY
   // ==========================================
   function callPollinations(messages, model) {
-    var controller = new AbortController();
-    var timeout = setTimeout(function () { controller.abort(); }, 15000);
+    console.log('[BeaBea] Calling Pollinations API with model:', model, 'messages:', messages.length);
     var safeSeed = Math.floor(Math.random() * 2147483647);
     return fetch('https://text.pollinations.ai/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: messages, model: model || 'openai', seed: safeSeed }),
-      signal: controller.signal
+      body: JSON.stringify({ messages: messages, model: model || 'openai', seed: safeSeed })
     }).then(function (res) {
-      clearTimeout(timeout);
+      console.log('[BeaBea] Pollinations response status:', res.status, res.statusText);
       if (!res.ok) throw new Error('Pollinations HTTP ' + res.status);
       return res.text();
+    }).then(function (text) {
+      console.log('[BeaBea] Pollinations raw response length:', text.length);
+      return text;
     }).catch(function (e) {
-      clearTimeout(timeout);
+      console.error('[BeaBea] Pollinations error:', e);
       throw e;
     });
   }
 
   function sendToAI(userText) {
+    console.log('[BeaBea] sendToAI called with:', userText);
     var spriteRefs = parseSpriteReferences(userText);
     var contextMd = '';
     if (spriteRefs.length > 0) {
@@ -744,46 +779,17 @@
     }
 
     var messages = [{ role: 'system', content: buildSystemPrompt() + (contextMd ? '\n\nSPRITE CONTEXT:\n' + contextMd : '') }];
-    chatHistory.forEach(function (m) { messages.push({ role: m.role, content: m.content }); });
-    messages.push({ role: 'user', content: userText });
-
-    currentToolCalls = 0;
-
-    return runAgentLoop(messages);
-  }
-
-  function runAgentLoop(messages) {
-    if (currentToolCalls >= maxToolCalls) {
-      return Promise.resolve('Đã đạt giới hạn số lần gọi công cụ (' + maxToolCalls + '). Vui lòng hỏi tiếp nếu cần thêm.');
-    }
+    chatHistory.forEach(function (m) {
+      if (!m.isThinking) {
+        messages.push({ role: m.role, content: m.content });
+      }
+    });
 
     return callPollinations(messages, currentModel)
       .then(function (reply) {
         var parsed = parseAiReply(reply);
-        var actions = parseActions(parsed.content);
-
-        if (actions.length === 0) {
-          // No actions, just return the response
-          chatHistory.push({ role: 'assistant', content: parsed.content, reasoning: parsed.reasoning });
-          return parsed.content;
-        }
-
-        // Execute first action
-        var action = actions[0];
-        currentToolCalls++;
-        var result = executeAction(action);
-
-        // Add assistant message with reasoning
-        var assistantMsg = parsed.content;
-        chatHistory.push({ role: 'assistant', content: assistantMsg, reasoning: parsed.reasoning });
-
-        // Add tool result as a message
-        var resultMsg = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
-        messages.push({ role: 'assistant', content: assistantMsg });
-        messages.push({ role: 'user', content: 'TOOL RESULT:\n' + resultMsg });
-
-        // Continue loop
-        return runAgentLoop(messages);
+        console.log('[BeaBea] AI response received, content length:', (parsed.content || '').length);
+        return parsed; // return full parsed object with action
       });
   }
 
@@ -815,6 +821,7 @@
   // 9. CHAT SEND WITH RETRY LOOP
   // ==========================================
   function doSend(userText, contentEl) {
+    console.log('[BeaBea] doSend called, isProcessing:', isProcessing);
     if (!userText.trim() || isProcessing) return;
     isProcessing = true;
     retryCount = 0;
@@ -822,25 +829,38 @@
     renderChat(contentEl);
 
     function attemptSend() {
+      console.log('[BeaBea] attemptSend, retryCount:', retryCount);
       var thinkingMsg = t('aiThinking');
       if (retryCount > 0) thinkingMsg = t('retryAttempt', retryCount, maxRetries);
       chatHistory.push({ role: 'assistant', content: thinkingMsg, isThinking: true });
       renderChat(contentEl);
 
-      sendToAI(userText).then(function (reply) {
+      sendToAI(userText).then(function (parsed) {
+        if (!beabeaWindow) { isProcessing = false; return; } // Window closed while loading
+        console.log('[BeaBea] sendToAI succeeded');
         chatHistory.pop(); // remove thinking message
+        var finalContent = parsed.content.replace(/<action>[\s\S]*?<\/action>/g, '').trim();
+        chatHistory.push({ role: 'assistant', content: finalContent || parsed.content, reasoning: parsed.reasoning });
         renderChat(contentEl);
+        bindActionButtons(contentEl);
         isProcessing = false;
         hideBlockingOverlay();
       }).catch(function (err) {
+        if (!beabeaWindow) { isProcessing = false; return; } // Window closed while loading
+        console.error('[BeaBea] sendToAI failed:', err);
         chatHistory.pop(); // remove thinking message
+        
+        // Stop retry if it is a 400 Bad Request (Context too long / Invalid format)
+        var isBadRequest = err.message && err.message.indexOf('400') !== -1;
+        
         retryCount++;
-        if (retryCount < maxRetries) {
+        if (retryCount < maxRetries && !isBadRequest) {
           chatHistory.push({ role: 'assistant', content: t('deepThinking'), isThinking: true });
           renderChat(contentEl);
           setTimeout(attemptSend, 500);
         } else {
-          chatHistory.push({ role: 'assistant', content: t('maxRetriesReached', maxRetries) });
+          var errorMsg = isBadRequest ? '❌ Context quá dài hoặc bị lỗi (HTTP 400), hãy xoá bớt lịch sử.' : t('maxRetriesReached', maxRetries);
+          chatHistory.push({ role: 'assistant', content: errorMsg });
           renderChat(contentEl);
           isProcessing = false;
           hideBlockingOverlay();
@@ -848,6 +868,30 @@
       });
     }
     attemptSend();
+  }
+
+  function bindActionButtons(contentEl) {
+    var execs = contentEl.querySelectorAll('[data-action-exec]');
+    for (var i = 0; i < execs.length; i++) {
+      execs[i].onclick = function () {
+        var act = JSON.parse(decodeURIComponent(this.getAttribute('data-action-exec')));
+        var result = executeAction(act);
+        // Show result as a system message
+        var resultMsg = result.success
+          ? '✅ ' + (result.message || 'Đã thực hiện: ' + act.type)
+          : '❌ ' + (result.error || 'Thất bại: ' + act.type);
+        chatHistory.push({ role: 'assistant', content: resultMsg });
+        renderChat(contentEl);
+        bindActionButtons(contentEl);
+      };
+    }
+    var revs = contentEl.querySelectorAll('[data-action-revise]');
+    for (var j = 0; j < revs.length; j++) {
+      revs[j].onclick = function () {
+        var inp = contentEl.querySelector('#chatInput');
+        if (inp) { inp.value = 'BeaBea ơi, mình muốn điều chỉnh lại: '; inp.focus(); }
+      };
+    }
   }
 
   // ==========================================
@@ -951,6 +995,7 @@
     var wm = window.wm;
     if (!wm) {
       console.warn('WindowManager not available');
+      alert('⚠️ BeaBea Agent yêu cầu cài đặt Extension để tạo giao diện hiển thị. Vui lòng thêm extension đó và thử lại.');
       return;
     }
     injectCSS();
@@ -968,8 +1013,14 @@
       closable: true,
       alwaysOnTop: true,
       onClose: function () {
-        beabeaWindow = null;
+        cleanupMentionDropdown();
         hideBlockingOverlay();
+        if (cssInjected) {
+          var style = document.getElementById('beabea-styles');
+          if (style) style.remove();
+          cssInjected = false;
+        }
+        beabeaWindow = null;
       }
     });
     beabeaWindow.element.classList.add('theme-' + currentTheme);
@@ -979,6 +1030,7 @@
 
   function renderWindowContent() {
     if (!beabeaWindow) return;
+    cleanupMentionDropdown();
     var contentEl = beabeaWindow.getContentElement();
     if (!contentEl) return;
 
@@ -1040,7 +1092,20 @@
     if (m.reasoning) {
       reasoningHtml = '<details class="bb-reasoning-panel" style="margin-top:8px"><summary class="bb-reasoning-header">' + ICONS.magic + ' ' + escHtml(t('reasoningTitle')) + '</summary><div class="bb-reasoning-body">' + escHtml(m.reasoning) + '</div></details>';
     }
-    return '<div class="bb-chat-row"><img class="bb-avatar" src="' + BEABEA_AVATAR + '"><div class="bb-bubble bb-bubble-bot">' + renderMarkdown(m.content) + reasoningHtml + '</div></div>';
+    var action = extractAction(m.content);
+    var actionHtml = '';
+    if (action) {
+      var title = '', desc = '';
+      if (action.type === 'set_variable') { title = 'Đặt biến'; desc = action.args.name + ' = ' + action.args.value; }
+      else if (action.type === 'set_list') { title = 'Cập nhật list'; desc = action.args.name + ' (' + (action.args.value && action.args.value.length) + ' items)'; }
+      else if (action.type === 'get_sprite_data') { title = 'Đọc sprite'; desc = action.args.sprite_name || 'current'; }
+      else if (action.type === 'get_variable') { title = 'Đọc biến'; desc = action.args.name; }
+      else if (action.type === 'get_list') { title = 'Đọc list'; desc = action.args.name; }
+      else if (action.type === 'list_sprites') { title = 'Liệt kê sprite'; desc = ''; }
+      else { title = 'Hành động: ' + action.type; desc = JSON.stringify(action.args); }
+      actionHtml = '<div class="bb-action-card" style="margin-top:10px;padding:12px;border:1px dashed var(--bb-accent);border-radius:10px;background:var(--bb-win)"><div style="font-size:12px;color:var(--bb-accent);font-weight:600">' + escHtml(title) + '</div><div style="font-family:monospace;font-size:11px;white-space:pre-wrap;color:var(--bb-mut)">' + escHtml(desc) + '</div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="bb-btn bb-btn-secondary" data-action-revise="1">' + escHtml(t('actionRevise')) + '</button><button class="bb-btn" data-action-exec="' + escHtml(encodeURIComponent(JSON.stringify(action))) + '">' + escHtml(t('actionAccept')) + '</button></div></div>';
+    }
+    return '<div class="bb-chat-row"><img class="bb-avatar" src="' + BEABEA_AVATAR + '"><div class="bb-bubble bb-bubble-bot">' + renderMarkdown(m.content) + reasoningHtml + actionHtml + '</div></div>';
   }
 
   function renderChatTab(content) {
@@ -1054,9 +1119,7 @@
 
     var statusHtml = isProcessing
       ? '<div class="bb-status-indicator processing">' + ICONS.magic + ' ' + escHtml(t('aiThinking')) + ' <span class="bb-status-dots"><span></span><span></span><span></span></span></div>'
-      : (currentToolCalls > 0
-          ? '<div class="bb-status-indicator acting">' + ICONS.magic + ' Đang thực hiện hành động... (' + currentToolCalls + '/' + maxToolCalls + ')</div>'
-          : '<div class="bb-status-indicator idle">' + ICONS.magic + ' Sẵn sàng</div>');
+      : '<div class="bb-status-indicator idle">' + ICONS.magic + ' Sẵn sàng</div>';
 
     content.innerHTML =
       '<div class="bb-split">' +
@@ -1080,21 +1143,21 @@
     var box = content.querySelector('#chatBox');
     if (box) box.scrollTop = box.scrollHeight;
 
-    function doSend() {
+    function handleUserSend() {
       var inp = content.querySelector('#chatInput');
       var txt = inp.value.trim();
-      if (!txt) return;
+      if (!txt || isProcessing) return;
       inp.value = '';
       chatHistory.push({ role: 'user', content: txt });
-      renderChatTab(content);
+      renderChat(content);
       doSend(txt, content);
     }
 
     var sendBtn = content.querySelector('#sendBtn');
-    if (sendBtn) sendBtn.onclick = doSend;
+    if (sendBtn) sendBtn.onclick = handleUserSend;
     var chatInput = content.querySelector('#chatInput');
     if (chatInput) {
-      chatInput.onkeydown = function (e) { if (e.key === 'Enter') doSend(); };
+      chatInput.onkeydown = function (e) { if (e.key === 'Enter') handleUserSend(); };
       chatInput.focus();
       setupMentionAutocomplete(chatInput);
     }
@@ -1272,7 +1335,7 @@
       exportContextBtn.onclick = function () {
         if (navigator.clipboard) {
           navigator.clipboard.writeText(contextMd).then(function () {
-            alert('📋 Đã sao chép ngữ cảnh sprite!');
+            alert(t('copiedContext'));
           });
         }
       };
@@ -1280,7 +1343,7 @@
     var clearHistoryBtn = content.querySelector('#clearHistoryBtn');
     if (clearHistoryBtn) {
       clearHistoryBtn.onclick = function () {
-        if (confirm('Xóa toàn bộ lịch sử hội thoại?')) {
+        if (confirm(t('confirmAction', 'xóa toàn bộ lịch sử hội thoại?'))) {
           chatHistory = [];
           actionHistory = [];
           renderWindowContent();
@@ -1295,10 +1358,10 @@
           if (store && store.dispatch) {
             store.dispatch({ type: 'scratch-gui/modals/OPEN_MODAL', modal: 'extensionManagerModal' });
           } else {
-            alert('Không truy cập được Redux store. Dùng menu Tiện ích mở rộng trên toolbar.');
+            alert(t('noReduxStore'));
           }
         } catch (e) {
-          alert('Lỗi: ' + e.message);
+          alert(t('errorPrefix') + e.message);
         }
       };
     }
@@ -1332,4 +1395,6 @@
     console.warn('BeaBea Coding Agent register fail:', err);
   }
 })(Scratch);
+
+
 
