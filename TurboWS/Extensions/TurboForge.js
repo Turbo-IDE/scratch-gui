@@ -555,7 +555,7 @@ TurboForgePalette.prototype.getInfo = function () {
     menuIconURI: EXT_ICON_URL,
     blockIconURI: EXT_ICON_URL,
     blocks: [
-      { blockType: Scratch.BlockType.BUTTON, text: 'Mo TurboForge Studio', func: 'openStudio' }
+      { blockType: Scratch.BlockType.BUTTON, text: 'Mở TurboForge Studio', func: 'openStudio' }
     ]
   };
 };
