@@ -881,7 +881,7 @@ const T = {
     "Notifications ({count} unread)": "Thông báo ({count} chưa đọc)",
     "Desktop Settings": "Cài đặt máy tính để bàn",
     "Preparing download…": "Đang chuẩn bị tải xuống...",
-    "Uploading to TurboWorkshop…": "Đang tải lên TurboWorkshop...",
+    "Uploading to TurboWorkshop…": "Đang tải lên TurboShare...",
     "You can't save changes to this project or remix it. Use File > Save to your computer to keep a copy.": "Bạn không thể lưu thay đổi hoặc remix dự án này. Sử dụng Tệp > Lưu vào máy tính để giữ một bản sao.",
     "{count, number} {count, plural, one {view} other {views}}": "{count, number} {count, plural, one {lượt_xem} other {lượt_xem}}",
     "Rename {name}": "Đổi tên {name}",

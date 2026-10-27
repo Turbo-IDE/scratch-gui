@@ -1,10 +1,10 @@
-// Sends the current project to TurboWorkshop. Shared by File > Upload to
-// TurboWorkshop and the menu bar upload button so both use the same mechanism.
+// Sends the current project to TurboShare. Shared by File > Upload to
+// TurboShare and the menu bar upload button so both use the same mechanism.
 // Authors: katboizz
 const WORKSHOP_UPLOAD_URL = 'https://danvpr.github.io/workshop/#upload';
 
 /**
- * Open TurboWorkshop in a new tab and send it the packaged project.
+ * Open TurboShare in a new tab and send it the packaged project.
  * @param {object} options - {vm, projectTitle, onOpened}
  * @param {object} options.vm - the project VM to package.
  * @param {string} [options.projectTitle] - title sent with the project.
@@ -63,18 +63,34 @@ const uploadProjectToWorkshop = async ({vm, projectTitle, onOpened}) => {
         const sb3Blob = await vm.saveProjectSb3();
         const sb3ArrayBuffer = await sb3Blob.arrayBuffer();
 
+        // 4b. Get project.json for TurboShare
+        let projectJson = null;
+        try {
+            const sb3Files = vm.saveProjectSb3DontZip();
+            if (sb3Files && sb3Files['project.json']) {
+                projectJson = sb3Files['project.json'];
+            }
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn('Could not get project.json:', e);
+        }
+
         // 5. Gui du lieu sang tab Workshop khi san sang
         let hasSent = false;
         const messageListener = event => {
             if (event.data && event.data.type === 'DANV_WORKSHOP_READY' && !hasSent) {
                 hasSent = true;
-                workshopTab.postMessage({
+                const payload = {
                     type: 'DANV_IMPORT_PROJECT',
                     title: title,
                     sb3Buffer: sb3ArrayBuffer,
                     fileName: `${title}.sb3`,
                     thumbDataUrl: thumbDataUrl
-                }, '*', [sb3ArrayBuffer]);
+                };
+                if (projectJson) {
+                    payload.projectJson = projectJson;
+                }
+                workshopTab.postMessage(payload, '*', [sb3ArrayBuffer]);
                 window.removeEventListener('message', messageListener);
             }
         };

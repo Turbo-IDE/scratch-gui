@@ -1932,7 +1932,7 @@ class MenuBar extends React.Component {
                                         >
                                             <Globe />
                                             <FormattedMessage
-                                                defaultMessage="Upload to TurboWorkshop"
+                                                defaultMessage="Upload to TurboShare"
                                                 description="File menu item to upload project to TurboWorkshop"
                                                 id="tw.menuBar.uploadTurboworkshop"
                                             />

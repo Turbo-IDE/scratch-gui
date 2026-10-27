@@ -224,7 +224,8 @@ en: {
   var cssInjected = false;
   var selectedSpriteName = null;
   var currentProvider = safeGet('beabea_provider', 'pollinations');
-  var currentModel = safeGet('beabea_model', 'openai-reasoning');
+  var currentModel = safeGet('beabea_model', 'openai');
+  if (currentModel === 'openai-reasoning') currentModel = 'openai';
   var autoConfirmActions = safeGet('beabea_auto_confirm', 'false') === 'true';
   var savedMaxAutoSteps = parseInt(safeGet('beabea_max_auto_steps', '10'), 10);
   maxAutoSteps = isNaN(savedMaxAutoSteps) ? 10 : savedMaxAutoSteps;
@@ -1265,89 +1266,70 @@ en: {
   }
 
   // ==========================================
-  // 7. POLLINATIONS API (OpenAI-compatible, streaming)
+  // 7. POLLINATIONS API (Free tier - text.pollinations.ai)
   // ==========================================
   function callPollinations(messages, model, onChunk) {
-    var useModel = model || currentModel || 'openai-reasoning';
-    console.log('[BeaBea] Calling Pollinations API with model:', useModel, 'messages:', messages.length, 'stream:', !!onChunk);
+    var useModel = model || currentModel || 'openai';
+    if (useModel === 'openai-reasoning') useModel = 'openai';
+    console.log('[BeaBea] Calling Pollinations API with model:', useModel, 'messages:', messages.length);
     
     var safeSeed = Math.floor(Math.random() * 2147483647);
-    var body = {
-      messages: messages,
-      model: useModel,
-      seed: safeSeed,
-      stream: !!onChunk,
-      reasoning_effort: 'medium'
-    };
-
-    return fetch('https://gen.pollinations.ai/v1/chat/completions', {
+    // Use the free tier endpoint (no API key, no streaming support)
+    return fetch('https://text.pollinations.ai/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify({ messages: messages, model: useModel, seed: safeSeed })
     }).then(function (res) {
       console.log('[BeaBea] Pollinations response status:', res.status, res.statusText);
       if (!res.ok) throw new Error('Pollinations HTTP ' + res.status);
-      
-      if (onChunk && res.body) {
-        return handleStreamingResponse(res, onChunk);
+      return res.text();
+    }).then(function (text) {
+      console.log('[BeaBea] Pollinations raw response length:', text.length);
+      // Parse response (may be JSON-wrapped)
+      var parsed = parseAiReply(text);
+      // If streaming callback provided, simulate streaming by chunking
+      if (onChunk) {
+        simulateStreaming(parsed.content, parsed.reasoning, onChunk);
       }
-      return res.json();
-    }).then(function (data) {
-      if (onChunk) return data; // Streaming handled via callback
-      console.log('[BeaBea] Pollinations response:', data);
-      var content = data.choices?.[0]?.message?.content || '';
-      var reasoning = data.choices?.[0]?.message?.reasoning_content || data.choices?.[0]?.message?.reasoning || '';
-      return { content: content, reasoning: reasoning };
+      return { content: parsed.content, reasoning: parsed.reasoning };
     }).catch(function (e) {
       console.error('[BeaBea] Pollinations error:', e);
       throw e;
     });
   }
 
-  function handleStreamingResponse(res, onChunk) {
-    var reader = res.body.getReader();
-    var decoder = new TextDecoder();
-    var buffer = '';
-    var fullContent = '';
-    var fullReasoning = '';
-    var reasoningStarted = false;
+  // Simulate streaming for free tier (no real SSE support)
+  function simulateStreaming(content, reasoning, onChunk) {
+    var fullContent = content || '';
+    var fullReasoning = reasoning || '';
+    var chunkSize = 30; // chars per chunk
+    var i = 0;
     
-    return new Promise(function (resolve, reject) {
-      function read() {
-        reader.read().then(function (result) {
-          if (result.done) {
+    // Stream reasoning first if available
+    if (fullReasoning) {
+      var reasonChunks = fullReasoning.match(new RegExp('.{1,' + chunkSize + '}', 'g')) || [fullReasoning];
+      reasonChunks.forEach(function (chunk, idx) {
+        setTimeout(function () {
+          onChunk({ reasoning: chunk, reasoningAccumulated: reasonChunks.slice(0, idx + 1).join('') });
+        }, idx * 50);
+      });
+      i = reasonChunks.length * 50;
+    }
+    
+    // Then stream content
+    if (fullContent) {
+      var contentChunks = fullContent.match(new RegExp('.{1,' + chunkSize + '}', 'g')) || [fullContent];
+      contentChunks.forEach(function (chunk, idx) {
+        setTimeout(function () {
+          onChunk({ content: chunk, contentAccumulated: contentChunks.slice(0, idx + 1).join('') });
+          if (idx === contentChunks.length - 1) {
             onChunk({ done: true, content: fullContent, reasoning: fullReasoning });
-            resolve({ content: fullContent, reasoning: fullReasoning });
-            return;
           }
-          buffer += decoder.decode(result.value, { stream: true });
-          var lines = buffer.split('\n');
-          buffer = lines.pop();
-          lines.forEach(function (line) {
-            if (line.startsWith('data: ')) {
-              var data = line.slice(6).trim();
-              if (data === '[DONE]') return;
-              try {
-                var parsed = JSON.parse(data);
-                var delta = parsed.choices?.[0]?.delta;
-                if (delta) {
-                  if (delta.reasoning_content) {
-                    fullReasoning += delta.reasoning_content;
-                    onChunk({ reasoning: delta.reasoning_content, reasoningAccumulated: fullReasoning });
-                  }
-                  if (delta.content) {
-                    fullContent += delta.content;
-                    onChunk({ content: delta.content, contentAccumulated: fullContent });
-                  }
-                }
-              } catch (e) {}
-            }
-          });
-          read();
-        }).catch(reject);
-      }
-      read();
-    });
+        }, i + idx * 30);
+      });
+    } else if (!fullReasoning) {
+      onChunk({ done: true, content: '', reasoning: '' });
+    }
   }
 
   function sendToAI(userText, options) {
@@ -2133,7 +2115,7 @@ en: {
 
   function renderSettingsTab(content) {
     var providers = [
-      { value: 'pollinations', label: t('modelPollinations'), models: ['openai-reasoning', 'openai', 'gpt-4o', 'gpt-4o-mini'] },
+      { value: 'pollinations', label: t('modelPollinations'), models: ['openai', 'qwen-coder', 'mistral', 'deepseek'] },
       { value: 'deepseek', label: t('modelDeepSeek'), models: ['deepseek-chat', 'deepseek-reasoner'] },
       { value: 'groq', label: t('modelGroq'), models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'] }
     ];
@@ -2312,6 +2294,3 @@ en: {
     console.warn('BeaBea Coding Agent register fail:', err);
   }
 })(Scratch);
-
-
-

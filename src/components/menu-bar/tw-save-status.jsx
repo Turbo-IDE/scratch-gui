@@ -33,7 +33,7 @@ const messages = defineMessages({
         id: 'mw.saveStatus.preparingDownload'
     },
     uploadingToWorkshop: {
-        defaultMessage: 'Uploading to TurboWorkshop…',
+        defaultMessage: 'Uploading to TurboShare…',
         description: 'Menu bar upload status while the project is sent to TurboWorkshop',
         id: 'mw.saveStatus.uploadingToWorkshop'
     },
@@ -90,7 +90,7 @@ const messages = defineMessages({
         id: 'mw.saveStatus.uploadLabel'
     },
     downloadLabel: {
-        defaultMessage: 'Upload to TurboWorkshop',
+        defaultMessage: 'Upload to TurboShare',
         description: 'Menu bar upload button that sends the project to TurboWorkshop',
         id: 'mw.saveStatus.downloadLabel'
     },
@@ -116,7 +116,7 @@ const messages = defineMessages({
         id: 'mw.saveStatus.shortcutDownloads'
     },
     uploadWorkshopDetail: {
-        defaultMessage: 'Uploads this project to TurboWorkshop.',
+        defaultMessage: 'Uploads this project to TurboShare.',
         description: 'Tooltip on the menu bar button that uploads the project to TurboWorkshop',
         id: 'mw.saveStatus.uploadWorkshopDetail'
     },

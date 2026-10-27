@@ -25,7 +25,7 @@ describe('menu bar upload button without the community site', () => {
         jest.clearAllMocks();
     });
 
-    test('uploads to TurboWorkshop with the File menu mechanism instead of downloading', async () => {
+    test('uploads to TurboShare with the File menu mechanism instead of downloading', async () => {
         uploadProjectToWorkshop.mockReturnValue(Promise.resolve(true));
         const vm = {};
         const wrapper = mountWithIntl(
@@ -39,8 +39,8 @@ describe('menu bar upload button without the community site', () => {
         );
 
         const button = wrapper.find('button');
-        expect(button.text()).toContain('Upload to TurboWorkshop');
-        expect(button.prop('title')).toContain('Uploads this project to TurboWorkshop.');
+        expect(button.text()).toContain('Upload to TurboShare');
+        expect(button.prop('title')).toContain('Uploads this project to TurboShare.');
 
         await act(async () => {
             button.simulate('click');
@@ -78,7 +78,7 @@ describe('menu bar upload button without the community site', () => {
         const button = wrapper.find('button');
         expect(button.prop('aria-disabled')).toBe(true);
         expect(button.prop('aria-busy')).toBe(true);
-        expect(wrapper.find('[role="status"]').text()).toBe('Uploading to TurboWorkshop…');
+        expect(wrapper.find('[role="status"]').text()).toBe('Uploading to TurboShare…');
 
         wrapper.find('button').simulate('click');
         expect(uploadProjectToWorkshop).toHaveBeenCalledTimes(1);

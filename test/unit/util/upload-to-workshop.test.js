@@ -10,6 +10,9 @@ describe('uploadProjectToWorkshop', () => {
         },
         saveProjectSb3: jest.fn(() => Promise.resolve({
             arrayBuffer: () => Promise.resolve(new ArrayBuffer(16))
+        })),
+        saveProjectSb3DontZip: jest.fn(() => ({
+            'project.json': JSON.stringify({targets: [], version: '3.0.0'})
         }))
     });
 
@@ -43,7 +46,8 @@ describe('uploadProjectToWorkshop', () => {
             title: 'My Project',
             sb3Buffer: expect.any(ArrayBuffer),
             fileName: 'My Project.sb3',
-            thumbDataUrl: 'data:image/png;base64,thumbnail'
+            thumbDataUrl: 'data:image/png;base64,thumbnail',
+            projectJson: JSON.stringify({targets: [], version: '3.0.0'})
         });
         expect(targetOrigin).toBe('*');
         expect(transfer).toHaveLength(1);
