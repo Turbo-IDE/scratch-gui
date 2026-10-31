@@ -143,7 +143,7 @@ class UpdateToast extends React.Component {
                         />
                     ) : (
                         <FormattedMessage
-                            defaultMessage="A new version of MistWarp is available. Reload to update."
+                            defaultMessage="A new version of Turbo-IDE is available. Reload to update."
                             description="Toast shown when a newer deploy is detected"
                             id="mw.updateToast.availableNoVersion"
                         />

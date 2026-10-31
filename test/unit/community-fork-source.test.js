@@ -1,9 +1,11 @@
 import {
     getRememberedForkSource,
+    isForkSourceOwner,
     installForkSourceMetadata,
     normalizeForkSource,
     parseForkSource,
-    rememberForkSource
+    rememberForkSource,
+    setForkSourceOwner
 } from '../../src/lib/community/fork-source.js';
 
 describe('TurboShare fork source metadata', () => {
@@ -17,13 +19,23 @@ describe('TurboShare fork source metadata', () => {
             projectId: '1234',
             title: ' Original project ',
             author: 'Creator',
-            forkTitle: 'My fork'
+            forkTitle: 'My fork',
+            rootSource: {
+                projectId: 'original-1',
+                title: 'Root project',
+                author: 'Root creator'
+            }
         })).toEqual({
             platform: 'turboshare',
             projectId: '1234',
             title: 'Original project',
             author: 'Creator',
             forkTitle: 'My fork',
+            rootSource: {
+                projectId: 'original-1',
+                title: 'Root project',
+                author: 'Root creator'
+            },
             url: 'https://turboshare.org.uk/projects/1234'
         });
         expect(normalizeForkSource({platform: 'other', projectId: '1234'})).toBeNull();
@@ -43,6 +55,14 @@ describe('TurboShare fork source metadata', () => {
         expect(parseForkSource('{invalid')).toBeNull();
     });
 
+    test('tracks whether the active TurboShare project belongs to the viewer', () => {
+        const vm = {};
+        setForkSourceOwner(vm, false);
+        expect(isForkSourceOwner(vm)).toBe(false);
+        setForkSourceOwner(vm, true);
+        expect(isForkSourceOwner(vm)).toBe(true);
+    });
+
     test('adds fork attribution to exported Scratch project JSON', () => {
         const vm = {
             toJSON: () => JSON.stringify({targets: [], meta: {semver: '3.0.0'}})
@@ -51,14 +71,24 @@ describe('TurboShare fork source metadata', () => {
             platform: 'turboshare',
             projectId: '1234',
             title: 'Original project',
-            author: 'Creator'
+            author: 'Creator',
+            rootSource: {
+                projectId: '9876',
+                title: 'Root project',
+                author: 'Root creator'
+            }
         });
 
         expect(JSON.parse(vm.toJSON()).meta.turboshareFork).toMatchObject({
             platform: 'turboshare',
             projectId: '1234',
             title: 'Original project',
-            author: 'Creator'
+            author: 'Creator',
+            rootSource: {
+                projectId: '9876',
+                title: 'Root project',
+                author: 'Root creator'
+            }
         });
         installForkSourceMetadata(vm, null);
         expect(JSON.parse(vm.toJSON()).meta.turboshareFork).toBeUndefined();

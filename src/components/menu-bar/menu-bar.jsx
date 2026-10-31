@@ -28,9 +28,11 @@ import {
 } from '../../lib/community/publish.js';
 import {
     getRememberedForkSource,
+    isForkSourceOwner,
     installForkSourceMetadata,
     normalizeForkSource,
-    rememberForkSource
+    rememberForkSource,
+    setForkSourceOwner
 } from '../../lib/community/fork-source.js';
 import {getProject as getMistWarpProject, remixProject} from '../../lib/community/api.js';
 import communityEnabled from '../../lib/community/enabled.js';
@@ -287,6 +289,16 @@ const twMessages = defineMessages({
         id: 'mw.editor.forkMarked',
         defaultMessage: 'Đã đánh dấu fork. Hãy lưu hoặc xuất .sb3 rồi tải lên TurboShare để đăng dự án.',
         description: 'Toast shown after marking the current workspace as a TurboShare fork'
+    },
+    forkRequired: {
+        id: 'mw.editor.forkRequired',
+        defaultMessage: 'Hãy fork dự án trước khi chỉnh sửa hoặc tải lên TurboShare.',
+        description: 'Shown when a viewer tries to edit or upload someone else’s TurboShare project'
+    },
+    uploadForkedProject: {
+        id: 'mw.editor.uploadForkedProject',
+        defaultMessage: 'Tải lên TurboShare',
+        description: 'Button to upload a forked project to TurboShare'
     }
 });
 
@@ -455,7 +467,9 @@ class MenuBar extends React.Component {
             mediaRecorderOpenRequest: 0,
             menuBarSettings: getMenuBarSettings(),
             mistwarpProject: getRememberedPlatformProjectState(),
-            forkedSource: false
+            forkedSource: Boolean(props.vm && props.vm._mwForkedSource),
+            hasTurboShareSource: Boolean(getRememberedForkSource()),
+            turboShareSourceOwner: isForkSourceOwner(props.vm)
         };
         this.menuBarRef = React.createRef();
         this.mainMenuRef = React.createRef();
@@ -494,6 +508,8 @@ class MenuBar extends React.Component {
             'handleClickSeeMistWarpPage',
             'handleClickBackToProjectPage',
             'handleClickFork',
+            'handleRequestFork',
+            'handleTurboShareSourceChanged',
             'refreshMistWarpShared',
             'handleClickUndo',
             'handleClickRedo',
@@ -541,6 +557,8 @@ class MenuBar extends React.Component {
     componentDidMount () {
         this.unmounted = false;
         window.addEventListener('mw:request-new-project', this.handleClickNew);
+        window.addEventListener('mw:request-fork', this.handleRequestFork);
+        window.addEventListener('mw:turboshare-source-changed', this.handleTurboShareSourceChanged);
         document.addEventListener('keydown', this.handleKeyPress);
         document.addEventListener('mousedown', this.handleDocumentMouseDown);
         this.observeMenuBarWidth();
@@ -610,6 +628,8 @@ class MenuBar extends React.Component {
     componentWillUnmount () {
         this.unmounted = true;
         window.removeEventListener('mw:request-new-project', this.handleClickNew);
+        window.removeEventListener('mw:request-fork', this.handleRequestFork);
+        window.removeEventListener('mw:turboshare-source-changed', this.handleTurboShareSourceChanged);
         document.removeEventListener('keydown', this.handleKeyPress);
         document.removeEventListener('mousedown', this.handleDocumentMouseDown);
         if (this.blockCountController) this.blockCountController.destroy();
@@ -888,6 +908,24 @@ class MenuBar extends React.Component {
         this.handleClickSeeMistWarpPage();
     }
 
+    handleRequestFork () {
+        void this.handleClickFork();
+    }
+
+    handleTurboShareSourceChanged () {
+        this.setState({
+            hasTurboShareSource: Boolean(getRememberedForkSource()),
+            turboShareSourceOwner: isForkSourceOwner(this.props.vm),
+            forkedSource: Boolean(this.props.vm && this.props.vm._mwForkedSource)
+        });
+    }
+
+    canUploadTurboShareProject () {
+        return !this.state.hasTurboShareSource ||
+            this.state.turboShareSourceOwner ||
+            this.state.forkedSource;
+    }
+
     async handleClickFork () {
         this.props.onRequestCloseFile();
         const platform = getRememberedPlatformProjectState();
@@ -899,11 +937,18 @@ class MenuBar extends React.Component {
                 `Forked from ${forkSource.title} by ${forkSource.author}. Enter a name for your fork.`,
                 forkSource.forkTitle || `${this.props.projectTitle || forkSource.title} fork`
             );
-            if (forkTitle === null || !forkTitle.trim()) return;
+            if (forkTitle === null || !forkTitle.trim()) {
+                if (!isForkSourceOwner(this.props.vm) && this.props.onSetPlayer) {
+                    this.props.onSetPlayer(true);
+                }
+                return;
+            }
             try {
                 const sourceWithTitle = normalizeForkSource({...forkSource, forkTitle: forkTitle.trim()});
                 rememberForkSource(sourceWithTitle);
                 installForkSourceMetadata(this.props.vm, sourceWithTitle);
+                setForkSourceOwner(this.props.vm, true);
+                if (this.props.onSetPlayer) this.props.onSetPlayer(false);
                 this.setState({forkedSource: true});
                 this.showToastMessage(
                     this.props.intl.formatMessage(twMessages.forkMarked),
@@ -1619,10 +1664,24 @@ class MenuBar extends React.Component {
         }
     }
     handleClickSeeInside () {
+        if (this.state.hasTurboShareSource && !this.canUploadTurboShareProject()) {
+            this.showToastMessage(
+                this.props.intl.formatMessage(twMessages.forkRequired),
+                'warning'
+            );
+            return;
+        }
         this.props.onClickSeeInside();
     }
     // Authors: katboizz
     async handleClickUploadProject () {
+        if (!this.canUploadTurboShareProject()) {
+            this.showToastMessage(
+                this.props.intl.formatMessage(twMessages.forkRequired),
+                'warning'
+            );
+            return;
+        }
         await uploadProjectToWorkshop({
             vm: this.props.vm,
             projectTitle: this.props.projectTitle,
@@ -2017,18 +2076,20 @@ class MenuBar extends React.Component {
                                             />
                                         </MenuItem>
                                     )}
-                                    <MenuSection>
-                                        <MenuItem
-                                            onClick={this.handleClickUploadProject}
-                                        >
-                                            <Globe />
-                                            <FormattedMessage
-                                                defaultMessage="Upload to TurboShare"
-                                                description="File menu item to upload project to TurboWorkshop"
-                                                id="tw.menuBar.uploadTurboworkshop"
-                                            />
-                                        </MenuItem>
-                                    </MenuSection>
+                                    {!this.state.forkedSource && this.canUploadTurboShareProject() && (
+                                        <MenuSection>
+                                            <MenuItem
+                                                onClick={this.handleClickUploadProject}
+                                            >
+                                                <Globe />
+                                                <FormattedMessage
+                                                    defaultMessage="Upload to TurboShare"
+                                                    description="File menu item to upload project to TurboWorkshop"
+                                                    id="tw.menuBar.uploadTurboworkshop"
+                                                />
+                                            </MenuItem>
+                                        </MenuSection>
+                                    )}
                                     <MenuSection>
                                         <MenuItem
                                             onClick={this.handleClickLoadFromComputer}
@@ -2502,7 +2563,23 @@ class MenuBar extends React.Component {
                         </div>
                     )}
 
-                    {(platformProject ? platformProject.canRemix !== false : Boolean(forkSource)) ? (
+                    {this.state.forkedSource ? (
+                        <div
+                            data-mw-item="upload-fork-to-turboshare"
+                            className={styles.menuBarItem}
+                        >
+                            <Button
+                                className={styles.menuBarButton}
+                                variant="secondary"
+                                iconElem={Globe}
+                                onClick={this.handleClickUploadProject}
+                                title="Tải fork lên TurboShare"
+                                style={{color: '#fff'}}
+                            >
+                                <FormattedMessage {...twMessages.uploadForkedProject} />
+                            </Button>
+                        </div>
+                    ) : (platformProject ? platformProject.canRemix !== false : Boolean(forkSource)) ? (
                         <div
                             data-mw-item="fork-project"
                             className={styles.menuBarItem}
@@ -2667,6 +2744,7 @@ MenuBar.propTypes = {
     onClickProducts: PropTypes.func,
     onClickGameItems: PropTypes.func,
     onClickVariableManager: PropTypes.func,
+    onSetPlayer: PropTypes.func,
     onClickAddRestorePoint: PropTypes.func,
     onClickExtensionManager: PropTypes.func,
     openSimpleDialog: PropTypes.func.isRequired,
@@ -2752,6 +2830,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => ({
     onClickSeeInside: () => dispatch(setPlayer(false)),
+    onSetPlayer: isPlayerOnly => dispatch(setPlayer(isPlayerOnly)),
     onOpenExtensionLibrary: () => dispatch(openExtensionLibrary()),
     onClickAccount: () => dispatch(openAccountMenu()),
     onRequestCloseAccount: () => dispatch(closeAccountMenu()),

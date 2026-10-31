@@ -25,6 +25,7 @@ import {
     BLOCKS_TAB_INDEX
 } from '../../reducers/editor-tab.js';
 import {openSimpleDialog} from '../../reducers/modals.js';
+import {setPlayer} from '../../reducers/mode.js';
 
 import log from '../utils/log.js';
 import storage from '../persistence/storage.js';
@@ -48,7 +49,8 @@ import {
 import {
     installForkSourceMetadata,
     parseForkSource,
-    rememberForkSource
+    rememberForkSource,
+    setForkSourceOwner
 } from '../community/fork-source.js';
 import {
     getEditorProject as getMistWarpEditorProject
@@ -80,7 +82,8 @@ const clearProjectSourceFromUrl = () => {
     const params = new URLSearchParams(location.search);
     let changed = false;
     const sourceParams = [
-        'clone', 'project_url', 'platform_project', 'mw_assets', 'mw_te', 'mw_fork_source', 'starter', 'restore'
+        'clone', 'project_url', 'platform_project', 'mw_assets', 'mw_te',
+        'mw_fork_source', 'mw_fork', 'mw_fork_owner', 'starter', 'restore'
     ];
     for (const key of sourceParams) {
         if (params.has(key)) {
@@ -110,6 +113,7 @@ const clearProjectSourceOnForeignLoads = vm => {
         if (foreign) {
             rememberForkSource(null);
             installForkSourceMetadata(vm, null);
+            setForkSourceOwner(vm, false);
         }
         return Promise.resolve(originalLoadProject(...args)).then(result => {
             if (foreign) clearProjectSourceFromUrl();
@@ -174,8 +178,16 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 const initialPlatformId = searchParams.get('platform_project') ||
                     (location.hash.match(/^#mw-([\w-]+)/) || [])[1];
                 const forkSource = parseForkSource(searchParams.get('mw_fork_source'));
+                this.autoForkRequested = searchParams.get('mw_fork') === '1' && Boolean(forkSource);
+                const isTurboShareSourceOwner = Boolean(
+                    forkSource && searchParams.get('mw_fork_owner') === '1'
+                );
                 rememberForkSource(forkSource);
-                installForkSourceMetadata(props.vm, forkSource);
+                setForkSourceOwner(props.vm, isTurboShareSourceOwner);
+                if (forkSource && !isTurboShareSourceOwner && !this.autoForkRequested &&
+                    props.onSetPlayer) {
+                    props.onSetPlayer(true);
+                }
                 rememberPlatformProject(initialPlatformId ? {id: initialPlatformId} : null);
                 const referrer = searchParams.get('referrer');
                 if (referrer) rememberEditorReferrer(referrer);
@@ -208,6 +220,13 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             }
             if (this.props.isShowingProject && !prevProps.isShowingProject) {
                 this.props.onProjectUnchanged();
+            }
+            if (this.autoForkRequested && this.props.isShowingProject &&
+                (prevProps.isLoadingProject || prevProps.isCreatingNew)) {
+                this.autoForkRequested = false;
+                window.setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('mw:request-fork'));
+                }, 0);
             }
             if (this.props.isShowingProject && (prevProps.isLoadingProject || prevProps.isCreatingNew)) {
                 this.props.onActivateTab(BLOCKS_TAB_INDEX);
@@ -476,6 +495,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         onProjectUnchanged: PropTypes.func,
         onAbortProjectSwitch: PropTypes.func,
         onSetProjectTitle: PropTypes.func,
+        onSetPlayer: PropTypes.func,
         onShowProjectSwitchError: PropTypes.func,
         projectHost: PropTypes.string,
         projectToken: PropTypes.string,
@@ -512,7 +532,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             dispatch(onFetchedProjectData(projectData, loadingState)),
         setProjectId: projectId => dispatch(setProjectId(projectId)),
         onProjectUnchanged: () => dispatch(setProjectUnchanged()),
-        onSetProjectTitle: title => dispatch(setProjectTitle(title))
+        onSetProjectTitle: title => dispatch(setProjectTitle(title)),
+        onSetPlayer: isPlayerOnly => dispatch(setPlayer(isPlayerOnly))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

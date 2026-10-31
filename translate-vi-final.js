@@ -789,8 +789,8 @@ const T = {
 
     // === Update toast ===
     "Version {oldId} → {newId}": "Phiên bản {oldId} → {newId}",
-    "A new version of MistWarp is available. You have unsaved changes, so save your project before reloading.": "Có phiên bản mới của MistWarp. Bạn có thay đổi chưa lưu, vì vậy hãy lưu dự án của bạn trước khi tải lại.",
-    "A new version of MistWarp is available. Reload to update.": "Có phiên bản mới của MistWarp. Hãy tải lại để cập nhật.",
+    "A new version of MistWarp is available. You have unsaved changes, so save your project before reloading.": "Có phiên bản mới của Turbo-IDE. Bạn có thay đổi chưa lưu, vì vậy hãy lưu dự án của bạn trước khi tải lại.",
+    "A new version of Turbo-IDE is available. Reload to update.": "Có phiên bản mới của Turbo-IDE. Hãy tải lại để cập nhật.",
     "Later": "Sau này",
 
     // === Variable Manager ===

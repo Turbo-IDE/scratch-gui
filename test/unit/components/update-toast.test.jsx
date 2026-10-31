@@ -16,7 +16,7 @@ const mountToast = projectChanged => {
 describe('update toast', () => {
     test('hides build ids in a tooltip and can be dismissed', () => {
         const wrapper = mountToast(false);
-        expect(wrapper.text()).toContain('A new version of MistWarp is available. Reload to update.');
+        expect(wrapper.text()).toContain('A new version of Turbo-IDE is available. Reload to update.');
         expect(wrapper.text()).not.toContain('abcdef0');
         expect(wrapper.find('[title]').first()
             .prop('title')).toContain('abcdef0');

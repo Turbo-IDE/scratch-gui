@@ -77,6 +77,29 @@ describe('menu bar file workflows', () => {
         rememberPlatformProject(null);
     });
 
+    test('only allows TurboShare uploads from an owned or forked workspace', () => {
+        rememberForkSource({
+            platform: 'turboshare',
+            projectId: '1234',
+            title: 'Original project',
+            author: 'Creator'
+        });
+        const vm = {_mwTurboShareSourceOwner: false};
+        const menuBar = makeMenuBar({vm});
+        menuBar.state = {
+            hasTurboShareSource: true,
+            turboShareSourceOwner: false,
+            forkedSource: false
+        };
+
+        expect(menuBar.canUploadTurboShareProject()).toBe(false);
+        menuBar.state.forkedSource = true;
+        expect(menuBar.canUploadTurboShareProject()).toBe(true);
+        menuBar.state.forkedSource = false;
+        menuBar.state.turboShareSourceOwner = true;
+        expect(menuBar.canUploadTurboShareProject()).toBe(true);
+    });
+
     test('marks a TurboShare source fork without downloading it', async () => {
         const source = {
             platform: 'turboshare',

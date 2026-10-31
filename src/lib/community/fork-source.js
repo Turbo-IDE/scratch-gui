@@ -1,22 +1,41 @@
 const FORK_SOURCE_KEY = 'mw:turboshare-fork-source';
 
-const normalizeForkSource = source => {
-    if (!source || typeof source !== 'object' || source.platform !== 'turboshare') return null;
+const setForkSourceOwner = (vm, isOwner) => {
+    if (!vm) return;
+    vm._mwTurboShareSourceOwner = Boolean(isOwner);
+    if (typeof window !== 'undefined' && typeof CustomEvent !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('mw:turboshare-source-changed'));
+    }
+};
+
+const isForkSourceOwner = vm => Boolean(vm && vm._mwTurboShareSourceOwner);
+
+const normalizeForkParty = source => {
+    if (!source || typeof source !== 'object') return null;
     const projectId = String(source.projectId || '').trim();
     if (!/^[A-Za-z0-9_-]{1,80}$/.test(projectId)) return null;
-    const title = String(source.title || 'Untitled').trim()
-        .slice(0, 100);
-    const author = String(source.author || 'Unknown').trim()
-        .slice(0, 80);
+    return {
+        projectId,
+        title: String(source.title || 'Untitled').trim()
+            .slice(0, 100) || 'Untitled',
+        author: String(source.author || 'Unknown').trim()
+            .slice(0, 80) || 'Unknown'
+    };
+};
+
+const normalizeForkSource = source => {
+    if (!source || typeof source !== 'object' || source.platform !== 'turboshare') return null;
+    const parent = normalizeForkParty(source);
+    if (!parent) return null;
     const forkTitle = String(source.forkTitle || '').trim()
         .slice(0, 100);
+    const rootSource = normalizeForkParty(source.rootSource);
     return {
         platform: 'turboshare',
-        projectId,
-        title: title || 'Untitled',
-        author: author || 'Unknown',
+        ...parent,
         ...(forkTitle ? {forkTitle} : {}),
-        url: `https://turboshare.org.uk/projects/${encodeURIComponent(projectId)}`
+        ...(rootSource ? {rootSource} : {}),
+        url: `https://turboshare.org.uk/projects/${encodeURIComponent(parent.projectId)}`
     };
 };
 
@@ -53,6 +72,7 @@ const getRememberedForkSource = () => {
 const installForkSourceMetadata = (vm, source) => {
     if (!vm) return;
     vm._mwForkSource = normalizeForkSource(source);
+    vm._mwForkedSource = Boolean(vm._mwForkSource);
     if (vm._mwForkMetadataInstalled) return;
 
     const originalToJSON = vm.toJSON;
@@ -70,8 +90,10 @@ const installForkSourceMetadata = (vm, source) => {
 
 export {
     getRememberedForkSource,
+    isForkSourceOwner,
     installForkSourceMetadata,
     normalizeForkSource,
     parseForkSource,
-    rememberForkSource
+    rememberForkSource,
+    setForkSourceOwner
 };

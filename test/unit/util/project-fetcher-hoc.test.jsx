@@ -57,6 +57,56 @@ describe('ProjectFetcherHOC', () => {
         expect(mounted.find(Component).prop('isEmbedded')).toBe(true);
     });
 
+    test('opens another creator’s TurboShare project in player-only mode', () => {
+        const source = encodeURIComponent(JSON.stringify({
+            platform: 'turboshare',
+            projectId: '1234',
+            title: 'Original project',
+            author: 'Creator'
+        }));
+        window.history.replaceState({}, '', `/?mw_fork_source=${source}&mw_fork_owner=0`);
+        const Component = () => <div />;
+        const WrappedComponent = ProjectFetcherHOC(Component);
+        const vmForFetch = {loadProject: jest.fn()};
+
+        mountWithIntl(
+            <WrappedComponent
+                store={store}
+                vm={vmForFetch}
+            />
+        );
+
+        expect(store.getActions()).toContainEqual({
+            type: 'scratch-gui/mode/SET_PLAYER',
+            isPlayerOnly: true
+        });
+    });
+
+    test('leaves the owner’s TurboShare project editable', () => {
+        const source = encodeURIComponent(JSON.stringify({
+            platform: 'turboshare',
+            projectId: '1234',
+            title: 'Original project',
+            author: 'Creator'
+        }));
+        window.history.replaceState({}, '', `/?mw_fork_source=${source}&mw_fork_owner=1`);
+        const Component = () => <div />;
+        const WrappedComponent = ProjectFetcherHOC(Component);
+        const vmForFetch = {loadProject: jest.fn()};
+
+        mountWithIntl(
+            <WrappedComponent
+                store={store}
+                vm={vmForFetch}
+            />
+        );
+
+        expect(store.getActions()).not.toContainEqual({
+            type: 'scratch-gui/mode/SET_PLAYER',
+            isPlayerOnly: true
+        });
+    });
+
     test('keeps the current VM intact while fetching replacement data', async () => {
         const Component = () => <div />;
         const WrappedComponent = ProjectFetcherHOC(Component);
