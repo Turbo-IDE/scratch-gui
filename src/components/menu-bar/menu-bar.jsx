@@ -26,8 +26,9 @@ import {
     rememberPlatformProject,
     getRememberedEditorReferrer
 } from '../../lib/community/publish.js';
-import {getProject as getMistWarpProject} from '../../lib/community/api.js';
+import {getProject as getMistWarpProject, remixProject} from '../../lib/community/api.js';
 import communityEnabled from '../../lib/community/enabled.js';
+import {editorUrl} from '../../community/api.js';
 import Divider from '../divider/divider.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
 import MenuLabel from './tw-menu-label.jsx';
@@ -171,7 +172,7 @@ import {
     Download, AppWindow, Computer, Shield, Code, Code2,
     Blocks as BlocksIcon, Menu as MenuIcon, Globe, Video,
     ShoppingBag, Backpack, Check, Zap,
-    Bookmark, BookmarkPlus, Trash2, FolderOpen
+    Bookmark, BookmarkPlus, Trash2, FolderOpen, GitFork
 } from 'lucide-react';
 
 import sharedMessages from '../../lib/constants/shared-messages';
@@ -265,6 +266,16 @@ const twMessages = defineMessages({
         id: 'mw.editor.backToProjectPage',
         defaultMessage: 'Xem trang dự án',
         description: 'Button that opens the project page the editor was launched from'
+    },
+    forkProject: {
+        id: 'mw.editor.forkProject',
+        defaultMessage: 'Fork Dự án',
+        description: 'Button that creates a copy of this MistWarp project linked to the original'
+    },
+    forkConfirm: {
+        id: 'mw.editor.forkConfirm',
+        defaultMessage: 'Tạo bản sao "{title}" liên kết với dự án gốc?',
+        description: 'Confirmation before creating a fork'
     }
 });
 
@@ -470,6 +481,7 @@ class MenuBar extends React.Component {
             'handleClickMistWarpShare',
             'handleClickSeeMistWarpPage',
             'handleClickBackToProjectPage',
+            'handleClickFork',
             'refreshMistWarpShared',
             'handleClickUndo',
             'handleClickRedo',
@@ -862,6 +874,31 @@ class MenuBar extends React.Component {
             return;
         }
         this.handleClickSeeMistWarpPage();
+    }
+
+    async handleClickFork () {
+        this.props.onRequestCloseFile();
+        const platform = getRememberedPlatformProjectState();
+        if (!platform || !platform.id) return;
+        const forkTitle = `${this.props.projectTitle || 'Untitled'} fork`;
+        const confirmed = await this.showConfirm(
+            this.props.intl.formatMessage(twMessages.forkConfirm, {title: forkTitle})
+        );
+        if (!confirmed) return;
+        try {
+            const result = await remixProject(platform.id, {
+                title: forkTitle,
+                branch: platform.gitBranch || 'main'
+            });
+            const forkId = result && result.id ? result.id : (result && result.project && result.project.id);
+            if (forkId) {
+                window.location.href = editorUrl({platformProject: forkId});
+            } else {
+                this.showToast('Fork thành công nhưng không lấy được ID dự án mới.', 'warning');
+            }
+        } catch (e) {
+            this.showToast(e && e.message ? e.message : 'Không thể tạo fork dự án.', 'error');
+        }
     }
 
     handleClickFile () {
@@ -2414,14 +2451,33 @@ class MenuBar extends React.Component {
                         data-mw-item="back-to-project-page"
                         className={styles.menuBarItem}
                     >
-                        <button
+                        <Button
                             className={styles.menuBarButton}
+                            variant="secondary"
+                            iconElem={Globe}
                             onClick={this.handleClickBackToProjectPage}
                             title={this.props.intl.formatMessage(twMessages.backToProjectPage)}
                         >
                             {this.props.intl.formatMessage(twMessages.backToProjectPage)}
-                        </button>
+                        </Button>
                     </div>
+
+                    {getRememberedPlatformProjectState() ? (
+                        <div
+                            data-mw-item="fork-project"
+                            className={styles.menuBarItem}
+                        >
+                            <Button
+                                className={styles.menuBarButton}
+                                variant="secondary"
+                                iconElem={GitFork}
+                                onClick={this.handleClickFork}
+                                title={this.props.intl.formatMessage(twMessages.forkProject)}
+                            >
+                                {this.props.intl.formatMessage(twMessages.forkProject)}
+                            </Button>
+                        </div>
+                    ) : null}
 
                     {(this.props.isShowingProject || this.props.isUpdating) &&
                         this.props.projectId && this.props.projectId !== '0' ? (

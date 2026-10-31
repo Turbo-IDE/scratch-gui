@@ -238,6 +238,8 @@
   "mw.menuBar.codeTabOnly": "Available on the Code tab",
   "mw.menuBar.cloudSettings": "Cloud variable settings",
   "mw.editor.backToProjectPage": "Xem trang dự án",
+  "mw.editor.forkProject": "Fork Dự án",
+  "mw.editor.forkConfirm": "Tạo bản sao \"{title}\" liên kết với dự án gốc?",
   "tw.workspaceBookmarks.defaultName": "Bookmark {number}",
   "tw.workspaceBookmarks.empty": "No bookmarks yet",
   "tw.workspaceBookmarks.emptyHelp": "A bookmark remembers a sprite and where you are in its code.",
