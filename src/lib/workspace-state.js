@@ -10,7 +10,10 @@ const detachWorkspace = vm => {
     vm._mwApprovedRemotes = new Set();
     const url = new URL(window.location.href);
     url.hash = '';
-    for (const key of ['clone', 'project_url', 'platform_project', 'mw_assets', 'mw_te', 'starter', 'restore']) {
+    const sourceParams = [
+        'clone', 'project_url', 'platform_project', 'mw_assets', 'mw_te', 'mw_fork_source', 'starter', 'restore'
+    ];
+    for (const key of sourceParams) {
         url.searchParams.delete(key);
     }
     window.history.replaceState(null, '', url);

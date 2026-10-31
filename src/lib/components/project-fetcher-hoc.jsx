@@ -46,6 +46,11 @@ import {
     rememberEditorReferrer
 } from '../community/publish.js';
 import {
+    installForkSourceMetadata,
+    parseForkSource,
+    rememberForkSource
+} from '../community/fork-source.js';
+import {
     getEditorProject as getMistWarpEditorProject
 } from '../community/api.js';
 import {hasBridge, bridgeFetch} from '../community/embed-bridge.js';
@@ -74,7 +79,10 @@ const clearProjectSourceFromUrl = () => {
     if (typeof location === 'undefined' || typeof URLSearchParams === 'undefined') return;
     const params = new URLSearchParams(location.search);
     let changed = false;
-    for (const key of ['clone', 'project_url', 'platform_project', 'mw_assets', 'mw_te', 'starter', 'restore']) {
+    const sourceParams = [
+        'clone', 'project_url', 'platform_project', 'mw_assets', 'mw_te', 'mw_fork_source', 'starter', 'restore'
+    ];
+    for (const key of sourceParams) {
         if (params.has(key)) {
             params.delete(key);
             changed = true;
@@ -99,6 +107,10 @@ const clearProjectSourceOnForeignLoads = vm => {
         vm._mwCanTrustProject = Boolean(args[1] && args[1].mwCanTrustProject);
         const foreign = !fetchInitiatedLoad && !(args[1] && args[1].mwPreserveProjectSource);
         fetchInitiatedLoad = false;
+        if (foreign) {
+            rememberForkSource(null);
+            installForkSourceMetadata(vm, null);
+        }
         return Promise.resolve(originalLoadProject(...args)).then(result => {
             if (foreign) clearProjectSourceFromUrl();
             return result;
@@ -161,6 +173,9 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 const searchParams = new URLSearchParams(location.search);
                 const initialPlatformId = searchParams.get('platform_project') ||
                     (location.hash.match(/^#mw-([\w-]+)/) || [])[1];
+                const forkSource = parseForkSource(searchParams.get('mw_fork_source'));
+                rememberForkSource(forkSource);
+                installForkSourceMetadata(props.vm, forkSource);
                 rememberPlatformProject(initialPlatformId ? {id: initialPlatformId} : null);
                 const referrer = searchParams.get('referrer');
                 if (referrer) rememberEditorReferrer(referrer);

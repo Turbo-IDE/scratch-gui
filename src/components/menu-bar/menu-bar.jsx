@@ -26,6 +26,7 @@ import {
     rememberPlatformProject,
     getRememberedEditorReferrer
 } from '../../lib/community/publish.js';
+import {getRememberedForkSource} from '../../lib/community/fork-source.js';
 import {getProject as getMistWarpProject, remixProject} from '../../lib/community/api.js';
 import communityEnabled from '../../lib/community/enabled.js';
 import {editorUrl} from '../../community/api.js';
@@ -276,6 +277,11 @@ const twMessages = defineMessages({
         id: 'mw.editor.forkConfirm',
         defaultMessage: 'Tạo bản sao "{title}" liên kết với dự án gốc?',
         description: 'Confirmation before creating a fork'
+    },
+    forkDownloadReady: {
+        id: 'mw.editor.forkDownloadReady',
+        defaultMessage: 'Đã tải bản fork xuống. Hãy tải tệp .sb3 này lên TurboShare để đăng dự án.',
+        description: 'Toast shown after downloading a TurboShare fork copy'
     }
 });
 
@@ -879,7 +885,27 @@ class MenuBar extends React.Component {
     async handleClickFork () {
         this.props.onRequestCloseFile();
         const platform = getRememberedPlatformProjectState();
-        if (!platform || !platform.id) return;
+        if (!platform || !platform.id) {
+            const forkSource = getRememberedForkSource();
+            if (!forkSource) return;
+            const forkTitle = `${this.props.projectTitle || forkSource.title} fork`;
+            const confirmed = await this.showConfirm(
+                this.props.intl.formatMessage(twMessages.forkConfirm, {title: forkTitle})
+            );
+            if (!confirmed) return;
+            try {
+                const blob = await this.props.vm.saveProjectSb3('blob');
+                downloadBlob(projectFilename(forkTitle, 'project', 'sb3'), blob);
+                this.showToastMessage(
+                    this.props.intl.formatMessage(twMessages.forkDownloadReady),
+                    'success'
+                );
+            } catch (e) {
+                this.showToastMessage(e.message || 'Không thể tạo fork dự án.', 'error');
+            }
+            return;
+        }
+        if (platform.canRemix === false) return;
         const forkTitle = `${this.props.projectTitle || 'Untitled'} fork`;
         const confirmed = await this.showConfirm(
             this.props.intl.formatMessage(twMessages.forkConfirm, {title: forkTitle})
@@ -1817,6 +1843,8 @@ class MenuBar extends React.Component {
         };
     }
     render () {
+        const platformProject = getRememberedPlatformProjectState();
+        const forkSource = getRememberedForkSource();
         const newProjectMessage = (
             <FormattedMessage
                 defaultMessage="New"
@@ -2462,7 +2490,7 @@ class MenuBar extends React.Component {
                         </Button>
                     </div>
 
-                    {getRememberedPlatformProjectState() ? (
+                    {(platformProject ? platformProject.canRemix !== false : Boolean(forkSource)) ? (
                         <div
                             data-mw-item="fork-project"
                             className={styles.menuBarItem}

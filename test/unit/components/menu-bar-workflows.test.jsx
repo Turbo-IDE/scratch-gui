@@ -3,6 +3,11 @@ import {openExtensionLibrary} from '../../../src/reducers/modals';
 import {commitProject, pull, push, repoExists} from '../../../src/lib/git/browser-git';
 import {createMwp} from '../../../src/lib/git/mwp.js';
 import RestorePointAPI from '../../../src/lib/api/restore-points.js';
+import {rememberPlatformProject} from '../../../src/lib/community/publish.js';
+import {rememberForkSource} from '../../../src/lib/community/fork-source.js';
+import downloadBlob from '../../../src/lib/utils/download-blob.js';
+
+jest.mock('../../../src/lib/utils/download-blob.js', () => jest.fn());
 
 jest.mock('../../../src/lib/git/browser-git', () => ({
     REPO_DIR: '/repo',
@@ -52,6 +57,54 @@ describe('menu bar file workflows', () => {
         push.mockClear();
         pull.mockClear();
         commitProject.mockClear();
+        rememberPlatformProject(null);
+        rememberForkSource(null);
+    });
+
+    test('does not start a fork when the project owner disabled remixes', async () => {
+        rememberPlatformProject({id: 'project-1', isOwner: false, canRemix: false});
+        const showConfirm = jest.fn();
+        const menuBar = makeMenuBar({
+            intl,
+            onRequestCloseFile: jest.fn(),
+            showConfirm
+        });
+
+        await menuBar.handleClickFork();
+
+        expect(showConfirm).not.toHaveBeenCalled();
+        expect(menuBar.props.onRequestCloseFile).toHaveBeenCalledTimes(1);
+        rememberPlatformProject(null);
+    });
+
+    test('downloads a TurboShare source fork with embedded attribution', async () => {
+        const source = {
+            platform: 'turboshare',
+            projectId: '1234',
+            title: 'Original project',
+            author: 'Creator'
+        };
+        rememberForkSource(source);
+        const blob = new Blob();
+        const showToast = jest.fn();
+        const menuBar = makeMenuBar({
+            intl,
+            onRequestCloseFile: jest.fn(),
+            projectTitle: 'My project',
+            showToast,
+            vm: {saveProjectSb3: jest.fn(() => Promise.resolve(blob))}
+        });
+        menuBar.showConfirm = jest.fn(() => Promise.resolve(true));
+
+        await menuBar.handleClickFork();
+
+        expect(menuBar.props.vm.saveProjectSb3).toHaveBeenCalledWith('blob');
+        expect(downloadBlob).toHaveBeenCalledWith('My project fork.sb3', blob);
+        expect(showToast).toHaveBeenCalledWith(
+            'Đã tải bản fork xuống. Hãy tải tệp .sb3 này lên TurboShare để đăng dự án.',
+            'success'
+        );
+        rememberForkSource(null);
     });
 
     test('leaves normal save and open shortcuts to the global shortcut router', () => {
