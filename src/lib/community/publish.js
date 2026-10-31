@@ -127,6 +127,28 @@ const getScratchOrigin = () => {
     }
 };
 
+const EDITOR_REFERRER_KEY = 'mw:mistwarp-editor-referrer';
+
+const rememberEditorReferrer = referrer => {
+    try {
+        if (referrer) {
+            sessionStorage.setItem(EDITOR_REFERRER_KEY, String(referrer));
+        } else {
+            sessionStorage.removeItem(EDITOR_REFERRER_KEY);
+        }
+    } catch (e) {
+        // ignore
+    }
+};
+
+const getRememberedEditorReferrer = () => {
+    try {
+        return sessionStorage.getItem(EDITOR_REFERRER_KEY) || null;
+    } catch (e) {
+        return null;
+    }
+};
+
 const captureThumbnailDataUri = vm => new Promise(resolve => {
     try {
         const renderer = vm && vm.renderer;
@@ -423,5 +445,7 @@ export {
     getRememberedPlatformProjectState,
     getMistWarpAction,
     rememberScratchOrigin,
-    getScratchOrigin
+    getScratchOrigin,
+    rememberEditorReferrer,
+    getRememberedEditorReferrer
 };

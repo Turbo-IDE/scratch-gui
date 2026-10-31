@@ -40,7 +40,11 @@ import {
 import {buildSb3FromFractchTree} from '../git/fractch-tree.js';
 import {buildSb3FromCurrentRepo, importMwp, isMwpArchive} from '../git/mwp.js';
 import {getAuth as getRoturGitAuth} from '../rotur/git-api.js';
-import {getRememberedPlatformProjectState, rememberPlatformProject} from '../community/publish.js';
+import {
+    getRememberedPlatformProjectState,
+    rememberPlatformProject,
+    rememberEditorReferrer
+} from '../community/publish.js';
 import {
     getEditorProject as getMistWarpEditorProject
 } from '../community/api.js';
@@ -154,9 +158,12 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             this.state = {projectFetchError: null};
             this.fetchGeneration = 0;
             if (typeof location !== 'undefined' && typeof URLSearchParams !== 'undefined') {
-                const initialPlatformId = new URLSearchParams(location.search).get('platform_project') ||
+                const searchParams = new URLSearchParams(location.search);
+                const initialPlatformId = searchParams.get('platform_project') ||
                     (location.hash.match(/^#mw-([\w-]+)/) || [])[1];
                 rememberPlatformProject(initialPlatformId ? {id: initialPlatformId} : null);
+                const referrer = searchParams.get('referrer');
+                if (referrer) rememberEditorReferrer(referrer);
             }
             // props.projectId might be unset, in which case we use our default;
             // or it may be set by an even higher HOC, and passed to us.

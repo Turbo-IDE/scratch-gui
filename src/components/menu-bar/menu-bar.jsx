@@ -23,7 +23,8 @@ import {FIT_STEPS, fitStepsAttribute, measureMenuSlack, nextFitLevel} from '../.
 import {
     getRememberedPlatformProjectState,
     getMistWarpAction,
-    rememberPlatformProject
+    rememberPlatformProject,
+    getRememberedEditorReferrer
 } from '../../lib/community/publish.js';
 import {getProject as getMistWarpProject} from '../../lib/community/api.js';
 import communityEnabled from '../../lib/community/enabled.js';
@@ -259,6 +260,11 @@ const twMessages = defineMessages({
         id: 'mw.menuBar.cloudSettings',
         defaultMessage: 'Cloud variable settings',
         description: 'Edit menu item that opens the editor settings where cloud variables can be turned off'
+    },
+    backToProjectPage: {
+        id: 'mw.editor.backToProjectPage',
+        defaultMessage: 'Xem trang dự án',
+        description: 'Button that opens the project page the editor was launched from'
     }
 });
 
@@ -463,6 +469,7 @@ class MenuBar extends React.Component {
             'handleClickProjectMetadata',
             'handleClickMistWarpShare',
             'handleClickSeeMistWarpPage',
+            'handleClickBackToProjectPage',
             'refreshMistWarpShared',
             'handleClickUndo',
             'handleClickRedo',
@@ -845,6 +852,16 @@ class MenuBar extends React.Component {
             window.location.href = /^[A-Za-z0-9-]{3,40}$/.test(vanity) ?
                 `/p/${encodeURIComponent(vanity)}` : `/project/${stored.id}`;
         }
+    }
+
+    handleClickBackToProjectPage () {
+        this.props.onRequestCloseFile();
+        const referrer = getRememberedEditorReferrer();
+        if (referrer) {
+            window.location.href = referrer;
+            return;
+        }
+        this.handleClickSeeMistWarpPage();
     }
 
     handleClickFile () {
@@ -2382,7 +2399,7 @@ class MenuBar extends React.Component {
                                 className={classNames(styles.titleFieldGrowable)}
                             />
                         </div>
-                    ) : (this.props.authorUsername ? (
+                    ) : ((this.props.authorUsername || this.props.projectTitle) ? (
                         <AuthorInfo
                             className={styles.authorInfo}
                             imageUrl={this.props.authorThumbnailUrl}
@@ -2392,6 +2409,19 @@ class MenuBar extends React.Component {
                             username={this.props.authorUsername}
                         />
                     ) : null)}
+
+                    <div
+                        data-mw-item="back-to-project-page"
+                        className={styles.menuBarItem}
+                    >
+                        <button
+                            className={styles.menuBarButton}
+                            onClick={this.handleClickBackToProjectPage}
+                            title={this.props.intl.formatMessage(twMessages.backToProjectPage)}
+                        >
+                            {this.props.intl.formatMessage(twMessages.backToProjectPage)}
+                        </button>
+                    </div>
 
                     {(this.props.isShowingProject || this.props.isUpdating) &&
                         this.props.projectId && this.props.projectId !== '0' ? (

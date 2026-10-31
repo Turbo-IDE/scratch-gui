@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import {FormattedMessage} from 'react-intl';
 import UserAvatar from './user-avatar.jsx';
 import Avatar from '../mw-avatar/avatar.jsx';
+import {getLoadedProjectMeta} from '../../lib/mw-project-metadata';
 
 import styles from './author-info.css';
 
@@ -14,44 +15,53 @@ const ActualAuthorInfo = ({
     // TODO: use userId to link to user's profile
     userId, // eslint-disable-line no-unused-vars
     username
-}) => (
-    <div
-        className={classNames(
-            className,
-            styles.authorInfo
-        )}
-    >
-        {imageUrl ? (
-            <UserAvatar
-                className={styles.avatar}
-                imageUrl={imageUrl}
-            />
-        ) : (
-            <Avatar
-                className={styles.avatar}
-                username={typeof username === 'string' ? username : ''}
-                size={32}
-            />
-        )}
-        <div className={styles.titleAuthor}>
-            <h1 className={styles.projectTitle}>
-                {projectTitle}
-            </h1>
-            <div>
-                <span className={styles.usernameLine}>
-                    <FormattedMessage
-                        defaultMessage="by {username}"
-                        description="Shows that a project was created by this user"
-                        id="gui.authorInfo.byUser"
-                        values={{
-                            username: <span className={styles.username}>{username}</span>
-                        }}
-                    />
-                </span>
+}) => {
+    const meta = getLoadedProjectMeta() || {};
+    const metaAuthor = (meta && meta.author) || {};
+    const authorName = username || metaAuthor.username || '';
+    const authorImageUrl = imageUrl || metaAuthor.thumbnail || '';
+
+    return (
+        <div
+            className={classNames(
+                className,
+                styles.authorInfo
+            )}
+        >
+            {authorImageUrl ? (
+                <UserAvatar
+                    className={styles.avatar}
+                    imageUrl={authorImageUrl}
+                />
+            ) : (
+                <Avatar
+                    className={styles.avatar}
+                    username={typeof authorName === 'string' ? authorName : ''}
+                    size={32}
+                />
+            )}
+            <div className={styles.titleAuthor}>
+                <h1 className={styles.projectTitle}>
+                    {projectTitle}
+                </h1>
+                {authorName && (
+                    <div>
+                        <span className={styles.usernameLine}>
+                            <FormattedMessage
+                                defaultMessage="Nhà phát triển {username}"
+                                description="Shows that a project was created by this user"
+                                id="gui.authorInfo.byUser"
+                                values={{
+                                    username: <span className={styles.username}>{authorName}</span>
+                                }}
+                            />
+                        </span>
+                    </div>
+                )}
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 ActualAuthorInfo.propTypes = {
     className: PropTypes.string,
@@ -61,20 +71,27 @@ ActualAuthorInfo.propTypes = {
     username: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
 };
 
-const AuthorInfo = ({projectId, ...props}) => (
-    projectId ? (
+const AuthorInfo = ({projectId, ...props}) => {
+    const meta = getLoadedProjectMeta() || {};
+    const metaAuthor = (meta && meta.author) || {};
+    const authorName = props.username || metaAuthor.username || '';
+    const link = projectId && projectId !== '0' ?
+        `https://scratch.mit.edu/projects/${projectId}` :
+        authorName ? `/users/${encodeURIComponent(authorName)}` : null;
+    return link ? (
         <a
             className={styles.link}
-            href={`https://scratch.mit.edu/projects/${projectId}`}
+            href={link}
             target="_blank"
             rel="noreferrer"
         >
             <ActualAuthorInfo {...props} />
         </a>
-    ) : <ActualAuthorInfo {...props} />
-);
+    ) : <ActualAuthorInfo {...props} />;
+};
 AuthorInfo.propTypes = {
-    projectId: PropTypes.string
+    projectId: PropTypes.string,
+    username: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
 };
 
 export default AuthorInfo;
