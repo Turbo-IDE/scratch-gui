@@ -63,21 +63,21 @@ describe('menu bar file workflows', () => {
 
     test('does not start a fork when the project owner disabled remixes', async () => {
         rememberPlatformProject({id: 'project-1', isOwner: false, canRemix: false});
-        const showConfirm = jest.fn();
         const menuBar = makeMenuBar({
             intl,
             onRequestCloseFile: jest.fn(),
-            showConfirm
+            vm: {}
         });
 
+        menuBar.showConfirm = jest.fn();
         await menuBar.handleClickFork();
 
-        expect(showConfirm).not.toHaveBeenCalled();
+        expect(menuBar.showConfirm).not.toHaveBeenCalled();
         expect(menuBar.props.onRequestCloseFile).toHaveBeenCalledTimes(1);
         rememberPlatformProject(null);
     });
 
-    test('downloads a TurboShare source fork with embedded attribution', async () => {
+    test('marks a TurboShare source fork without downloading it', async () => {
         const source = {
             platform: 'turboshare',
             projectId: '1234',
@@ -85,23 +85,37 @@ describe('menu bar file workflows', () => {
             author: 'Creator'
         };
         rememberForkSource(source);
-        const blob = new Blob();
         const showToast = jest.fn();
+        const serializeProject = jest.fn(() => JSON.stringify({targets: []}));
+        const vm = {toJSON: serializeProject};
         const menuBar = makeMenuBar({
             intl,
             onRequestCloseFile: jest.fn(),
             projectTitle: 'My project',
             showToast,
-            vm: {saveProjectSb3: jest.fn(() => Promise.resolve(blob))}
+            vm
         });
-        menuBar.showConfirm = jest.fn(() => Promise.resolve(true));
+        menuBar.showPrompt = jest.fn(() => Promise.resolve('My fork'));
+        menuBar.setState = jest.fn(update => {
+            menuBar.state = {...menuBar.state, ...update};
+        });
 
         await menuBar.handleClickFork();
 
-        expect(menuBar.props.vm.saveProjectSb3).toHaveBeenCalledWith('blob');
-        expect(downloadBlob).toHaveBeenCalledWith('My project fork.sb3', blob);
+        expect(serializeProject).not.toHaveBeenCalled();
+        expect(menuBar.showPrompt).toHaveBeenCalledWith(
+            'Fork Dự án',
+            'Forked from Original project by Creator. Enter a name for your fork.',
+            'My project fork'
+        );
+        expect(downloadBlob).not.toHaveBeenCalled();
+        expect(JSON.parse(vm.toJSON()).meta.turboshareFork).toMatchObject({
+            projectId: '1234',
+            forkTitle: 'My fork'
+        });
+        expect(menuBar.state.forkedSource).toBe(true);
         expect(showToast).toHaveBeenCalledWith(
-            'Đã tải bản fork xuống. Hãy tải tệp .sb3 này lên TurboShare để đăng dự án.',
+            'Đã đánh dấu fork. Hãy lưu hoặc xuất .sb3 rồi tải lên TurboShare để đăng dự án.',
             'success'
         );
         rememberForkSource(null);

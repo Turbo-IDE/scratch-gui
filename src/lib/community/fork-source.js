@@ -8,11 +8,14 @@ const normalizeForkSource = source => {
         .slice(0, 100);
     const author = String(source.author || 'Unknown').trim()
         .slice(0, 80);
+    const forkTitle = String(source.forkTitle || '').trim()
+        .slice(0, 100);
     return {
         platform: 'turboshare',
         projectId,
         title: title || 'Untitled',
         author: author || 'Unknown',
+        ...(forkTitle ? {forkTitle} : {}),
         url: `https://turboshare.org.uk/projects/${encodeURIComponent(projectId)}`
     };
 };

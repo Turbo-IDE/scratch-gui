@@ -240,7 +240,7 @@
   "mw.editor.backToProjectPage": "Xem trang dự án",
   "mw.editor.forkProject": "Fork Dự án",
   "mw.editor.forkConfirm": "Tạo bản sao \"{title}\" liên kết với dự án gốc?",
-  "mw.editor.forkDownloadReady": "Đã tải bản fork xuống. Hãy tải tệp .sb3 này lên TurboShare để đăng dự án.",
+  "mw.editor.forkMarked": "Đã đánh dấu fork. Hãy lưu hoặc xuất .sb3 rồi tải lên TurboShare để đăng dự án.",
   "tw.workspaceBookmarks.defaultName": "Bookmark {number}",
   "tw.workspaceBookmarks.empty": "No bookmarks yet",
   "tw.workspaceBookmarks.emptyHelp": "A bookmark remembers a sprite and where you are in its code.",

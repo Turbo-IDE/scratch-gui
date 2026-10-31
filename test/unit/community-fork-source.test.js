@@ -16,12 +16,14 @@ describe('TurboShare fork source metadata', () => {
             platform: 'turboshare',
             projectId: '1234',
             title: ' Original project ',
-            author: 'Creator'
+            author: 'Creator',
+            forkTitle: 'My fork'
         })).toEqual({
             platform: 'turboshare',
             projectId: '1234',
             title: 'Original project',
             author: 'Creator',
+            forkTitle: 'My fork',
             url: 'https://turboshare.org.uk/projects/1234'
         });
         expect(normalizeForkSource({platform: 'other', projectId: '1234'})).toBeNull();

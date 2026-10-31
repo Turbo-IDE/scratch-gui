@@ -26,7 +26,12 @@ import {
     rememberPlatformProject,
     getRememberedEditorReferrer
 } from '../../lib/community/publish.js';
-import {getRememberedForkSource} from '../../lib/community/fork-source.js';
+import {
+    getRememberedForkSource,
+    installForkSourceMetadata,
+    normalizeForkSource,
+    rememberForkSource
+} from '../../lib/community/fork-source.js';
 import {getProject as getMistWarpProject, remixProject} from '../../lib/community/api.js';
 import communityEnabled from '../../lib/community/enabled.js';
 import {editorUrl} from '../../community/api.js';
@@ -278,10 +283,10 @@ const twMessages = defineMessages({
         defaultMessage: 'Tạo bản sao "{title}" liên kết với dự án gốc?',
         description: 'Confirmation before creating a fork'
     },
-    forkDownloadReady: {
-        id: 'mw.editor.forkDownloadReady',
-        defaultMessage: 'Đã tải bản fork xuống. Hãy tải tệp .sb3 này lên TurboShare để đăng dự án.',
-        description: 'Toast shown after downloading a TurboShare fork copy'
+    forkMarked: {
+        id: 'mw.editor.forkMarked',
+        defaultMessage: 'Đã đánh dấu fork. Hãy lưu hoặc xuất .sb3 rồi tải lên TurboShare để đăng dự án.',
+        description: 'Toast shown after marking the current workspace as a TurboShare fork'
     }
 });
 
@@ -449,7 +454,8 @@ class MenuBar extends React.Component {
             exportMenuOpen: false,
             mediaRecorderOpenRequest: 0,
             menuBarSettings: getMenuBarSettings(),
-            mistwarpProject: getRememberedPlatformProjectState()
+            mistwarpProject: getRememberedPlatformProjectState(),
+            forkedSource: false
         };
         this.menuBarRef = React.createRef();
         this.mainMenuRef = React.createRef();
@@ -888,16 +894,19 @@ class MenuBar extends React.Component {
         if (!platform || !platform.id) {
             const forkSource = getRememberedForkSource();
             if (!forkSource) return;
-            const forkTitle = `${this.props.projectTitle || forkSource.title} fork`;
-            const confirmed = await this.showConfirm(
-                this.props.intl.formatMessage(twMessages.forkConfirm, {title: forkTitle})
+            const forkTitle = await this.showPrompt(
+                this.props.intl.formatMessage(twMessages.forkProject),
+                `Forked from ${forkSource.title} by ${forkSource.author}. Enter a name for your fork.`,
+                forkSource.forkTitle || `${this.props.projectTitle || forkSource.title} fork`
             );
-            if (!confirmed) return;
+            if (forkTitle === null || !forkTitle.trim()) return;
             try {
-                const blob = await this.props.vm.saveProjectSb3('blob');
-                downloadBlob(projectFilename(forkTitle, 'project', 'sb3'), blob);
+                const sourceWithTitle = normalizeForkSource({...forkSource, forkTitle: forkTitle.trim()});
+                rememberForkSource(sourceWithTitle);
+                installForkSourceMetadata(this.props.vm, sourceWithTitle);
+                this.setState({forkedSource: true});
                 this.showToastMessage(
-                    this.props.intl.formatMessage(twMessages.forkDownloadReady),
+                    this.props.intl.formatMessage(twMessages.forkMarked),
                     'success'
                 );
             } catch (e) {
@@ -2475,20 +2484,23 @@ class MenuBar extends React.Component {
                         />
                     ) : null)}
 
-                    <div
-                        data-mw-item="back-to-project-page"
-                        className={styles.menuBarItem}
-                    >
-                        <Button
-                            className={styles.menuBarButton}
-                            variant="secondary"
-                            iconElem={Globe}
-                            onClick={this.handleClickBackToProjectPage}
-                            title={this.props.intl.formatMessage(twMessages.backToProjectPage)}
+                    {this.state.forkedSource ? null : (
+                        <div
+                            data-mw-item="back-to-project-page"
+                            className={styles.menuBarItem}
                         >
-                            {this.props.intl.formatMessage(twMessages.backToProjectPage)}
-                        </Button>
-                    </div>
+                            <Button
+                                className={styles.menuBarButton}
+                                variant="secondary"
+                                iconElem={Globe}
+                                onClick={this.handleClickBackToProjectPage}
+                                title={this.props.intl.formatMessage(twMessages.backToProjectPage)}
+                                style={{color: '#fff'}}
+                            >
+                                {this.props.intl.formatMessage(twMessages.backToProjectPage)}
+                            </Button>
+                        </div>
+                    )}
 
                     {(platformProject ? platformProject.canRemix !== false : Boolean(forkSource)) ? (
                         <div
@@ -2501,6 +2513,7 @@ class MenuBar extends React.Component {
                                 iconElem={GitFork}
                                 onClick={this.handleClickFork}
                                 title={this.props.intl.formatMessage(twMessages.forkProject)}
+                                style={{color: '#fff'}}
                             >
                                 {this.props.intl.formatMessage(twMessages.forkProject)}
                             </Button>
