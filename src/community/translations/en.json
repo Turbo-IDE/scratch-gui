@@ -984,6 +984,8 @@
   "Private draft": "Private draft",
   "Creating fork…": "Creating fork…",
   "Create fork": "Create fork",
+  "mw.editor.forkProject": "Fork Project",
+  "mw.editor.forkConfirm": "Create copy \"{title}\" linked to the original project?",
   "Confirm purchase": "Confirm purchase",
   "Link copied to clipboard.": "Link copied to clipboard.",
   "Saving thumbnail…": "Saving thumbnail…",
