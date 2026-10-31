@@ -178,6 +178,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 const initialPlatformId = searchParams.get('platform_project') ||
                     (location.hash.match(/^#mw-([\w-]+)/) || [])[1];
                 const forkSource = parseForkSource(searchParams.get('mw_fork_source'));
+                this.forkSource = forkSource;
                 this.autoForkRequested = searchParams.get('mw_fork') === '1' && Boolean(forkSource);
                 const isTurboShareSourceOwner = Boolean(
                     forkSource && searchParams.get('mw_fork_owner') === '1'
@@ -343,7 +344,12 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 const jsonUrl = projectUrl;
                 assetPromise = (hasBridge() ? bridgeFetch(jsonUrl) : fetchArrayBuffer(jsonUrl))
                     .then(async buffer => {
-                        if (!(await isMwpArchive(buffer))) return {data: buffer};
+                        if (!(await isMwpArchive(buffer))) {
+                            return {
+                                data: buffer,
+                                ...(this.forkSource ? {title: this.forkSource.title} : {})
+                            };
+                        }
                         return queueProjectHistoryLoad(async () => {
                             if (fetchGeneration !== this.fetchGeneration) return null;
                             rememberPlatformProject(null);

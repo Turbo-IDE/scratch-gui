@@ -133,6 +133,7 @@ import {
 } from '../../reducers/menus';
 import {setFileHandle} from '../../reducers/tw.js';
 import {setProjectUnchanged} from '../../reducers/project-changed';
+import {setProjectTitle} from '../../reducers/project-title';
 import {showStandardAlert, showAlertWithTimeout, closeAlertWithId} from '../../reducers/alerts';
 import {removeRestore} from '../../reducers/restore-deletion';
 import {nextUndoSource, undoLatest} from '../../lib/undo-history';
@@ -947,6 +948,7 @@ class MenuBar extends React.Component {
                 const sourceWithTitle = normalizeForkSource({...forkSource, forkTitle: forkTitle.trim()});
                 rememberForkSource(sourceWithTitle);
                 installForkSourceMetadata(this.props.vm, sourceWithTitle);
+                this.props.onSetProjectTitle(forkTitle.trim());
                 setForkSourceOwner(this.props.vm, true);
                 if (this.props.onSetPlayer) this.props.onSetPlayer(false);
                 this.setState({forkedSource: true});
@@ -2537,7 +2539,7 @@ class MenuBar extends React.Component {
                     ) : ((this.props.authorUsername || this.props.projectTitle) ? (
                         <AuthorInfo
                             className={styles.authorInfo}
-                            imageUrl={this.props.authorThumbnailUrl}
+                            imageUrl={forkSource ? (forkSource.authorAvatar || null) : this.props.authorThumbnailUrl}
                             projectId={this.props.projectId}
                             projectTitle={this.props.projectTitle}
                             userId={this.props.authorId}
@@ -2782,6 +2784,7 @@ MenuBar.propTypes = {
     projectChanged: PropTypes.bool,
     roturReady: PropTypes.bool,
     onProjectUnchanged: PropTypes.func,
+    onSetProjectTitle: PropTypes.func,
     onShowGitStatus: PropTypes.func,
     onCloseGitStatus: PropTypes.func,
     onGitStatusDone: PropTypes.func,
@@ -2838,6 +2841,7 @@ const mapDispatchToProps = dispatch => ({
     onClickFile: () => dispatch(openFileMenu()),
     onRequestCloseFile: () => dispatch(closeFileMenu()),
     onProjectUnchanged: () => dispatch(setProjectUnchanged()),
+    onSetProjectTitle: title => dispatch(setProjectTitle(title)),
     onShowGitStatus: alertId => dispatch(showStandardAlert(alertId)),
     onDeletionRestored: restoreFun => dispatch(removeRestore(restoreFun)),
     onShowRestoreError: () => dispatch(showStandardAlert('assetRestoreError')),

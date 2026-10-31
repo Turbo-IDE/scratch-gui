@@ -6,7 +6,8 @@ import styles from './user-avatar.css';
 
 const UserAvatar = ({
     className,
-    imageUrl
+    imageUrl,
+    onError
 }) => (
     <img
         className={classNames(
@@ -14,13 +15,15 @@ const UserAvatar = ({
             styles.userThumbnail
         )}
         src={imageUrl}
+        onError={onError}
         draggable={false}
     />
 );
 
 UserAvatar.propTypes = {
     className: PropTypes.string,
-    imageUrl: PropTypes.string
+    imageUrl: PropTypes.string,
+    onError: PropTypes.func
 };
 
 export default UserAvatar;

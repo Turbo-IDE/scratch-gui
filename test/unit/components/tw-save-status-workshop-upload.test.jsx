@@ -3,6 +3,11 @@ import {act} from 'react-dom/test-utils';
 import {mountWithIntl} from '../../helpers/intl-helpers.jsx';
 
 import {TWSaveStatus} from '../../../src/components/menu-bar/tw-save-status.jsx';
+import {
+    installForkSourceMetadata,
+    rememberForkSource,
+    setForkSourceOwner
+} from '../../../src/lib/community/fork-source.js';
 
 jest.mock('../../../src/lib/community/enabled.js', () => false);
 jest.mock('../../../src/lib/community/publish.js', () => ({
@@ -23,6 +28,10 @@ const uploadProjectToWorkshop = require('../../../src/lib/mw/upload-to-workshop.
 describe('menu bar upload button without the community site', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+    });
+
+    afterEach(() => {
+        rememberForkSource(null);
     });
 
     test('uploads to TurboShare with the File menu mechanism instead of downloading', async () => {
@@ -87,6 +96,53 @@ describe('menu bar upload button without the community site', () => {
             resolveUpload(true);
             await Promise.resolve();
         });
+        wrapper.unmount();
+    });
+
+    test('hides TurboShare upload for a source project until it has been forked', () => {
+        const vm = {};
+        rememberForkSource({
+            platform: 'turboshare',
+            projectId: '1234',
+            title: 'Source project',
+            author: 'Creator'
+        });
+        setForkSourceOwner(vm, false);
+        const wrapper = mountWithIntl(
+            <TWSaveStatus
+                alertsList={[]}
+                projectChanged
+                projectTitle="Source project"
+                vm={vm}
+            />
+        );
+
+        expect(wrapper.find('button')).toHaveLength(0);
+        expect(uploadProjectToWorkshop).not.toHaveBeenCalled();
+        wrapper.unmount();
+    });
+
+    test('keeps the existing upload button hidden after a fork to avoid duplicate upload actions', () => {
+        const vm = {};
+        const source = {
+            platform: 'turboshare',
+            projectId: '1234',
+            title: 'Source project',
+            author: 'Creator'
+        };
+        rememberForkSource(source);
+        installForkSourceMetadata(vm, source);
+        setForkSourceOwner(vm, true);
+        const wrapper = mountWithIntl(
+            <TWSaveStatus
+                alertsList={[]}
+                projectChanged
+                projectTitle="Forked project"
+                vm={vm}
+            />
+        );
+
+        expect(wrapper.find('button')).toHaveLength(0);
         wrapper.unmount();
     });
 });

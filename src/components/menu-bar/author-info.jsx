@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import classNames from 'classnames';
 import {FormattedMessage} from 'react-intl';
 import UserAvatar from './user-avatar.jsx';
@@ -19,7 +19,10 @@ const ActualAuthorInfo = ({
     const meta = getLoadedProjectMeta() || {};
     const metaAuthor = (meta && meta.author) || {};
     const authorName = username || metaAuthor.username || '';
-    const authorImageUrl = imageUrl || metaAuthor.thumbnail || '';
+    const authorImageUrl = imageUrl === null ? '' : imageUrl || metaAuthor.thumbnail || '';
+    const [imageFailed, setImageFailed] = useState(false);
+    const handleImageError = useCallback(() => setImageFailed(true), []);
+    useEffect(() => setImageFailed(false), [authorImageUrl]);
 
     return (
         <div
@@ -28,10 +31,11 @@ const ActualAuthorInfo = ({
                 styles.authorInfo
             )}
         >
-            {authorImageUrl ? (
+            {authorImageUrl && !imageFailed ? (
                 <UserAvatar
                     className={styles.avatar}
                     imageUrl={authorImageUrl}
+                    onError={handleImageError}
                 />
             ) : (
                 <Avatar

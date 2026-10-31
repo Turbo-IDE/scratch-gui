@@ -29,10 +29,15 @@ const normalizeForkSource = source => {
     if (!parent) return null;
     const forkTitle = String(source.forkTitle || '').trim()
         .slice(0, 100);
+    const authorAvatar = typeof source.authorAvatar === 'string' &&
+        /^https:\/\//i.test(source.authorAvatar) ?
+        source.authorAvatar.slice(0, 2048) :
+        '';
     const rootSource = normalizeForkParty(source.rootSource);
     return {
         platform: 'turboshare',
         ...parent,
+        ...(authorAvatar ? {authorAvatar} : {}),
         ...(forkTitle ? {forkTitle} : {}),
         ...(rootSource ? {rootSource} : {}),
         url: `https://turboshare.org.uk/projects/${encodeURIComponent(parent.projectId)}`

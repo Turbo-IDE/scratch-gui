@@ -114,6 +114,7 @@ describe('menu bar file workflows', () => {
         const menuBar = makeMenuBar({
             intl,
             onRequestCloseFile: jest.fn(),
+            onSetProjectTitle: jest.fn(),
             projectTitle: 'My project',
             showToast,
             vm
@@ -126,6 +127,7 @@ describe('menu bar file workflows', () => {
         await menuBar.handleClickFork();
 
         expect(serializeProject).not.toHaveBeenCalled();
+        expect(menuBar.props.onSetProjectTitle).toHaveBeenCalledWith('My fork');
         expect(menuBar.showPrompt).toHaveBeenCalledWith(
             'Fork Dự án',
             'Forked from Original project by Creator. Enter a name for your fork.',

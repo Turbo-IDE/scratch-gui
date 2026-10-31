@@ -55,6 +55,21 @@ describe('TurboShare fork source metadata', () => {
         expect(parseForkSource('{invalid')).toBeNull();
     });
 
+    test('keeps only secure author avatar URLs', () => {
+        expect(normalizeForkSource({
+            platform: 'turboshare',
+            projectId: '1234',
+            title: 'Original project',
+            author: 'Creator',
+            authorAvatar: 'https://turboshare.org.uk/avatar.png'
+        }).authorAvatar).toBe('https://turboshare.org.uk/avatar.png');
+        expect(normalizeForkSource({
+            platform: 'turboshare',
+            projectId: '1234',
+            authorAvatar: 'javascript:alert(1)'
+        })).not.toHaveProperty('authorAvatar');
+    });
+
     test('tracks whether the active TurboShare project belongs to the viewer', () => {
         const vm = {};
         setForkSourceOwner(vm, false);

@@ -18,6 +18,10 @@ import {guardSavedCallback} from '../../lib/mw/smart-save.js';
 import uploadProjectToWorkshop from '../../lib/mw/upload-to-workshop.js';
 import {getSaveFeedback, setSaveFeedback, SAVE_FEEDBACK_EVENT} from '../../lib/mw/save-feedback.js';
 import {getSetting, onSettingsChanged} from '../../lib/mw/autosave-settings.js';
+import {
+    getRememberedForkSource,
+    isForkSourceOwner
+} from '../../lib/community/fork-source.js';
 
 import styles from './save-status.css';
 
@@ -180,9 +184,20 @@ const TWSaveStatus = ({
     const [uploading, setUploading] = useState(false);
     const [operationActive, setOperationActive] = useState(() => isProjectOperationActive(vm));
     const [, refreshPlatform] = useState(0);
+    const [forkAccess, setForkAccess] = useState(() => ({
+        hasSource: Boolean(getRememberedForkSource()),
+        isOwner: isForkSourceOwner(vm),
+        isForked: Boolean(vm && vm._mwForkedSource)
+    }));
     useEffect(() => {
         const refresh = () => refreshPlatform(version => version + 1);
+        const refreshForkAccess = () => setForkAccess({
+            hasSource: Boolean(getRememberedForkSource()),
+            isOwner: isForkSourceOwner(vm),
+            isForked: Boolean(vm && vm._mwForkedSource)
+        });
         window.addEventListener('mw:platform-project-changed', refresh);
+        window.addEventListener('mw:turboshare-source-changed', refreshForkAccess);
         const update = event => {
             if (event.detail.vm !== vm) return;
             const next = getSaveFeedback(vm);
@@ -208,12 +223,14 @@ const TWSaveStatus = ({
             setDownloadError(false);
         };
         setOperationActive(isProjectOperationActive(vm));
+        refreshForkAccess();
         window.addEventListener(SAVE_FEEDBACK_EVENT, update);
         window.addEventListener(PROJECT_OPERATION_EVENT, operation);
         if (vm.on) vm.on('PROJECT_LOADED', reset);
         const unsubscribe = onSettingsChanged(() => setAutosave(getSetting('enabled')));
         return () => {
             window.removeEventListener('mw:platform-project-changed', refresh);
+            window.removeEventListener('mw:turboshare-source-changed', refreshForkAccess);
             window.removeEventListener(SAVE_FEEDBACK_EVENT, update);
             window.removeEventListener(PROJECT_OPERATION_EVENT, operation);
             if (vm.off) vm.off('PROJECT_LOADED', reset);
@@ -226,11 +243,13 @@ const TWSaveStatus = ({
         (isOwner ? 'update' : platformState ? 'remix' : 'save');
     const readOnly = Boolean(platformState && platformState.isOwner === false &&
         !platformState.canSaveDirectly && platformState.canRemix === false);
+    const turboShareUploadBlocked = forkAccess.hasSource && !forkAccess.isOwner && !forkAccess.isForked;
+    const hideSaveStatus = forkAccess.hasSource && (turboShareUploadBlocked || forkAccess.isForked);
     const unavailable = readOnly || uploading || operationActive;
     const onSaveClick = useCallback(() => {
         // Saves, uploads and project replacements share one lock; a second
         // click while one runs would only fail, so ignore it.
-        if (unavailable || isProjectOperationActive(vm)) return;
+        if (unavailable || turboShareUploadBlocked || isProjectOperationActive(vm)) return;
         if (communityEnabled) {
             openMistWarpShareWindow({
                 vm,
@@ -245,7 +264,7 @@ const TWSaveStatus = ({
             uploadProjectToWorkshop({vm, projectTitle})
                 .finally(() => setUploading(false));
         }
-    }, [vm, projectTitle, mistwarpAction, onProjectUnchanged, unavailable]);
+    }, [vm, projectTitle, mistwarpAction, onProjectUnchanged, unavailable, turboShareUploadBlocked]);
     const status = getSaveStatus({downloadError, feedback, isOwner, projectChanged, readOnly, uploading});
     const statusText = status ? intl.formatMessage(messages[status]) : '';
     const label = intl.formatMessage(communityEnabled ?
@@ -275,6 +294,7 @@ const TWSaveStatus = ({
     }
     const Icon = communityEnabled ? Cloud : Globe;
     const tone = status ? STATUS_TONES[status] : null;
+    if (hideSaveStatus) return null;
     return (
         <React.Fragment>
             <button
@@ -330,6 +350,7 @@ TWSaveStatus.propTypes = {
     vm: PropTypes.shape({
         saveProjectSb3: PropTypes.func,
         renderer: PropTypes.object,
+        _mwForkedSource: PropTypes.bool,
         on: PropTypes.func,
         off: PropTypes.func
     })
