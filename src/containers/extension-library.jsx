@@ -169,8 +169,8 @@ const fetchLibrary = async () => {
         description: extension.description,
         extensionId: extension.extensionId,
         extensionURL: extension.extensionURL,
-        source: 'turboshare',
-        tags: ['turboshare'],
+        source: 'marketplace',
+        tags: ['marketplace'],
         credits: [extension.author],
         incompatibleWithScratch: true
     }));
@@ -352,11 +352,11 @@ class ExtensionLibrary extends React.PureComponent {
             if (!vanilla) {
                 library.push('---');
                 library.push(toLibraryItem({
-                    name: 'Submit an extension',
-                    description: 'Upload a JavaScript extension for admin review.',
+                    name: 'Publish an extension',
+                    description: 'Submit an extension to the store for admin review.',
                     extensionId: 'marketplace_submit',
-                    source: 'turboshare',
-                    tags: ['turboshare'],
+                    source: 'marketplace',
+                    tags: ['marketplace'],
                     iconURL: extensionIcon
                 }));
                 if (this.state.gallery) {
@@ -403,7 +403,9 @@ class ExtensionLibrary extends React.PureComponent {
                         >
                             <h2 style={{margin: 0}}>{'Submit an extension'}</h2>
                             <p style={{margin: 0}}>
-                                {'Submissions and updates stay private until an admin reviews and approves them.'}
+                                {'Submit a version for admin review. '}
+                                {'Only approved versions appear in the Extensions Store. '}
+                                {'To use an extension privately, choose Custom Extension instead.'}
                             </p>
                             <label>
                                 {'Extension ID'}

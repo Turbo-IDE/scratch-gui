@@ -44,7 +44,7 @@ const messages = defineMessages({
 
 const ALL = 'all';
 const topExtensionIds = new Set(['tw', 'custom_extension', 'gallery']);
-const sources = ['turboshare', 'scratch', 'tw', 'mistium'];
+const sources = ['turboshare', 'marketplace', 'scratch', 'tw', 'mistium'];
 
 const labelOf = (tag, intl) => (
     typeof tag.intlLabel === 'string' ? tag.intlLabel : intl.formatMessage(tag.intlLabel)
@@ -270,9 +270,10 @@ class TWExtensionLibrary extends React.Component {
         const visible = items.filter(matches);
         const top = visible.filter(item => topExtensionIds.has(item.extensionId));
         const sourceOf = item => item.source ||
-            (item.tags.includes('turboshare') ? 'turboshare' :
-                item.tags.includes('mistium') ? 'mistium' :
-                    item.tags.includes('tw') ? 'tw' : 'scratch');
+            (item.tags.includes('marketplace') ? 'marketplace' :
+                item.tags.includes('turboshare') ? 'turboshare' :
+                    item.tags.includes('mistium') ? 'mistium' :
+                        item.tags.includes('tw') ? 'tw' : 'scratch');
         const sourceTitle = source => {
             const tag = tags.find(candidate => candidate.tag === source);
             return tag ? labelOf(tag, intl) : source;
