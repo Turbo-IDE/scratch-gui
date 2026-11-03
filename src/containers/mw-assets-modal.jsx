@@ -7,6 +7,7 @@ import {showStandardAlert} from '../reducers/alerts';
 import downloadBlob from '../lib/utils/download-blob';
 import storage from '../lib/persistence/storage';
 import log from '../lib/utils/log';
+import {costumeUpload, soundUpload} from '../lib/file-uploader.js';
 import AssetsModalComponent from '../components/mw-assets-modal/assets-modal.jsx';
 
 const IMAGE_FORMATS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'svg'];
@@ -51,6 +52,9 @@ class MWAssetsModal extends React.Component {
             'handleDialogKeyDown',
             'handleDialogCancel',
             'handleDialogConfirm',
+            'handleStoreMessage',
+            'handleToggleStore',
+            'setStoreFrame',
             'setFileInput'
         ]);
         this.state = {
@@ -60,7 +64,9 @@ class MWAssetsModal extends React.Component {
             selectedIndex: null,
             dialog: null,
             dialogError: '',
-            importing: false
+            importing: false,
+            storeOpen: false,
+            storeStatus: ''
         };
         this.selectedEntry = null;
         this.importPromise = null;
@@ -71,12 +77,14 @@ class MWAssetsModal extends React.Component {
         this.mounted = true;
         this.assetManager.on('change', this.handleAssetsChanged);
         document.addEventListener('paste', this.handlePaste);
+        window.addEventListener('message', this.handleStoreMessage);
     }
 
     componentWillUnmount () {
         this.mounted = false;
         this.assetManager.off('change', this.handleAssetsChanged);
         document.removeEventListener('paste', this.handlePaste);
+        window.removeEventListener('message', this.handleStoreMessage);
     }
 
     get assetManager () {
@@ -142,6 +150,83 @@ class MWAssetsModal extends React.Component {
         this.fileInput = input;
     }
 
+    setStoreFrame (frame) {
+        this.storeFrame = frame;
+    }
+
+    handleToggleStore () {
+        this.setState(state => ({
+            storeOpen: !state.storeOpen,
+            storeStatus: ''
+        }));
+    }
+
+    async handleStoreMessage (event) {
+        if (event.origin !== 'https://turboshare.org.uk' ||
+            !this.storeFrame || event.source !== this.storeFrame.contentWindow ||
+            !event.data || event.data.type !== 'turbo-ide:import-asset') return;
+
+        const {asset} = event.data;
+        if (!asset || typeof asset.name !== 'string' ||
+            !(asset.data instanceof ArrayBuffer) ||
+            asset.data.byteLength === 0 || asset.data.byteLength > 20 * 1024 * 1024) return;
+
+        const imageTypes = {
+            png: 'image/png',
+            jpg: 'image/jpeg',
+            jpeg: 'image/jpeg',
+            gif: 'image/gif',
+            bmp: 'image/bmp',
+            webp: 'image/webp',
+            svg: 'image/svg+xml'
+        };
+        const soundTypes = {
+            mp3: 'audio/mpeg',
+            wav: 'audio/wav',
+            ogg: 'audio/ogg'
+        };
+        const format = String(asset.format || '').toLowerCase();
+        const expectedType = imageTypes[format] || soundTypes[format];
+        if (!expectedType || asset.mimeType !== expectedType || this.importingStoreAsset) return;
+
+        const target = this.props.vm.editingTarget;
+        if (!target) {
+            this.setState({storeStatus: 'Select a sprite or the stage before importing.'});
+            return;
+        }
+
+        const name = asset.name.replace(/\.[^.]+$/, '').slice(0, 100) || 'Asset';
+        this.importingStoreAsset = true;
+        this.setState({importing: true, storeStatus: `Importing ${name}…`});
+        try {
+            if (imageTypes[format]) {
+                await new Promise((resolve, reject) => {
+                    costumeUpload(asset.data, expectedType, this.props.vm, costumes => {
+                        Promise.all(costumes.map((costume, index) => {
+                            costume.name = `${name}${index ? index + 1 : ''}`;
+                            return this.props.vm.addCostume(costume.md5, costume, target.id);
+                        })).then(resolve, reject);
+                    }, reject);
+                });
+            } else {
+                await new Promise((resolve, reject) => {
+                    soundUpload(asset.data, expectedType, this.props.vm.runtime.storage, sound => {
+                        sound.name = name;
+                        this.props.vm.addSound(sound, target.id).then(resolve, reject);
+                    }, reject);
+                });
+            }
+            this.setState({storeStatus: `Added “${name}” to the current ${target.isStage ? 'stage' : 'sprite'}.`});
+        } catch (error) {
+            log.error('could not import a store asset', error);
+            this.setState({storeStatus: `Could not import ${name}.`});
+            this.props.onShowImportError(error);
+        } finally {
+            this.importingStoreAsset = false;
+            this.setState({importing: false});
+        }
+    }
+
     addFiles (files, folder) {
         if (this.importPromise) return this.importPromise;
         this.setState({importing: true});
@@ -178,7 +263,7 @@ class MWAssetsModal extends React.Component {
     }
 
     handleClose () {
-        if (this.importPromise) return;
+        if (this.importPromise || this.importingStoreAsset) return;
         if (this.state.dialog) this.handleDialogCancel();
         else this.props.onClose();
     }
@@ -316,6 +401,10 @@ class MWAssetsModal extends React.Component {
     render () {
         return (
             <AssetsModalComponent
+                storeOpen={this.state.storeOpen}
+                storeStatus={this.state.storeStatus}
+                onToggleStore={this.handleToggleStore}
+                storeFrameRef={this.setStoreFrame}
                 onClose={this.handleClose}
                 assets={this.state.assets}
                 folders={this.state.folders}
@@ -349,8 +438,15 @@ MWAssetsModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     onShowImportError: PropTypes.func.isRequired,
     vm: PropTypes.shape({
+        editingTarget: PropTypes.shape({
+            id: PropTypes.string,
+            isStage: PropTypes.bool
+        }),
+        addCostume: PropTypes.func,
+        addSound: PropTypes.func,
         emitWorkspaceUpdate: PropTypes.func,
         runtime: PropTypes.shape({
+            storage: PropTypes.object,
             assetManager: PropTypes.shape({
                 assets: PropTypes.array,
                 addAsset: PropTypes.func,

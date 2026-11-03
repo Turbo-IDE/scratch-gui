@@ -309,6 +309,7 @@
   "tw.menuBar.variableManager": "Variable Manager",
   "tw.menuBar.extensions.addImport": "Add Extension",
   "tw.menuBar.extensions.manage": "Manage Extensions",
+  "mw.menuBar.assetStore": "Asset Store",
   "mw.collabPresence.opening": "Opening session…",
   "mw.collabPresence.joining": "Joining session…",
   "mw.collabPresence.reconnecting": "Reconnecting…",

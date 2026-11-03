@@ -455,6 +455,10 @@ const extensionSourceUrl = async (project, url) => {
 
 const checkProjectAssets = (id, assets) => request(`/projects/${id}/assets/check`, {method: 'POST', body: {assets}});
 
+const marketplaceExtensions = () => request('/extensions/marketplace', {cache: false});
+const submitMarketplaceExtension = extension =>
+    request('/extensions/marketplace/submit', {method: 'POST', body: extension});
+
 const collectExtensionSources = async sb3Blob => {
     const zip = await JSZip.loadAsync(sb3Blob);
     const projectFile = zip.file('project.json');
@@ -606,6 +610,8 @@ export {
     publishProject,
     updateProject,
     checkProjectAssets,
+    marketplaceExtensions,
+    submitMarketplaceExtension,
     getProject,
     getPerks,
     getEditorProject,

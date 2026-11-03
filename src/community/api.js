@@ -350,6 +350,8 @@ const api = {
             `&limit=${encodeURIComponent(limit)}&sort=${encodeURIComponent(sort)}&filter=${encodeURIComponent(filter)}`
         ),
         extensions: () => request('/admin/extensions', {cache: false}),
+        reviewMarketplaceExtension: (hash, status) =>
+            request('/admin/extensions/marketplace/review', {method: 'POST', body: {hash, status}}),
         setExtensionPolicy: (hash, status) =>
             request('/admin/extensions/policy', {method: 'POST', body: {hash, status}}),
         setExtensionUrlPolicy: (url, blocked) =>

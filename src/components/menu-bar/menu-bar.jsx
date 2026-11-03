@@ -92,6 +92,7 @@ import {
     openGitModal,
     openExtensionManagerModal,
     openExtensionLibrary,
+    openAssetsModal,
     openVariableManagerModal,
     openProductsModal,
     openGameItemsModal,
@@ -2504,6 +2505,14 @@ class MenuBar extends React.Component {
                                             id="tw.menuBar.extensions.manage"
                                         />
                                     </MenuItem>
+                                    <MenuItem onClick={this.props.onOpenAssetsModal}>
+                                        <ShoppingBag />
+                                        <FormattedMessage
+                                            defaultMessage="Asset Store"
+                                            description="Menu bar item to open the TurboShare asset store"
+                                            id="mw.menuBar.assetStore"
+                                        />
+                                    </MenuItem>
                                 </MenuSection>
                             </MenuBarMenu>
                         </MenuLabel>
@@ -2764,6 +2773,7 @@ MenuBar.propTypes = {
     onOpenSettingsModal: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenExtensionLibrary: PropTypes.func,
+    onOpenAssetsModal: PropTypes.func,
     onOpenExtensionManagerModal: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onProjectTelemetryEvent: PropTypes.func,
@@ -2835,6 +2845,7 @@ const mapDispatchToProps = dispatch => ({
     onClickSeeInside: () => dispatch(setPlayer(false)),
     onSetPlayer: isPlayerOnly => dispatch(setPlayer(isPlayerOnly)),
     onOpenExtensionLibrary: () => dispatch(openExtensionLibrary()),
+    onOpenAssetsModal: () => dispatch(openAssetsModal()),
     onClickAccount: () => dispatch(openAccountMenu()),
     onRequestCloseAccount: () => dispatch(closeAccountMenu()),
     onClickCollaboration: () => dispatch(openCollaborationModal()),

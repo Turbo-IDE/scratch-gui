@@ -86,92 +86,122 @@ const AssetsModal = props => {
                     </div>
                 ) : null}
                 <div className={styles.toolbar}>
-                    <button
-                        type="button"
-                        className={styles.addButton}
-                        disabled={props.importing}
-                        onClick={props.onClickAdd}
-                    >
-                        <FilePlus2 size={15} />
-                        {props.importing ? 'Importing…' : (
-                            <FormattedMessage
-                                defaultMessage="Add files"
-                                description="Button to add custom assets"
-                                id="mw.assets.add"
-                            />
-                        )}
-                    </button>
-                    <input
-                        className={styles.fileInput}
-                        type="file"
-                        multiple
-                        disabled={props.importing}
-                        ref={props.fileInputRef}
-                        onChange={props.onFileChange}
-                    />
-
+                    {props.storeOpen ? null : (
+                        <button
+                            type="button"
+                            className={styles.addButton}
+                            disabled={props.importing}
+                            onClick={props.onClickAdd}
+                        >
+                            <FilePlus2 size={15} />
+                            {props.importing ? 'Importing…' : (
+                                <FormattedMessage
+                                    defaultMessage="Add files"
+                                    description="Button to add custom assets"
+                                    id="mw.assets.add"
+                                />
+                            )}
+                        </button>
+                    )}
                     <button
                         type="button"
                         className={styles.folderButton}
                         disabled={props.importing}
-                        onClick={props.onNewFolder}
+                        onClick={props.onToggleStore}
                     >
-                        <FolderPlus size={15} />
-                        <FormattedMessage
-                            defaultMessage="New folder"
-                            description="Button to create a folder for custom assets"
-                            id="mw.assets.newFolder"
-                        />
+                        {props.storeOpen ? 'Back to project assets' : 'Browse Assets Store'}
                     </button>
+                    {props.storeOpen ? null : (
+                        <React.Fragment>
+                            <input
+                                className={styles.fileInput}
+                                type="file"
+                                multiple
+                                disabled={props.importing}
+                                ref={props.fileInputRef}
+                                onChange={props.onFileChange}
+                            />
 
-                    <div className={styles.destination}>
-                        <FormattedMessage
-                            defaultMessage="Adding to {folder}"
-                            description="Shows which folder new assets will be added to"
-                            id="mw.assets.destination"
-                            values={{
-                                folder: <code>{props.selected === '' ? '/' : `/${props.selected}`}</code>
-                            }}
-                        />
-                    </div>
-
-                    <div className={styles.total}>
-                        {`${props.assets.length} files - ${formatBytes(totalSize)}`}
-                    </div>
-                </div>
-
-                <div className={styles.columns}>
-                    <div className={styles.treeColumn}>
-                        {props.assets.length === 0 && props.folders.length === 0 ? (
-                            <div className={styles.empty}>
+                            <button
+                                type="button"
+                                className={styles.folderButton}
+                                disabled={props.importing}
+                                onClick={props.onNewFolder}
+                            >
+                                <FolderPlus size={15} />
                                 <FormattedMessage
-                                    // eslint-disable-next-line max-len
-                                    defaultMessage="Drop files here, paste them, or click Add files. Assets cost nothing until a block loads them."
-                                    description="Shown when a project has no custom assets"
-                                    id="mw.assets.none"
+                                    defaultMessage="New folder"
+                                    description="Button to create a folder for custom assets"
+                                    id="mw.assets.newFolder"
+                                />
+                            </button>
+
+                            <div className={styles.destination}>
+                                <FormattedMessage
+                                    defaultMessage="Adding to {folder}"
+                                    description="Shows which folder new assets will be added to"
+                                    id="mw.assets.destination"
+                                    values={{
+                                        folder: <code>{props.selected === '' ? '/' : `/${props.selected}`}</code>
+                                    }}
                                 />
                             </div>
-                        ) : null}
 
-                        <AssetFolder
-                            node={buildTree(props.assets, props.folders)}
-                            isRoot
-                            selected={props.selected}
-                            selectedIndex={props.selectedIndex}
-                            onSelect={props.onSelect}
-                            onSelectFile={props.onSelectFile}
-                            onMove={props.onMove}
-                            onDropFiles={props.onDropFiles}
-                            onRename={props.onRename}
+                            <div className={styles.total}>
+                                {`${props.assets.length} files - ${formatBytes(totalSize)}`}
+                            </div>
+                        </React.Fragment>
+                    )}
+                </div>
+
+                {props.storeOpen ? (
+                    <div style={{display: 'flex', flex: '1 1 auto', minHeight: 0, flexDirection: 'column'}}>
+                        {props.storeStatus ? <p
+                            role="status"
+                            style={{margin: '6px 12px'}}
+                        >{props.storeStatus}</p> : null}
+                        <iframe
+                            ref={props.storeFrameRef}
+                            title="TurboShare Assets Store"
+                            src="https://turboshare.org.uk/?embed=editor#assets?editor=1"
+                            referrerPolicy="origin"
+                            style={{border: 0, flex: '1 1 auto', minHeight: 0, width: '100%'}}
                         />
                     </div>
+                ) : (
+                    <div className={styles.columns}>
+                        <div className={styles.treeColumn}>
+                            {props.assets.length === 0 && props.folders.length === 0 ? (
+                                <div className={styles.empty}>
+                                    <FormattedMessage
+                                    // eslint-disable-next-line max-len
+                                        defaultMessage="Drop files here, paste them, or click Add files. Assets cost nothing until a block loads them."
+                                        description="Shown when a project has no custom assets"
+                                        id="mw.assets.none"
+                                    />
+                                </div>
+                            ) : null}
 
-                    <AssetPreview
-                        preview={props.preview}
-                        onExport={props.onExport}
-                        onDelete={props.onDelete}
-                    />
-                </div>
+                            <AssetFolder
+                                node={buildTree(props.assets, props.folders)}
+                                isRoot
+                                selected={props.selected}
+                                selectedIndex={props.selectedIndex}
+                                onSelect={props.onSelect}
+                                onSelectFile={props.onSelectFile}
+                                onMove={props.onMove}
+                                onDropFiles={props.onDropFiles}
+                                onRename={props.onRename}
+                            />
+                        </div>
+
+                        <AssetPreview
+                            preview={props.preview}
+                            onExport={props.onExport}
+                            onDelete={props.onDelete}
+                        />
+                    </div>
+                )}
             </div>
         </Modal>
     );
@@ -180,6 +210,10 @@ const AssetsModal = props => {
 AssetsModal.propTypes = {
     intl: intlShape,
     onClose: PropTypes.func.isRequired,
+    onToggleStore: PropTypes.func.isRequired,
+    storeFrameRef: PropTypes.func.isRequired,
+    storeOpen: PropTypes.bool,
+    storeStatus: PropTypes.string,
     assets: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
         dataFormat: PropTypes.string.isRequired,

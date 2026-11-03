@@ -16,11 +16,13 @@ const record = (text, source, line) => {
         english[text] = text; added++;
     }
     if (!locations[text]) locations[text] = [];
-    locations[text].push(`${path.relative(root, source)}:${line}`);
+    locations[text].push(`${path.relative(root, source).split(path.sep)
+        .join('/')}:${line}`);
 };
 const MESSAGE_FUNCTIONS = ['communityText', 'communityRich', 'text', 't', 'formatCommunityMessage'];
 const visit = directory => {
-    for (const entry of fs.readdirSync(directory, {withFileTypes: true})) {
+    for (const entry of fs.readdirSync(directory, {withFileTypes: true})
+        .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
         const source = path.join(directory, entry.name);
         if (entry.isDirectory()) {
             if (entry.name !== 'translations') visit(source); continue;

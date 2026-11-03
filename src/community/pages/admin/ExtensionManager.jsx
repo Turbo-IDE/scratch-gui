@@ -134,8 +134,58 @@ const ExtensionManager = () => {
         applyUrlPolicy(url, blocked);
     };
 
+    const applyMarketplaceReview = async (hash, status) => {
+        if (policyInFlight.current) return;
+        const releasePolicy = () => {
+            policyInFlight.current = false;
+        };
+        policyInFlight.current = true;
+        setDialogBusy(true);
+        setDialogError('');
+        try {
+            await api.admin.reviewMarketplaceExtension(hash, status);
+            setData(current => ({
+                ...current,
+                extensions: (current.extensions || []).map(extension => (
+                    extension.hash === hash ? {
+                        ...extension,
+                        status: status === 'approved' ? 'trusted' : extension.status,
+                        marketplace: {...extension.marketplace, status}
+                    } : extension
+                ))
+            }));
+            setNote(status === 'approved' ?
+                communityText('Extension approved and published.') :
+                communityText('Marketplace submission rejected.'));
+            setDialog(null);
+        } catch (e) {
+            setDialogError(e.message || 'Could not review marketplace submission.');
+        } finally {
+            releasePolicy();
+            setDialogBusy(false);
+        }
+    };
+
+    const setMarketplaceReview = (hash, status) => {
+        const approving = status === 'approved';
+        setDialogError('');
+        setDialog({
+            kind: 'marketplace',
+            hash,
+            status,
+            title: communityText(approving ? 'Publish extension?' : 'Reject submission?'),
+            description: communityText(approving ?
+                'Review the source before publishing. Approved code can run in users’ projects.' :
+                'This extension will not appear in the public store.'),
+            action: communityText(approving ? 'Approve and publish' : 'Reject submission'),
+            danger: !approving,
+            icon: Puzzle
+        });
+    };
+
     const confirmPolicy = () => {
         if (!dialog) return;
+        if (dialog.kind === 'marketplace') return applyMarketplaceReview(dialog.hash, dialog.status);
         if (dialog.kind === 'hash') return applyPolicy(dialog.hash, dialog.status);
         return applyUrlPolicy(dialog.url, dialog.blocked);
     };
@@ -163,9 +213,13 @@ const ExtensionManager = () => {
     const allExtensions = data.extensions || [];
     const search = query.trim().toLowerCase();
     const extensions = allExtensions.filter(extension => {
-        if (extension.status !== tab) return false;
+        const matchesTab = tab === 'marketplace' ?
+            Boolean(extension.marketplace && extension.marketplace.status === 'pending') :
+            extension.status === tab;
+        if (!matchesTab) return false;
         if (!search) return true;
         const metadata = extension.metadata || {};
+        const marketplace = extension.marketplace || {};
         return [
             extension.hash,
             ...(extension.urls || []),
@@ -173,10 +227,16 @@ const ExtensionManager = () => {
             metadata.id,
             metadata.description,
             metadata.author,
-            metadata.license
+            metadata.license,
+            marketplace.id,
+            marketplace.name,
+            marketplace.description,
+            marketplace.version,
+            marketplace.author
         ].some(value => typeof value === 'string' && value.toLowerCase().includes(search));
     });
     const tabs = [
+        {key: 'marketplace', label: communityText('Store submissions')},
         {key: 'untrusted', label: communityText('To be verified')},
         {key: 'ignored', label: communityText('Ignored')},
         {key: 'trusted', label: communityText('Trusted')},
@@ -186,7 +246,9 @@ const ExtensionManager = () => {
         label: (
             <React.Fragment>
                 {item.label}
-                <b>{allExtensions.filter(extension => extension.status === item.key).length}</b>
+                <b>{allExtensions.filter(extension => (item.key === 'marketplace' ?
+                    extension.marketplace && extension.marketplace.status === 'pending' :
+                    extension.status === item.key)).length}</b>
             </React.Fragment>
         )
     }));
@@ -260,6 +322,15 @@ const ExtensionManager = () => {
                                             {communityText('License: {value1}', {value1: extension.metadata.license})}
                                         </span>
                                     ) : null}
+                                    {extension.marketplace ? (
+                                        <span className={styles.rowMeta}>
+                                            {communityText('Store submission: {value1} v{value2} by {value3}', {
+                                                value1: extension.marketplace.name,
+                                                value2: extension.marketplace.version,
+                                                value3: extension.marketplace.author
+                                            })}
+                                        </span>
+                                    ) : null}
                                     <span className={styles.extensionHash}>{extension.hash}</span>
                                     <span className={styles.rowMeta}>
                                         {communityText('Used in {value1, plural, one {# project} other {# projects}}', {value1: extension.projectCount})}
@@ -283,9 +354,22 @@ const ExtensionManager = () => {
                                     {extension.sourceAvailable ? (
                                         <Button onClick={() => viewSource(extension.hash)}>{communityText('View source')}</Button>
                                     ) : null}
-                                    {!extension.gallery && tab !== 'trusted' ? (
+                                    {tab === 'marketplace' ? (
+                                        <React.Fragment>
+                                            <Button onClick={() => setMarketplaceReview(extension.hash, 'approved')}>
+                                                {communityText('Approve and publish')}
+                                            </Button>
+                                            <Button
+                                                variant="danger"
+                                                onClick={() => setMarketplaceReview(extension.hash, 'rejected')}
+                                            >
+                                                {communityText('Reject')}
+                                            </Button>
+                                        </React.Fragment>
+                                    ) : null}
+                                    {!extension.gallery && tab !== 'trusted' && tab !== 'marketplace' ? (
                                         <Button onClick={() => setPolicy(extension.hash, 'trusted')}>{communityText('Trust')}</Button>
-                                    ) : !extension.gallery ? (
+                                    ) : !extension.gallery && tab !== 'marketplace' ? (
                                         <Button onClick={() => setPolicy(extension.hash, 'untrusted')}>{communityText('Untrust')}</Button>
                                     ) : null}
                                     {tab === 'untrusted' ? (

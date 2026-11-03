@@ -421,7 +421,7 @@
     "src/community/pages/Search.jsx:213",
     "src/community/pages/Spaces.jsx:329",
     "src/community/pages/Themes.jsx:185",
-    "src/community/pages/admin/ExtensionManager.jsx:146"
+    "src/community/pages/admin/ExtensionManager.jsx:196"
   ],
   "Could not load more comments. Try again.": [
     "src/community/components/CommentThread.jsx:1050"
@@ -521,8 +521,8 @@
     "src/community/components/DiffView.jsx:239",
     "src/community/pages/Admin.jsx:39",
     "src/community/pages/Roadmap.jsx:497",
-    "src/community/pages/admin/ExtensionManager.jsx:157",
-    "src/community/pages/admin/ExtensionManager.jsx:206"
+    "src/community/pages/admin/ExtensionManager.jsx:207",
+    "src/community/pages/admin/ExtensionManager.jsx:268"
   ],
   "New in this commit.": [
     "src/community/components/DiffView.jsx:283"
@@ -600,7 +600,7 @@
   ],
   "Explore": [
     "src/community/components/ExploreHeader.jsx:17",
-    "src/community/components/Footer.jsx:38",
+    "src/community/components/Footer.jsx:39",
     "src/community/components/NavBar.jsx:626",
     "src/community/components/NavBar.jsx:626"
   ],
@@ -629,14 +629,14 @@
   ],
   "Studios": [
     "src/community/components/ExploreNav.jsx:10",
-    "src/community/components/Footer.jsx:39",
+    "src/community/components/Footer.jsx:40",
     "src/community/components/MyStuffSpaces.jsx:65",
     "src/community/pages/Group.jsx:176",
     "src/community/pages/Spaces.jsx:21"
   ],
   "Challenges": [
     "src/community/components/ExploreNav.jsx:11",
-    "src/community/components/Footer.jsx:40",
+    "src/community/components/Footer.jsx:41",
     "src/community/components/MyStuffSpaces.jsx:79",
     "src/community/pages/Group.jsx:177",
     "src/community/pages/Home.jsx:426",
@@ -661,7 +661,7 @@
   ],
   "Themes": [
     "src/community/components/ExploreNav.jsx:15",
-    "src/community/components/Footer.jsx:41",
+    "src/community/components/Footer.jsx:42",
     "src/community/components/MyStuffThemes.jsx:218",
     "src/community/pages/MyStuff.jsx:512",
     "src/community/pages/Profile.jsx:551"
@@ -704,29 +704,29 @@
     "src/community/components/FileBrowserTree.jsx:127"
   ],
   "MistWarp": [
-    "src/community/components/Footer.jsx:25",
+    "src/community/components/Footer.jsx:26",
     "src/community/components/NavBar.jsx:474",
     "src/community/components/NavBar.jsx:482",
     "src/community/components/RichText.jsx:116",
     "src/community/pages/Roadmap.jsx:511"
   ],
   "Build, share, and remix projects together.": [
-    "src/community/components/Footer.jsx:26"
+    "src/community/components/Footer.jsx:27"
   ],
   "Create": [
-    "src/community/components/Footer.jsx:32",
+    "src/community/components/Footer.jsx:33",
     "src/community/components/NavBar.jsx:629",
     "src/community/components/NavBar.jsx:629",
     "src/community/pages/Spaces.jsx:300"
   ],
   "Editor": [
-    "src/community/components/Footer.jsx:33",
+    "src/community/components/Footer.jsx:34",
     "src/community/components/SharedProjects.jsx:19",
     "src/community/pages/ManageProject.jsx:997",
     "src/community/pages/Roadmap.jsx:497"
   ],
   "My stuff": [
-    "src/community/components/Footer.jsx:34",
+    "src/community/components/Footer.jsx:35",
     "src/community/components/NavBar.jsx:564",
     "src/community/components/NavBar.jsx:565",
     "src/community/components/NavBar.jsx:645",
@@ -735,89 +735,89 @@
     "src/community/pages/MyStuff.jsx:1231"
   ],
   "Community": [
-    "src/community/components/Footer.jsx:37",
+    "src/community/components/Footer.jsx:38",
     "src/community/pages/Challenge.jsx:806",
     "src/community/pages/Roadmap.jsx:497",
     "src/community/pages/Roadmap.jsx:511"
   ],
   "Leaderboard": [
-    "src/community/components/Footer.jsx:42"
+    "src/community/components/Footer.jsx:43"
   ],
   "News": [
-    "src/community/components/Footer.jsx:43",
+    "src/community/components/Footer.jsx:44",
     "src/community/pages/Home.jsx:74",
     "src/community/pages/Home.jsx:410",
     "src/community/pages/News.jsx:166"
   ],
   "Stats": [
-    "src/community/components/Footer.jsx:44"
+    "src/community/components/Footer.jsx:45"
   ],
   "Roadmap": [
-    "src/community/components/Footer.jsx:45",
+    "src/community/components/Footer.jsx:46",
     "src/community/pages/Home.jsx:170",
     "src/community/pages/Home.jsx:418",
     "src/community/pages/Roadmap.jsx:478"
   ],
   "Compare with Scratch": [
-    "src/community/components/Footer.jsx:46"
-  ],
-  "Report a bug": [
     "src/community/components/Footer.jsx:47"
   ],
-  "Chat": [
+  "Report a bug": [
     "src/community/components/Footer.jsx:48"
   ],
+  "Chat": [
+    "src/community/components/Footer.jsx:49"
+  ],
   "Discord": [
-    "src/community/components/Footer.jsx:53"
+    "src/community/components/Footer.jsx:54"
   ],
   "More": [
-    "src/community/components/Footer.jsx:56"
+    "src/community/components/Footer.jsx:57"
   ],
   "Memberships": [
-    "src/community/components/Footer.jsx:57",
+    "src/community/components/Footer.jsx:58",
     "src/community/components/NavBar.jsx:543",
     "src/community/components/NavBar.jsx:544"
   ],
   "Documentation": [
-    "src/community/components/Footer.jsx:58"
-  ],
-  "Packager": [
     "src/community/components/Footer.jsx:59"
   ],
+  "Packager": [
+    "src/community/components/Footer.jsx:60"
+  ],
   "GitHub": [
-    "src/community/components/Footer.jsx:66"
+    "src/community/components/Footer.jsx:67"
   ],
   "Rotur": [
-    "src/community/components/Footer.jsx:71"
+    "src/community/components/Footer.jsx:72"
   ],
   "Credits": [
-    "src/community/components/Footer.jsx:72",
+    "src/community/components/Footer.jsx:73",
     "src/community/components/ProjectInfoPanel.jsx:226"
   ],
   "Help and safety": [
-    "src/community/components/Footer.jsx:75"
+    "src/community/components/Footer.jsx:76"
   ],
   "Support": [
-    "src/community/components/Footer.jsx:76",
+    "src/community/components/Footer.jsx:77",
     "src/community/pages/Group.jsx:180",
     "src/community/pages/Support.jsx:101",
     "src/community/pages/project/ProjectHeader.jsx:82"
   ],
   "Trust, privacy, and terms": [
-    "src/community/components/Footer.jsx:77",
+    "src/community/components/Footer.jsx:78",
     "src/community/pages/Trust.jsx:31"
   ],
   "Service status": [
-    "src/community/components/Footer.jsx:78"
+    "src/community/components/Footer.jsx:79"
   ],
   "MistWarp is a mod of TurboWarp and Scratch. Not affiliated with Scratch or the Scratch Foundation.": [
-    "src/community/components/Footer.jsx:84"
+    "src/community/components/Footer.jsx:85"
   ],
   "Deployed {value1}": [
-    "src/community/components/Footer.jsx:87"
+    "src/community/components/Footer.jsx:88"
   ],
   "Version": [
-    "src/community/components/Footer.jsx:89"
+    "src/community/components/Footer.jsx:90"
   ],
   "Could not load this game shop.": [
     "src/community/components/GameMarketplaceModal.jsx:118"
@@ -5673,7 +5673,7 @@
   "Unblock": [
     "src/community/pages/Profile.jsx:897",
     "src/community/pages/Settings.jsx:793",
-    "src/community/pages/admin/ExtensionManager.jsx:299"
+    "src/community/pages/admin/ExtensionManager.jsx:383"
   ],
   "Block": [
     "src/community/pages/Profile.jsx:897"
@@ -7330,72 +7330,90 @@
   ],
   "Block URL": [
     "src/community/pages/admin/ExtensionManager.jsx:128",
-    "src/community/pages/admin/ExtensionManager.jsx:233",
-    "src/community/pages/admin/ExtensionManager.jsx:277"
+    "src/community/pages/admin/ExtensionManager.jsx:295",
+    "src/community/pages/admin/ExtensionManager.jsx:348"
+  ],
+  "Extension approved and published.": [
+    "src/community/pages/admin/ExtensionManager.jsx:158"
+  ],
+  "Marketplace submission rejected.": [
+    "src/community/pages/admin/ExtensionManager.jsx:159"
+  ],
+  "Store submissions": [
+    "src/community/pages/admin/ExtensionManager.jsx:239"
   ],
   "To be verified": [
-    "src/community/pages/admin/ExtensionManager.jsx:180"
+    "src/community/pages/admin/ExtensionManager.jsx:240"
   ],
   "Ignored": [
-    "src/community/pages/admin/ExtensionManager.jsx:181"
+    "src/community/pages/admin/ExtensionManager.jsx:241"
   ],
   "Trusted": [
-    "src/community/pages/admin/ExtensionManager.jsx:182"
+    "src/community/pages/admin/ExtensionManager.jsx:242"
   ],
   "Blocked": [
-    "src/community/pages/admin/ExtensionManager.jsx:183"
+    "src/community/pages/admin/ExtensionManager.jsx:243"
   ],
   "Search extensions": [
-    "src/community/pages/admin/ExtensionManager.jsx:210",
-    "src/community/pages/admin/ExtensionManager.jsx:211"
+    "src/community/pages/admin/ExtensionManager.jsx:272",
+    "src/community/pages/admin/ExtensionManager.jsx:273"
   ],
   "Block an extension URL": [
-    "src/community/pages/admin/ExtensionManager.jsx:226"
+    "src/community/pages/admin/ExtensionManager.jsx:288"
   ],
   "ID: {value1}": [
-    "src/community/pages/admin/ExtensionManager.jsx:250"
-  ],
-  "By: {value1}": [
-    "src/community/pages/admin/ExtensionManager.jsx:256"
-  ],
-  "License: {value1}": [
-    "src/community/pages/admin/ExtensionManager.jsx:260"
-  ],
-  "Used in {value1, plural, one {# project} other {# projects}}": [
-    "src/community/pages/admin/ExtensionManager.jsx:265"
-  ],
-  "View source": [
-    "src/community/pages/admin/ExtensionManager.jsx:284"
-  ],
-  "Trust": [
-    "src/community/pages/admin/ExtensionManager.jsx:287"
-  ],
-  "Untrust": [
-    "src/community/pages/admin/ExtensionManager.jsx:289"
-  ],
-  "Ignore": [
-    "src/community/pages/admin/ExtensionManager.jsx:292"
-  ],
-  "Review again": [
-    "src/community/pages/admin/ExtensionManager.jsx:294"
-  ],
-  "Block hash": [
-    "src/community/pages/admin/ExtensionManager.jsx:297"
-  ],
-  "No extensions": [
-    "src/community/pages/admin/ExtensionManager.jsx:310"
-  ],
-  "No matching extensions.": [
     "src/community/pages/admin/ExtensionManager.jsx:312"
   ],
+  "By: {value1}": [
+    "src/community/pages/admin/ExtensionManager.jsx:318"
+  ],
+  "License: {value1}": [
+    "src/community/pages/admin/ExtensionManager.jsx:322"
+  ],
+  "Store submission: {value1} v{value2} by {value3}": [
+    "src/community/pages/admin/ExtensionManager.jsx:327"
+  ],
+  "Used in {value1, plural, one {# project} other {# projects}}": [
+    "src/community/pages/admin/ExtensionManager.jsx:336"
+  ],
+  "View source": [
+    "src/community/pages/admin/ExtensionManager.jsx:355"
+  ],
+  "Approve and publish": [
+    "src/community/pages/admin/ExtensionManager.jsx:360"
+  ],
+  "Reject": [
+    "src/community/pages/admin/ExtensionManager.jsx:366"
+  ],
+  "Trust": [
+    "src/community/pages/admin/ExtensionManager.jsx:371"
+  ],
+  "Untrust": [
+    "src/community/pages/admin/ExtensionManager.jsx:373"
+  ],
+  "Ignore": [
+    "src/community/pages/admin/ExtensionManager.jsx:376"
+  ],
+  "Review again": [
+    "src/community/pages/admin/ExtensionManager.jsx:378"
+  ],
+  "Block hash": [
+    "src/community/pages/admin/ExtensionManager.jsx:381"
+  ],
+  "No extensions": [
+    "src/community/pages/admin/ExtensionManager.jsx:394"
+  ],
+  "No matching extensions.": [
+    "src/community/pages/admin/ExtensionManager.jsx:396"
+  ],
   "No extensions to verify.": [
-    "src/community/pages/admin/ExtensionManager.jsx:313"
+    "src/community/pages/admin/ExtensionManager.jsx:397"
   ],
   "No {value1} extension hashes.": [
-    "src/community/pages/admin/ExtensionManager.jsx:313"
+    "src/community/pages/admin/ExtensionManager.jsx:397"
   ],
   "Unblock URL": [
-    "src/community/pages/admin/ExtensionManager.jsx:324"
+    "src/community/pages/admin/ExtensionManager.jsx:408"
   ],
   "Project hidden. Its creator was told why.": [
     "src/community/pages/admin/ProjectManager.jsx:55",

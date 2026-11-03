@@ -2876,5 +2876,11 @@
   "{value1} is shadow banned": "{value1} is shadow banned",
   "None of their projects or comments appear for anyone else. Only admins see this notice.": "None of their projects or comments appear for anyone else. Only admins see this notice.",
   "This page could not load.": "This page could not load.",
-  "Part of the site did not download. Check your connection and try again.": "Part of the site did not download. Check your connection and try again."
+  "Part of the site did not download. Check your connection and try again.": "Part of the site did not download. Check your connection and try again.",
+  "Extension approved and published.": "Extension approved and published.",
+  "Marketplace submission rejected.": "Marketplace submission rejected.",
+  "Store submissions": "Store submissions",
+  "Store submission: {value1} v{value2} by {value3}": "Store submission: {value1} v{value2} by {value3}",
+  "Approve and publish": "Approve and publish",
+  "Reject": "Reject"
 }

@@ -14,6 +14,8 @@ import extensionLibraryContent, {
 } from '../lib/libraries/extensions/index.jsx';
 import extensionTags from '../lib/libraries/tw-extension-tags';
 import {getVanillaPalette} from '../lib/mw-vanilla-palette';
+import {marketplaceExtensions, submitMarketplaceExtension} from '../lib/community/api.js';
+import Modal from './windowed-modal.jsx';
 
 import LibraryComponent from '../components/tw-extension-library/extension-library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
@@ -55,19 +57,34 @@ const fetchCatalog = async (name, url) => {
 };
 
 const fetchLibrary = async () => {
-    const [twResult, mistiumResult] = await Promise.allSettled([
+    const [twResult, mistiumResult, marketplaceResult] = await Promise.allSettled([
         fetchCatalog('TurboWarp', 'https://extensions.turbowarp.org/generated-metadata/extensions-v0.json'),
-        fetchCatalog('Mistium', 'https://extensions.mistium.com/generated-metadata/extensions-v0.json')
+        fetchCatalog('Mistium', 'https://extensions.mistium.com/generated-metadata/extensions-v0.json'),
+        marketplaceExtensions()
     ]);
 
-    if (twResult.status === 'rejected' && mistiumResult.status === 'rejected') {
-        throw new Error(`${twResult.reason.message}; ${mistiumResult.reason.message}`);
+    if (
+        twResult.status === 'rejected' &&
+        mistiumResult.status === 'rejected' &&
+        marketplaceResult.status === 'rejected'
+    ) {
+        throw new Error([
+            twResult.reason.message,
+            mistiumResult.reason.message,
+            marketplaceResult.reason.message
+        ].join('; '));
     }
     if (twResult.status === 'rejected') log.error(twResult.reason);
     if (mistiumResult.status === 'rejected') log.error(mistiumResult.reason);
+    if (marketplaceResult.status === 'rejected') log.error(marketplaceResult.reason);
 
     const twData = twResult.status === 'fulfilled' ? twResult.value : [];
     const mistiumData = mistiumResult.status === 'fulfilled' ? mistiumResult.value : [];
+    const marketplaceData = marketplaceResult.status === 'fulfilled' &&
+        Array.isArray(marketplaceResult.value.extensions) ? marketplaceResult.value.extensions : [];
+    if (marketplaceResult.status === 'fulfilled' && !Array.isArray(marketplaceResult.value.extensions)) {
+        log.error(new Error('TurboShare extension catalog returned an invalid response.'));
+    }
     
     // Process TurboWarp extensions
     const twExtensions = twData.map(extension => ({
@@ -146,21 +163,38 @@ const fetchLibrary = async () => {
             incompatibleWithScratch: true,
             featured: true
         }));
+
+    const marketplace = marketplaceData.map(extension => ({
+        name: extension.name,
+        description: extension.description,
+        extensionId: extension.extensionId,
+        extensionURL: extension.extensionURL,
+        source: 'turboshare',
+        tags: ['turboshare'],
+        credits: [extension.author],
+        incompatibleWithScratch: true
+    }));
     
     // Combine both extension sets
-    return [...twExtensions, ...mistiumExtensions];
+    return [...twExtensions, ...mistiumExtensions, ...marketplace];
 };
 
 class ExtensionLibrary extends React.PureComponent {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleItemSelect'
+            'handleItemSelect',
+            'handleMarketplaceSubmit',
+            'handleCloseSubmission'
         ]);
         this.state = {
             gallery: cachedGallery,
             galleryError: null,
-            galleryTimedOut: false
+            galleryTimedOut: false,
+            submitOpen: false,
+            submitBusy: false,
+            submitError: '',
+            submitSuccess: ''
         };
         this._isMounted = false;
         this.galleryTimeout = null;
@@ -212,11 +246,19 @@ class ExtensionLibrary extends React.PureComponent {
 
         const extensionId = item.extensionId;
 
+        if (extensionId === 'marketplace_submit') {
+            this.setState({
+                submitOpen: true,
+                submitError: '',
+                submitSuccess: ''
+            });
+            return;
+        }
+
         if (extensionId === 'custom_extension') {
             this.props.onOpenCustomExtensionModal();
             return;
         }
-
         if (extensionId === 'procedures_enable_return') {
             if (this.props.onEnableProcedureReturns) {
                 this.props.onEnableProcedureReturns();
@@ -261,6 +303,45 @@ class ExtensionLibrary extends React.PureComponent {
             }
         }
     }
+    async handleMarketplaceSubmit (event) {
+        event.preventDefault();
+        if (this.state.submitBusy) return;
+        const form = event.currentTarget;
+        const file = form.elements.source.files[0];
+        if (!file || !/\.js$/i.test(file.name)) {
+            this.setState({submitError: 'Choose a JavaScript (.js) file.'});
+            return;
+        }
+        if (file.size === 0 || file.size > 2 * 1024 * 1024) {
+            this.setState({submitError: 'The extension must be up to 2 MB.'});
+            return;
+        }
+        this.setState({submitBusy: true, submitError: '', submitSuccess: ''});
+        try {
+            const result = await submitMarketplaceExtension({
+                id: form.elements.id.value.trim(),
+                name: form.elements.name.value.trim(),
+                version: form.elements.version.value.trim(),
+                description: form.elements.description.value.trim(),
+                source: await file.text()
+            });
+            if (!result || !result.ok) throw new Error('The server could not accept this extension.');
+            this.setState({submitSuccess: 'Submitted for admin review. It will appear in the store after approval.'});
+            try {
+                cachedGallery = await fetchLibrary();
+                if (this._isMounted) this.setState({gallery: cachedGallery});
+            } catch (error) {
+                log.error(error);
+            }
+        } catch (error) {
+            this.setState({submitError: error.message || 'Could not submit the extension.'});
+        } finally {
+            if (this._isMounted) this.setState({submitBusy: false});
+        }
+    }
+    handleCloseSubmission () {
+        this.setState({submitOpen: false});
+    }
     render () {
         const vanilla = getVanillaPalette();
         let library = null;
@@ -270,6 +351,14 @@ class ExtensionLibrary extends React.PureComponent {
                 .map(toLibraryItem);
             if (!vanilla) {
                 library.push('---');
+                library.push(toLibraryItem({
+                    name: 'Submit an extension',
+                    description: 'Upload a JavaScript extension for admin review.',
+                    extensionId: 'marketplace_submit',
+                    source: 'turboshare',
+                    tags: ['turboshare'],
+                    iconURL: extensionIcon
+                }));
                 if (this.state.gallery) {
                     library.push(toLibraryItem(galleryMore));
                     const locale = this.props.intl.locale;
@@ -288,17 +377,89 @@ class ExtensionLibrary extends React.PureComponent {
         }
 
         return (
-            <LibraryComponent
-                data={library}
-                filterable
-                persistableKey="extensionId"
-                id="extensionLibrary"
-                tags={extensionTags}
-                title={this.props.intl.formatMessage(messages.extensionTitle)}
-                visible={this.props.visible}
-                onItemSelected={this.handleItemSelect}
-                onRequestClose={this.props.onRequestClose}
-            />
+            <React.Fragment>
+                <LibraryComponent
+                    data={library}
+                    filterable
+                    persistableKey="extensionId"
+                    id="extensionLibrary"
+                    tags={extensionTags}
+                    title={this.props.intl.formatMessage(messages.extensionTitle)}
+                    visible={this.props.visible}
+                    onItemSelected={this.handleItemSelect}
+                    onRequestClose={this.props.onRequestClose}
+                />
+                {this.state.submitOpen ? (
+                    <Modal
+                        id="extensionMarketplaceSubmit"
+                        contentLabel="Submit an extension"
+                        onRequestClose={this.handleCloseSubmission}
+                        width={520}
+                        height={600}
+                    >
+                        <form
+                            onSubmit={this.handleMarketplaceSubmit}
+                            style={{display: 'flex', flexDirection: 'column', gap: 12, padding: 24}}
+                        >
+                            <h2 style={{margin: 0}}>{'Submit an extension'}</h2>
+                            <p style={{margin: 0}}>
+                                {'Submissions and updates stay private until an admin reviews and approves them.'}
+                            </p>
+                            <label>
+                                {'Extension ID'}
+                                <input
+                                    name="id"
+                                    required
+                                    maxLength={64}
+                                    pattern="[A-Za-z0-9_-]+"
+                                />
+                            </label>
+                            <label>
+                                {'Name'}
+                                <input
+                                    name="name"
+                                    required
+                                    maxLength={80}
+                                />
+                            </label>
+                            <label>
+                                {'Version'}
+                                <input
+                                    name="version"
+                                    required
+                                    maxLength={40}
+                                    placeholder="1.0.0"
+                                />
+                            </label>
+                            <label>
+                                {'Description'}
+                                <textarea
+                                    name="description"
+                                    maxLength={500}
+                                    rows={3}
+                                />
+                            </label>
+                            <label>
+                                {'JavaScript source (.js, up to 2 MB)'}
+                                <input
+                                    name="source"
+                                    type="file"
+                                    accept=".js,application/javascript"
+                                    required
+                                />
+                            </label>
+                            {this.state.submitError ? <p role="alert">{this.state.submitError}</p> : null}
+                            {this.state.submitSuccess ? <p role="status">{this.state.submitSuccess}</p> : null}
+                            <button
+                                type="submit"
+                                disabled={this.state.submitBusy}
+                            >
+                                {this.state.submitBusy ? 'Submitting…' : 'Submit for review'}
+                            </button>
+                        </form>
+                    </Modal>
+                ) : null}
+            </React.Fragment>
         );
     }
 }
