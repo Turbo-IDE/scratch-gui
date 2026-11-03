@@ -267,6 +267,7 @@ const request = async (path, {
     raw = false,
     cache = true,
     timeoutMs,
+    includeSession = true,
     baseURL = API_BASE
 } = {}) => {
     const cacheable = method === 'GET' && !raw && cache;
@@ -285,7 +286,7 @@ const request = async (path, {
     const generation = cacheGeneration;
     const run = async () => {
         const fetchOnce = () => {
-            const session = loadSession();
+            const session = includeSession ? loadSession() : null;
             const finalHeaders = {...headers};
             if (session) {
                 finalHeaders.Authorization = `Bearer ${session}`;
@@ -466,6 +467,7 @@ const checkProjectAssets = (id, assets) => request(`/projects/${id}/assets/check
 
 const marketplaceExtensions = () => request('/extensions/marketplace', {
     cache: false,
+    includeSession: false,
     baseURL: EXTENSION_STORE_API_BASE,
     headers: {'X-Client-Type': 'StudioDANV-Web'}
 });
@@ -473,6 +475,7 @@ const submitMarketplaceExtension = extension =>
     request('/extensions/marketplace/submit', {
         method: 'POST',
         body: extension,
+        includeSession: false,
         baseURL: EXTENSION_STORE_API_BASE,
         headers: {'X-Client-Type': 'StudioDANV-Web'}
     });

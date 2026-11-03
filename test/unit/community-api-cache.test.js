@@ -1,4 +1,9 @@
-import {request, staleCacheTest} from '../../src/lib/community/api.js';
+import {
+    marketplaceExtensions,
+    request,
+    staleCacheTest,
+    submitMarketplaceExtension
+} from '../../src/lib/community/api.js';
 
 const jsonResponse = data => ({
     ok: true,
@@ -121,6 +126,21 @@ describe('community api GET cache', () => {
         await request('/admin/extensions', {cache: false});
         await request('/admin/extensions', {cache: false});
         expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    test('Extensions Store requests do not send the editor account token', async () => {
+        localStorage.setItem('mw:mistwarp-session', 'private-session-token');
+        try {
+            await marketplaceExtensions();
+            await submitMarketplaceExtension({id: 'example'});
+
+            expect(global.fetch).toHaveBeenCalledTimes(2);
+            for (const [, options] of global.fetch.mock.calls) {
+                expect(options.headers.Authorization).toBeUndefined();
+            }
+        } finally {
+            localStorage.removeItem('mw:mistwarp-session');
+        }
     });
 
     test('expired entries refetch', async () => {

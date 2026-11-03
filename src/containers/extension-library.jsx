@@ -449,6 +449,7 @@ class ExtensionLibrary extends React.PureComponent {
                             <p className={libraryStyles.submissionDescription}>
                                 {'Submit a version for admin review. '}
                                 {'Only approved versions appear in the Extensions Store. '}
+                                {'No account token is sent; provide a public author name. '}
                                 {'To use an extension privately, choose Custom Extension instead.'}
                             </p>
                             <label className={libraryStyles.submissionField}>
@@ -474,6 +475,7 @@ class ExtensionLibrary extends React.PureComponent {
                                 <span>{'Author name (shown publicly)'}</span>
                                 <input
                                     name="author"
+                                    required
                                     maxLength={80}
                                     placeholder="Your name or team"
                                 />
