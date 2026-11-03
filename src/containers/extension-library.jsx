@@ -364,7 +364,8 @@ class ExtensionLibrary extends React.PureComponent {
                 log.error(error);
             }
         } catch (error) {
-            this.setState({submitError: error.message || 'Could not submit the extension.'});
+            const serverMessage = error.serverMessage || (error.data && error.data.error) || error.message;
+            this.setState({submitError: serverMessage || 'Could not submit the extension.'});
         } finally {
             if (this._isMounted) this.setState({submitBusy: false});
         }
