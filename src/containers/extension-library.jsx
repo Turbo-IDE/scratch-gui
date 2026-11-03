@@ -331,20 +331,6 @@ class ExtensionLibrary extends React.PureComponent {
             this.setState({submitError: 'The extension must be up to 2 MB.'});
             return;
         }
-        if (cover && (
-            !['image/png', 'image/jpeg', 'image/webp'].includes(cover.type) ||
-            cover.size === 0 ||
-            cover.size > 2 * 1024 * 1024
-        )) {
-            let coverError = 'The cover must be a PNG, JPEG, or WebP image.';
-            if (cover.size === 0) {
-                coverError = 'The cover image is empty.';
-            } else if (cover.size > 2 * 1024 * 1024) {
-                coverError = 'The cover image must be up to 2 MB.';
-            }
-            this.setState({submitError: coverError});
-            return;
-        }
         this.setState({submitBusy: true, submitError: '', submitSuccess: ''});
         try {
             const result = await submitMarketplaceExtension({
