@@ -336,7 +336,13 @@ class ExtensionLibrary extends React.PureComponent {
             cover.size === 0 ||
             cover.size > 2 * 1024 * 1024
         )) {
-            this.setState({submitError: 'The cover must be a PNG, JPEG, or WebP image up to 2 MB.'});
+            let coverError = 'The cover must be a PNG, JPEG, or WebP image.';
+            if (cover.size === 0) {
+                coverError = 'The cover image is empty.';
+            } else if (cover.size > 2 * 1024 * 1024) {
+                coverError = 'The cover image must be up to 2 MB.';
+            }
+            this.setState({submitError: coverError});
             return;
         }
         this.setState({submitBusy: true, submitError: '', submitSuccess: ''});
