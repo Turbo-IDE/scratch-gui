@@ -344,6 +344,7 @@ class ExtensionLibrary extends React.PureComponent {
             const result = await submitMarketplaceExtension({
                 id: form.elements.id.value.trim(),
                 name: form.elements.name.value.trim(),
+                author: form.elements.author.value.trim(),
                 version: form.elements.version.value.trim(),
                 description: form.elements.description.value.trim(),
                 source: await file.text(),
@@ -467,6 +468,14 @@ class ExtensionLibrary extends React.PureComponent {
                                     required
                                     maxLength={80}
                                     placeholder="My Extension"
+                                />
+                            </label>
+                            <label className={libraryStyles.submissionField}>
+                                <span>{'Author name (shown publicly)'}</span>
+                                <input
+                                    name="author"
+                                    maxLength={80}
+                                    placeholder="Your name or team"
                                 />
                             </label>
                             <label className={libraryStyles.submissionField}>

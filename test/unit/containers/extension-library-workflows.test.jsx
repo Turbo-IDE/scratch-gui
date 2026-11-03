@@ -30,6 +30,26 @@ describe('extension gallery loading', () => {
 
         await expect(fetchLibrary()).rejects.toThrow('TurboWarp extensions');
     });
+
+    test('uses the marketplace author as the extension credit', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce(response(true, {extensions: []}))
+            .mockResolvedValueOnce(response(true, {extensions: []}))
+            .mockResolvedValueOnce(response(true, {
+                ok: true,
+                extensions: [{
+                    extensionId: 'community-test',
+                    name: 'Community Test',
+                    author: 'Example Author',
+                    extensionURL: 'https://example.com/community-test.js'
+                }]
+            }));
+
+        const gallery = await fetchLibrary();
+
+        expect(gallery.find(item => item.extensionId === 'community-test').credits)
+            .toEqual(['Example Author']);
+    });
 });
 
 describe('extension selection', () => {
