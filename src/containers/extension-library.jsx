@@ -253,7 +253,7 @@ class ExtensionLibrary extends React.PureComponent {
         clearTimeout(this.galleryTimeout);
         this.galleryTimeout = null;
     }
-    async handleItemSelect (item) {
+    handleItemSelect (item) {
         if (item.href) {
             return;
         }
@@ -291,12 +291,6 @@ class ExtensionLibrary extends React.PureComponent {
         }
 
         const url = item.extensionURL ? item.extensionURL : extensionId;
-        let loadUrl = url;
-        if (url && url.includes('/api/extensions/marketplace/source/')) {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`Could not resolve extension source (${res.status})`);
-            loadUrl = (await res.text()).trim();
-        }
         if (!item.disabled) {
             if (this.props.vm.extensionManager.isExtensionLoaded(extensionId)) {
                 if (typeof this.props.onCategorySelected === 'function') {
@@ -305,7 +299,7 @@ class ExtensionLibrary extends React.PureComponent {
             } else {
                 if (this.loadingExtensions.has(extensionId)) return;
                 this.loadingExtensions.add(extensionId);
-                return this.props.vm.extensionManager.loadExtensionURL(loadUrl)
+                return this.props.vm.extensionManager.loadExtensionURL(url)
                     .then(() => {
                         if (typeof this.props.onCategorySelected === 'function') {
                             this.props.onCategorySelected(extensionId);
