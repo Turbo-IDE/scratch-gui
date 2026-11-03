@@ -92,6 +92,7 @@ import {
     openGitModal,
     openExtensionManagerModal,
     openExtensionLibrary,
+    openExtensionStore,
     openAssetsModal,
     openVariableManagerModal,
     openProductsModal,
@@ -524,6 +525,7 @@ class MenuBar extends React.Component {
             'handleClickGameItems',
             'handleClickMediaRecorder',
             'handleOpenExtensionLibrary',
+            'handleOpenExtensionStore',
             'handleOpenExtensionManager',
             'handleClickFile',
             'refreshGitMenuState',
@@ -844,6 +846,10 @@ class MenuBar extends React.Component {
     handleOpenExtensionLibrary () {
         this.props.onRequestCloseTools();
         this.props.onOpenExtensionLibrary();
+    }
+    handleOpenExtensionStore () {
+        this.props.onRequestCloseTools();
+        this.props.onOpenExtensionStore();
     }
     handleOpenExtensionManager () {
         this.props.onRequestCloseTools();
@@ -2495,6 +2501,16 @@ class MenuBar extends React.Component {
                                         />
                                     </MenuItem>
                                     <MenuItem
+                                        onClick={this.handleOpenExtensionStore}
+                                    >
+                                        <Package />
+                                        <FormattedMessage
+                                            defaultMessage="Extensions Store"
+                                            description="Menu bar item to open the extensions marketplace"
+                                            id="mw.menuBar.extensions.store"
+                                        />
+                                    </MenuItem>
+                                    <MenuItem
                                         onClick={this.handleOpenExtensionManager}
                                         shortcut={shortcutHint('extensionManager', this.props.customShortcuts)}
                                     >
@@ -2773,6 +2789,7 @@ MenuBar.propTypes = {
     onOpenSettingsModal: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenExtensionLibrary: PropTypes.func,
+    onOpenExtensionStore: PropTypes.func,
     onOpenAssetsModal: PropTypes.func,
     onOpenExtensionManagerModal: PropTypes.func,
     onOpenRegistration: PropTypes.func,
@@ -2845,6 +2862,7 @@ const mapDispatchToProps = dispatch => ({
     onClickSeeInside: () => dispatch(setPlayer(false)),
     onSetPlayer: isPlayerOnly => dispatch(setPlayer(isPlayerOnly)),
     onOpenExtensionLibrary: () => dispatch(openExtensionLibrary()),
+    onOpenExtensionStore: () => dispatch(openExtensionStore()),
     onOpenAssetsModal: () => dispatch(openAssetsModal()),
     onClickAccount: () => dispatch(openAccountMenu()),
     onRequestCloseAccount: () => dispatch(closeAccountMenu()),

@@ -851,6 +851,7 @@ const GUIComponent = props => {
         enableCommunity,
         intl,
         extensionLibraryVisible,
+        extensionStoreVisible,
         isCreating,
         isEmbedded,
         isFullScreen,
@@ -870,6 +871,7 @@ const GUIComponent = props => {
         onClickPackager,
         onLogOut,
         onOpenExtensionLibrary,
+        onOpenExtensionStore,
         onOpenExtensionManagerModal,
         onOpenRegistration,
         onToggleLoginOpen,
@@ -880,6 +882,7 @@ const GUIComponent = props => {
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
         onRequestCloseExtensionLibrary,
+        onRequestCloseExtensionStore,
         onRequestCloseSoundLibrary,
         onRequestCloseTelemetryModal,
         onSetStageSize: _onSetStageSize,
@@ -1302,6 +1305,7 @@ const GUIComponent = props => {
                             onCloseAccountNav={onCloseAccountNav}
                             onLogOut={onLogOut}
                             onOpenExtensionLibrary={onOpenExtensionLibrary}
+                            onOpenExtensionStore={onOpenExtensionStore}
                             onOpenExtensionManagerModal={onOpenExtensionManagerModal}
                             onOpenRegistration={onOpenRegistration}
                             onProjectTelemetryEvent={onProjectTelemetryEvent}
@@ -1647,6 +1651,21 @@ const GUIComponent = props => {
                             />
                         </IsolatedPanel>
                     ) : null}
+                    {extensionStoreVisible ? (
+                        <IsolatedPanel
+                            name="Extensions Store"
+                            onClose={onRequestCloseExtensionStore}
+                        >
+                            <ExtensionLibrary
+                                vm={vm}
+                                visible={extensionStoreVisible}
+                                storeOnly
+                                onRequestClose={onRequestCloseExtensionStore}
+                                onOpenCustomExtensionModal={onOpenCustomExtensionModal}
+                                onEnableProcedureReturns={handleEnableProcedureReturns}
+                            />
+                        </IsolatedPanel>
+                    ) : null}
                     <DragLayer />
                 </Box>
             </React.Suspense>
@@ -1697,6 +1716,7 @@ GUIComponent.propTypes = {
     }),
     enableCommunity: PropTypes.bool,
     extensionLibraryVisible: PropTypes.bool,
+    extensionStoreVisible: PropTypes.bool,
     intl: intlShape.isRequired,
     isCreating: PropTypes.bool,
     isEmbedded: PropTypes.bool,
@@ -1717,12 +1737,14 @@ GUIComponent.propTypes = {
     onOpenCustomExtensionModal: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenExtensionLibrary: PropTypes.func,
+    onOpenExtensionStore: PropTypes.func,
     onOpenExtensionManagerModal: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onRequestCloseBackdropLibrary: PropTypes.func,
     onRequestCloseCostumeLibrary: PropTypes.func,
     onRequestCloseSoundLibrary: PropTypes.func,
     onRequestCloseExtensionLibrary: PropTypes.func,
+    onRequestCloseExtensionStore: PropTypes.func,
     onRequestCloseTelemetryModal: PropTypes.func,
     onShowPrivacyPolicy: PropTypes.func,
     onStartSelectingFileUpload: PropTypes.func,

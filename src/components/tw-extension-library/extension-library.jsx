@@ -39,6 +39,26 @@ const messages = defineMessages({
         id: 'mw.extensionLibrary.loadCustom',
         defaultMessage: 'Load a custom extension',
         description: 'Button in the empty extension library search that opens the custom extension dialog'
+    },
+    storeDescription: {
+        id: 'mw.extensionStore.description',
+        defaultMessage: 'Explore community extensions reviewed by the Turbo-IDE team.',
+        description: 'Introduction shown in the Extensions Store window'
+    },
+    storePublish: {
+        id: 'mw.extensionStore.publish',
+        defaultMessage: 'Publish an extension',
+        description: 'Button to submit an extension to the store'
+    },
+    storeEmpty: {
+        id: 'mw.extensionStore.empty',
+        defaultMessage: 'No extensions are published yet. Be the first to share one.',
+        description: 'Empty state shown when the extension store has no results'
+    },
+    storeUnavailable: {
+        id: 'mw.extensionStore.unavailable',
+        defaultMessage: 'The Extensions Store could not be loaded.',
+        description: 'Error title shown when the extension store API is unavailable'
     }
 });
 
@@ -260,7 +280,7 @@ class TWExtensionLibrary extends React.Component {
     }
 
     render () {
-        const {intl, tags, title, onRequestClose, onItemSelected} = this.props;
+        const {intl, tags, title, onRequestClose, onItemSelected, onPublish, storeError, storeOnly} = this.props;
         const data = this.props.data || [];
         const divider = data.indexOf('---');
         const builtIn = data.slice(0, divider === -1 ? data.length : divider).filter(isExtension);
@@ -295,31 +315,52 @@ class TWExtensionLibrary extends React.Component {
                 className={styles.modalContent}
                 contentLabel={title}
                 onRequestClose={onRequestClose}
-                id="extensionLibrary"
+                id={storeOnly ? 'extensionStore' : 'extensionLibrary'}
                 width={1040}
                 height={720}
                 minWidth={760}
                 minHeight={520}
             >
                 <ModalSidebarLayout className={styles.layout}>
-                    <ModalSidebar
-                        ariaLabel={title}
-                        width="wide"
-                    >
-                        <ModalSidebarCollapsibleGroup label={intl.formatMessage(messages.groupLabel)}>
-                            {sidebarTags.map(tag => (
-                                <TagItem
-                                    key={tag.tag}
-                                    tag={tag.tag}
-                                    label={labelOf(tag, intl)}
-                                    selected={this.state.selectedTag === tag.tag}
-                                    onSelect={this.handleSelectTag}
-                                />
-                            ))}
-                        </ModalSidebarCollapsibleGroup>
-                    </ModalSidebar>
+                    {storeOnly ? null : (
+                        <ModalSidebar
+                            ariaLabel={title}
+                            width="wide"
+                        >
+                            <ModalSidebarCollapsibleGroup label={intl.formatMessage(messages.groupLabel)}>
+                                {sidebarTags.map(tag => (
+                                    <TagItem
+                                        key={tag.tag}
+                                        tag={tag.tag}
+                                        label={labelOf(tag, intl)}
+                                        selected={this.state.selectedTag === tag.tag}
+                                        onSelect={this.handleSelectTag}
+                                    />
+                                ))}
+                            </ModalSidebarCollapsibleGroup>
+                        </ModalSidebar>
+                    )}
 
                     <div className={styles.content}>
+                        {storeOnly ? (
+                            <header className={styles.storeHeader}>
+                                <div>
+                                    <span className={styles.storeEyebrow}>{'COMMUNITY MARKETPLACE'}</span>
+                                    <h1 className={styles.storeTitle}>{title}</h1>
+                                    <p className={styles.storeDescription}>
+                                        {intl.formatMessage(messages.storeDescription)}
+                                    </p>
+                                </div>
+                                <button
+                                    className={styles.storePublish}
+                                    onClick={onPublish}
+                                    type="button"
+                                >
+                                    <PackagePlus size={17} />
+                                    {intl.formatMessage(messages.storePublish)}
+                                </button>
+                            </header>
+                        ) : null}
                         <div className={styles.searchRow}>
                             <Search
                                 className={styles.searchIcon}
@@ -335,9 +376,17 @@ class TWExtensionLibrary extends React.Component {
                             />
                         </div>
                         <div className={styles.scroll}>
-                            {visible.length === 0 ? (
+                            {storeOnly && storeError ? (
+                                <div
+                                    className={styles.emptyState}
+                                    role="alert"
+                                >
+                                    <p>{intl.formatMessage(messages.storeUnavailable)}</p>
+                                    <p>{storeError.message || String(storeError)}</p>
+                                </div>
+                            ) : visible.length === 0 ? (
                                 <div className={styles.emptyState}>
-                                    <p>{intl.formatMessage(messages.noMatches)}</p>
+                                    <p>{intl.formatMessage(storeOnly ? messages.storeEmpty : messages.noMatches)}</p>
                                     {customExtension ? (
                                         <CustomExtensionButton
                                             item={customExtension}
@@ -400,6 +449,9 @@ TWExtensionLibrary.propTypes = {
     tags: PropTypes.arrayOf(PropTypes.object),
     title: PropTypes.string,
     onItemSelected: PropTypes.func.isRequired,
+    onPublish: PropTypes.func,
+    storeError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    storeOnly: PropTypes.bool,
     onRequestClose: PropTypes.func
 };
 

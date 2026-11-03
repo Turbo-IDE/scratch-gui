@@ -20,6 +20,169 @@
     overflow: hidden;
 }
 
+.store-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 16px 16px 0;
+    padding: 20px 22px;
+    border: 1px solid $ui-black-transparent;
+    border-radius: 14px;
+    background: linear-gradient(120deg, color-mix(in srgb, $looks-secondary 12%, $ui-primary), $ui-primary 75%);
+}
+
+.store-eyebrow {
+    color: $looks-secondary;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.store-title {
+    margin: 3px 0;
+    color: $text-primary;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.store-description {
+    margin: 0;
+    color: color-mix(in srgb, $text-primary 65%, transparent);
+    font-size: 0.875rem;
+}
+
+.store-publish,
+.submission-button {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 9px;
+    background: $looks-secondary;
+    color: $ui-white;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.store-publish:hover,
+.submission-button:hover:not(:disabled) {
+    background: $looks-secondary-dark;
+    transform: translateY(-1px);
+}
+
+.store-publish:focus-visible,
+.submission-button:focus-visible {
+    outline: 2px solid $looks-secondary;
+    outline-offset: 3px;
+}
+
+.submission-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 26px;
+    box-sizing: border-box;
+    background: $ui-primary;
+    color: $text-primary;
+}
+
+.submission-header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid $ui-black-transparent;
+}
+
+.submission-eyebrow {
+    color: $looks-secondary;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.submission-header h2 {
+    margin: 5px 0 0;
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+.submission-description {
+    margin: 0;
+    color: color-mix(in srgb, $text-primary 70%, transparent);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.submission-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: $text-primary;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.submission-field input,
+.submission-field textarea {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 11px;
+    border: 1px solid $ui-black-transparent;
+    border-radius: 8px;
+    background: $ui-secondary;
+    color: $text-primary;
+    font: inherit;
+    font-size: 0.875rem;
+    box-sizing: border-box;
+}
+
+.submission-field textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.submission-field input:focus,
+.submission-field textarea:focus {
+    border-color: $looks-secondary;
+    outline: 2px solid $looks-transparent;
+}
+
+.submission-error,
+.submission-success {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+}
+
+.submission-error {
+    background: color-mix(in srgb, #e74c3c 12%, $ui-primary);
+    color: #b42318;
+}
+
+.submission-success {
+    background: color-mix(in srgb, #22a06b 12%, $ui-primary);
+    color: #16794c;
+}
+
+.submission-button {
+    width: 100%;
+    margin-top: 2px;
+}
+
+.submission-button:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
 .search-row {
     flex-shrink: 0;
     display: flex;
@@ -235,6 +398,17 @@
     .search-row {
         margin: 0.75rem;
         padding: 0.7rem 0.75rem;
+    }
+
+    .store-header {
+        align-items: flex-start;
+        flex-direction: column;
+        margin: 0.75rem 0.75rem 0;
+        padding: 1rem;
+    }
+
+    .store-title {
+        font-size: 1.25rem;
     }
 
     .search {

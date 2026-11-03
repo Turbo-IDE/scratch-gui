@@ -10,6 +10,7 @@ import {
 
 // Builds can point at another API with MW_API_BASE (see vite.config.mjs).
 const API_BASE = process.env.MW_API_BASE || 'https://api.mistwarp.org/v1';
+const EXTENSION_STORE_API_BASE = process.env.MW_EXTENSION_STORE_API_BASE || 'https://turboshare.org.uk/api';
 
 const SESSION_KEY = 'mw:mistwarp-session';
 const GET_CACHE_PREFIX = 'mw:api-cache:';
@@ -259,7 +260,15 @@ const runExchange = token => {
     return exchangeInFlight;
 };
 
-const request = async (path, {method = 'GET', body, headers = {}, raw = false, cache = true, timeoutMs} = {}) => {
+const request = async (path, {
+    method = 'GET',
+    body,
+    headers = {},
+    raw = false,
+    cache = true,
+    timeoutMs,
+    baseURL = API_BASE
+} = {}) => {
     const cacheable = method === 'GET' && !raw && cache;
     const cacheKey = cacheable ? getCacheKey(path) : '';
     // Uploads and raw downloads (project history) can take far longer than a
@@ -291,7 +300,7 @@ const request = async (path, {method = 'GET', body, headers = {}, raw = false, c
             const controller = timeout ? new AbortController() : null;
             if (controller) options.signal = controller.signal;
             const timer = controller ? setTimeout(() => controller.abort(), timeout) : null;
-            return fetch(`${API_BASE}${path}`, options)
+            return fetch(`${baseURL}${path}`, options)
                 .catch(error => {
                     if (controller && controller.signal.aborted) throw createTimeoutError(error);
                     throw createNetworkError(error);
@@ -455,9 +464,18 @@ const extensionSourceUrl = async (project, url) => {
 
 const checkProjectAssets = (id, assets) => request(`/projects/${id}/assets/check`, {method: 'POST', body: {assets}});
 
-const marketplaceExtensions = () => request('/extensions/marketplace', {cache: false});
+const marketplaceExtensions = () => request('/extensions/marketplace', {
+    cache: false,
+    baseURL: EXTENSION_STORE_API_BASE,
+    headers: {'X-Client-Type': 'StudioDANV-Web'}
+});
 const submitMarketplaceExtension = extension =>
-    request('/extensions/marketplace/submit', {method: 'POST', body: extension});
+    request('/extensions/marketplace/submit', {
+        method: 'POST',
+        body: extension,
+        baseURL: EXTENSION_STORE_API_BASE,
+        headers: {'X-Client-Type': 'StudioDANV-Web'}
+    });
 
 const collectExtensionSources = async sb3Blob => {
     const zip = await JSZip.loadAsync(sb3Blob);

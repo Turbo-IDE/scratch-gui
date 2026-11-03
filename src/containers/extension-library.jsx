@@ -18,6 +18,7 @@ import {marketplaceExtensions, submitMarketplaceExtension} from '../lib/communit
 import Modal from './windowed-modal.jsx';
 
 import LibraryComponent from '../components/tw-extension-library/extension-library.jsx';
+import libraryStyles from '../components/tw-extension-library/extension-library.css';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
 
 const messages = defineMessages({
@@ -42,6 +43,13 @@ const translateGalleryItem = (extension, locale) => ({
     ...extension,
     name: extension.nameTranslations[locale] || extension.name,
     description: extension.descriptionTranslations[locale] || extension.description
+});
+
+const readFileAsBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+    reader.onerror = () => reject(reader.error || new Error('Could not read the cover image.'));
+    reader.readAsDataURL(file);
 });
 
 let cachedGallery = null;
@@ -77,13 +85,15 @@ const fetchLibrary = async () => {
     if (twResult.status === 'rejected') log.error(twResult.reason);
     if (mistiumResult.status === 'rejected') log.error(mistiumResult.reason);
     if (marketplaceResult.status === 'rejected') log.error(marketplaceResult.reason);
+    let marketplaceError = marketplaceResult.status === 'rejected' ? marketplaceResult.reason : null;
 
     const twData = twResult.status === 'fulfilled' ? twResult.value : [];
     const mistiumData = mistiumResult.status === 'fulfilled' ? mistiumResult.value : [];
     const marketplaceData = marketplaceResult.status === 'fulfilled' &&
         Array.isArray(marketplaceResult.value.extensions) ? marketplaceResult.value.extensions : [];
     if (marketplaceResult.status === 'fulfilled' && !Array.isArray(marketplaceResult.value.extensions)) {
-        log.error(new Error('TurboShare extension catalog returned an invalid response.'));
+        marketplaceError = new Error('TurboShare extension catalog returned an invalid response.');
+        log.error(marketplaceError);
     }
     
     // Process TurboWarp extensions
@@ -171,12 +181,15 @@ const fetchLibrary = async () => {
         extensionURL: extension.extensionURL,
         source: 'marketplace',
         tags: ['marketplace'],
+        iconURL: extension.coverURL || extensionIcon,
         credits: [extension.author],
         incompatibleWithScratch: true
     }));
     
     // Combine both extension sets
-    return [...twExtensions, ...mistiumExtensions, ...marketplace];
+    const extensions = [...twExtensions, ...mistiumExtensions, ...marketplace];
+    extensions.marketplaceError = marketplaceError;
+    return extensions;
 };
 
 class ExtensionLibrary extends React.PureComponent {
@@ -185,6 +198,7 @@ class ExtensionLibrary extends React.PureComponent {
         bindAll(this, [
             'handleItemSelect',
             'handleMarketplaceSubmit',
+            'handleOpenSubmission',
             'handleCloseSubmission'
         ]);
         this.state = {
@@ -308,12 +322,21 @@ class ExtensionLibrary extends React.PureComponent {
         if (this.state.submitBusy) return;
         const form = event.currentTarget;
         const file = form.elements.source.files[0];
+        const cover = form.elements.cover.files[0];
         if (!file || !/\.js$/i.test(file.name)) {
             this.setState({submitError: 'Choose a JavaScript (.js) file.'});
             return;
         }
         if (file.size === 0 || file.size > 2 * 1024 * 1024) {
             this.setState({submitError: 'The extension must be up to 2 MB.'});
+            return;
+        }
+        if (cover && (
+            !['image/png', 'image/jpeg', 'image/webp'].includes(cover.type) ||
+            cover.size === 0 ||
+            cover.size > 2 * 1024 * 1024
+        )) {
+            this.setState({submitError: 'The cover must be a PNG, JPEG, or WebP image up to 2 MB.'});
             return;
         }
         this.setState({submitBusy: true, submitError: '', submitSuccess: ''});
@@ -323,10 +346,16 @@ class ExtensionLibrary extends React.PureComponent {
                 name: form.elements.name.value.trim(),
                 version: form.elements.version.value.trim(),
                 description: form.elements.description.value.trim(),
-                source: await file.text()
+                source: await file.text(),
+                coverBase64: cover ? await readFileAsBase64(cover) : '',
+                coverMime: cover ? cover.type : ''
             });
             if (!result || !result.ok) throw new Error('The server could not accept this extension.');
-            this.setState({submitSuccess: 'Submitted for admin review. It will appear in the store after approval.'});
+            this.setState({
+                submitSuccess: result.coverWarning ?
+                    `Submitted for admin review, but cover upload failed: ${result.coverWarning}` :
+                    'Submitted for admin review. It will appear in the store after approval.'
+            });
             try {
                 cachedGallery = await fetchLibrary();
                 if (this._isMounted) this.setState({gallery: cachedGallery});
@@ -342,29 +371,33 @@ class ExtensionLibrary extends React.PureComponent {
     handleCloseSubmission () {
         this.setState({submitOpen: false});
     }
+    handleOpenSubmission () {
+        this.setState({submitOpen: true, submitError: '', submitSuccess: ''});
+    }
     render () {
         const vanilla = getVanillaPalette();
         let library = null;
-        if (vanilla || this.state.gallery || this.state.galleryError || this.state.galleryTimedOut) {
+        if (this.props.storeOnly) {
+            library = [];
+            if (this.state.gallery) {
+                library.push(...this.state.gallery.filter(item => item.source === 'marketplace'));
+            } else if (this.state.galleryError) {
+                library.push(toLibraryItem(galleryError));
+            } else {
+                library.push(toLibraryItem(galleryLoading));
+            }
+        } else if (vanilla || this.state.gallery || this.state.galleryError || this.state.galleryTimedOut) {
             library = extensionLibraryContent
                 .filter(extension => !vanilla || (extension.tags.includes('scratch') && !extension.extensionURL))
                 .map(toLibraryItem);
             if (!vanilla) {
                 library.push('---');
-                library.push(toLibraryItem({
-                    name: 'Publish an extension',
-                    description: 'Submit an extension to the store for admin review.',
-                    extensionId: 'marketplace_submit',
-                    source: 'marketplace',
-                    tags: ['marketplace'],
-                    iconURL: extensionIcon
-                }));
                 if (this.state.gallery) {
                     library.push(toLibraryItem(galleryMore));
                     const locale = this.props.intl.locale;
                     library.push(
                         ...this.state.gallery
-                            .filter(i => i.extensionId !== 'faceSensing')
+                            .filter(i => i.extensionId !== 'faceSensing' && i.source !== 'marketplace')
                             .map(i => translateGalleryItem(i, locale))
                             .map(toLibraryItem)
                     );
@@ -384,8 +417,15 @@ class ExtensionLibrary extends React.PureComponent {
                     persistableKey="extensionId"
                     id="extensionLibrary"
                     tags={extensionTags}
-                    title={this.props.intl.formatMessage(messages.extensionTitle)}
+                    title={this.props.storeOnly ?
+                        'Extensions Store' :
+                        this.props.intl.formatMessage(messages.extensionTitle)}
                     visible={this.props.visible}
+                    storeOnly={this.props.storeOnly}
+                    storeError={this.state.gallery ?
+                        this.state.gallery.marketplaceError :
+                        this.state.galleryError}
+                    onPublish={this.handleOpenSubmission}
                     onItemSelected={this.handleItemSelect}
                     onRequestClose={this.props.onRequestClose}
                 />
@@ -394,55 +434,69 @@ class ExtensionLibrary extends React.PureComponent {
                         id="extensionMarketplaceSubmit"
                         contentLabel="Submit an extension"
                         onRequestClose={this.handleCloseSubmission}
-                        width={520}
-                        height={600}
+                        width={640}
+                        height={760}
                     >
                         <form
+                            className={libraryStyles.submissionForm}
                             onSubmit={this.handleMarketplaceSubmit}
-                            style={{display: 'flex', flexDirection: 'column', gap: 12, padding: 24}}
                         >
-                            <h2 style={{margin: 0}}>{'Submit an extension'}</h2>
-                            <p style={{margin: 0}}>
+                            <header className={libraryStyles.submissionHeader}>
+                                <span className={libraryStyles.submissionEyebrow}>{'EXTENSIONS STORE'}</span>
+                                <h2>{'Publish an extension'}</h2>
+                            </header>
+                            <p className={libraryStyles.submissionDescription}>
                                 {'Submit a version for admin review. '}
                                 {'Only approved versions appear in the Extensions Store. '}
                                 {'To use an extension privately, choose Custom Extension instead.'}
                             </p>
-                            <label>
-                                {'Extension ID'}
+                            <label className={libraryStyles.submissionField}>
+                                <span>{'Extension ID'}</span>
                                 <input
                                     name="id"
                                     required
                                     maxLength={64}
                                     pattern="[A-Za-z0-9_-]+"
+                                    placeholder="my_extension"
                                 />
                             </label>
-                            <label>
-                                {'Name'}
+                            <label className={libraryStyles.submissionField}>
+                                <span>{'Name'}</span>
                                 <input
                                     name="name"
                                     required
                                     maxLength={80}
+                                    placeholder="My Extension"
                                 />
                             </label>
-                            <label>
-                                {'Version'}
+                            <label className={libraryStyles.submissionField}>
+                                <span>{'Version'}</span>
                                 <input
                                     name="version"
                                     required
                                     maxLength={40}
-                                    placeholder="1.0.0"
+                                    defaultValue="1.0.0"
                                 />
                             </label>
-                            <label>
-                                {'Description'}
+                            <label className={libraryStyles.submissionField}>
+                                <span>{'Description'}</span>
                                 <textarea
                                     name="description"
                                     maxLength={500}
-                                    rows={3}
+                                    rows={4}
+                                    placeholder="What can this extension do?"
                                 />
                             </label>
-                            <label>
-                                {'JavaScript source (.js, up to 2 MB)'}
+                            <label className={libraryStyles.submissionField}>
+                                <span>{'Cover image (PNG, JPEG, or WebP; up to 2 MB)'}</span>
+                                <input
+                                    name="cover"
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp"
+                                />
+                            </label>
+                            <label className={libraryStyles.submissionField}>
+                                <span>{'JavaScript source (.js, up to 2 MB)'}</span>
                                 <input
                                     name="source"
                                     type="file"
@@ -450,9 +504,24 @@ class ExtensionLibrary extends React.PureComponent {
                                     required
                                 />
                             </label>
-                            {this.state.submitError ? <p role="alert">{this.state.submitError}</p> : null}
-                            {this.state.submitSuccess ? <p role="status">{this.state.submitSuccess}</p> : null}
+                            {this.state.submitError ? (
+                                <p
+                                    className={libraryStyles.submissionError}
+                                    role="alert"
+                                >
+                                    {this.state.submitError}
+                                </p>
+                            ) : null}
+                            {this.state.submitSuccess ? (
+                                <p
+                                    className={libraryStyles.submissionSuccess}
+                                    role="status"
+                                >
+                                    {this.state.submitSuccess}
+                                </p>
+                            ) : null}
                             <button
+                                className={libraryStyles.submissionButton}
                                 type="submit"
                                 disabled={this.state.submitBusy}
                             >
@@ -474,6 +543,7 @@ ExtensionLibrary.propTypes = {
     onOpenCustomExtensionModal: PropTypes.func,
     onRequestClose: PropTypes.func,
     onShowExtensionError: PropTypes.func.isRequired,
+    storeOnly: PropTypes.bool,
     visible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired // eslint-disable-line react/no-unused-prop-types
 };

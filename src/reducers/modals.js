@@ -5,6 +5,7 @@ let nextSimpleDialogId = 0;
 const MODAL_BACKDROP_LIBRARY = 'backdropLibrary';
 const MODAL_COSTUME_LIBRARY = 'costumeLibrary';
 const MODAL_EXTENSION_LIBRARY = 'extensionLibrary';
+const MODAL_EXTENSION_STORE = 'extensionStore';
 const MODAL_LOADING_PROJECT = 'loadingProject';
 const MODAL_TELEMETRY = 'telemetryModal';
 const MODAL_SOUND_LIBRARY = 'soundLibrary';
@@ -35,6 +36,7 @@ const initialState = {
     [MODAL_BACKDROP_LIBRARY]: false,
     [MODAL_COSTUME_LIBRARY]: false,
     [MODAL_EXTENSION_LIBRARY]: false,
+    [MODAL_EXTENSION_STORE]: false,
     [MODAL_LOADING_PROJECT]: false,
     [MODAL_TELEMETRY]: false,
     [MODAL_SOUND_LIBRARY]: false,
@@ -114,6 +116,9 @@ const openCostumeLibrary = function () {
 };
 const openExtensionLibrary = function () {
     return openModal(MODAL_EXTENSION_LIBRARY);
+};
+const openExtensionStore = function () {
+    return openModal(MODAL_EXTENSION_STORE);
 };
 const openLoadingProject = function () {
     return openModal(MODAL_LOADING_PROJECT);
@@ -231,6 +236,9 @@ const closeCostumeLibrary = function () {
 const closeExtensionLibrary = function () {
     return closeModal(MODAL_EXTENSION_LIBRARY);
 };
+const closeExtensionStore = function () {
+    return closeModal(MODAL_EXTENSION_STORE);
+};
 const closeLoadingProject = function () {
     return closeModal(MODAL_LOADING_PROJECT);
 };
@@ -289,6 +297,7 @@ export {
     openBackdropLibrary,
     openCostumeLibrary,
     openExtensionLibrary,
+    openExtensionStore,
     openLoadingProject,
     openSoundLibrary,
     openSpriteLibrary,
@@ -324,6 +333,7 @@ export {
     closeBackdropLibrary,
     closeCostumeLibrary,
     closeExtensionLibrary,
+    closeExtensionStore,
     closeLoadingProject,
     closeSpriteLibrary,
     closeSoundLibrary,
