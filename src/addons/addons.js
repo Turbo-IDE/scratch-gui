@@ -36,6 +36,7 @@ const addons = [
     'folders',
     'block-switching',
     'load-extensions',
+    'load-wow-economy',
     'custom-zoom',
     'copy-reporter',
     'initialise-sprite-position',
