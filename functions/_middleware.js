@@ -21,102 +21,102 @@ const SKIP_PATHS = new Set([
 
 const STATIC_META = {
     '/': {
-        title: 'MistWarp',
+        title: 'Turbo IDE from TurboShare',
         description:
-            'MistWarp is a powerful Scratch mod. Create, share, and explore projects on the MistWarp community.'
+            'Turbo IDE is a powerful Scratch mod. Create, share, and explore projects on the Turbo IDE community.'
     },
     '/explore': {
-        title: 'Explore - MistWarp',
-        description: 'Explore community projects, games, and creations shared on MistWarp.'
+        title: 'Explore - Turbo IDE',
+        description: 'Explore community projects, games, and creations shared on Turbo IDE.'
     },
     '/bounties': {
-        title: 'Project bounties - MistWarp',
-        description: 'Earn credits by completing bounties on MistWarp community projects.'
+        title: 'Project bounties - Turbo IDE',
+        description: 'Earn credits by completing bounties on Turbo IDE community projects.'
     },
     '/themes': {
-        title: 'Themes - MistWarp',
-        description: 'Browse community-made editor themes for MistWarp.'
+        title: 'Themes - Turbo IDE',
+        description: 'Browse community-made editor themes for Turbo IDE.'
     },
     '/groups': {
-        title: 'Groups - MistWarp',
-        description: 'Organisations that share projects, spaces, members, and funding on MistWarp.'
+        title: 'Groups - Turbo IDE',
+        description: 'Organisations that share projects, spaces, members, and funding on Turbo IDE.'
     },
     '/news': {
-        title: 'News - MistWarp',
-        description: 'Updates and announcements from the MistWarp team.'
+        title: 'News - Turbo IDE',
+        description: 'Updates and announcements from the Turbo IDE team.'
     },
     '/stats': {
-        title: 'MistWarp stats - MistWarp',
-        description: 'Public statistics about the MistWarp community.'
+        title: 'Turbo IDE stats - Turbo IDE',
+        description: 'Public statistics about the Turbo IDE community.'
     },
     '/leaderboard': {
-        title: 'Leaderboard - MistWarp',
-        description: 'Top creators and projects on MistWarp.'
+        title: 'Leaderboard - Turbo IDE',
+        description: 'Top creators and projects on Turbo IDE.'
     },
     '/spaces': {
-        title: 'Spaces - MistWarp',
-        description: 'Browse studios, collections, and community challenges on MistWarp.'
+        title: 'Spaces - Turbo IDE',
+        description: 'Browse studios, collections, and community challenges on Turbo IDE.'
     },
     '/compare': {
-        title: 'MistWarp compared with Scratch and TurboWarp - MistWarp',
-        description: 'What MistWarp adds on top of Scratch and TurboWarp: ' +
+        title: 'Turbo IDE compared with Scratch and TurboWarp - Turbo IDE',
+        description: 'What Turbo IDE adds on top of Scratch and TurboWarp: ' +
             'a built-in community, version history, faster projects, and more blocks.'
     },
     '/roadmap': {
-        title: 'Roadmap - MistWarp',
-        description: 'Suggest, discuss, and vote on ideas for MistWarp.'
+        title: 'Roadmap - Turbo IDE',
+        description: 'Suggest, discuss, and vote on ideas for Turbo IDE.'
     },
     '/trust': {
-        title: 'Trust and safety - MistWarp',
-        description: 'How MistWarp keeps the community safe.'
+        title: 'Trust and safety - Turbo IDE',
+        description: 'How Turbo IDE keeps the community safe.'
     },
     '/support': {
-        title: 'Support - MistWarp',
-        description: 'Get help with MistWarp.'
+        title: 'Support - Turbo IDE',
+        description: 'Get help with Turbo IDE.'
     },
     '/status': {
-        title: 'Service status - MistWarp',
-        description: 'Current status of MistWarp services.'
+        title: 'Service status - Turbo IDE',
+        description: 'Current status of Turbo IDE services.'
     },
     '/perks': {
-        title: 'Membership perks - MistWarp',
-        description: 'MistWarp membership plans and perks.'
+        title: 'Membership perks - Turbo IDE',
+        description: 'Turbo IDE membership plans and perks.'
     },
     '/mystuff': {
-        title: 'My Stuff - MistWarp',
-        description: 'Your MistWarp projects and library.',
+        title: 'My Stuff - Turbo IDE',
+        description: 'Your Turbo IDE projects and library.',
         noindex: true
     },
     '/settings': {
-        title: 'Settings - MistWarp',
-        description: 'Your MistWarp account settings.',
+        title: 'Settings - Turbo IDE',
+        description: 'Your Turbo IDE account settings.',
         noindex: true
     },
     '/wallet': {
-        title: 'Wallet - MistWarp',
-        description: 'Your Rotur credits and MistWarp purchases.',
+        title: 'Wallet - Turbo IDE',
+        description: 'Your Turbo IDE credits and Turbo IDE purchases.',
         noindex: true
     },
     '/purchases': {
-        title: 'Purchases - MistWarp',
-        description: 'What you have bought on MistWarp.',
+        title: 'Purchases - Turbo IDE',
+        description: 'What you have bought on Turbo IDE.',
         noindex: true
     },
     '/notifications': {
-        title: 'Notifications - MistWarp',
-        description: 'Your MistWarp notifications.',
+        title: 'Notifications - Turbo IDE',
+        description: 'Your Turbo IDE notifications.',
         noindex: true
     },
     '/admin': {
-        title: 'Admin - MistWarp',
-        description: 'MistWarp administration.',
+        title: 'Admin - Turbo IDE',
+        description: 'Turbo IDE administration.',
         noindex: true
     }
 };
 
 const NOT_FOUND_META = {
-    title: 'Page not found - MistWarp',
-    description: 'This page does not exist on MistWarp.'
+    title: 'Page not found - Turbo IDE',
+    description: 'This page does not exist on Turbo IDE.'
 };
 
 const escapeAttribute = value => String(value)
