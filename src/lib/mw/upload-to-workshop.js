@@ -1,7 +1,7 @@
 // Sends the current project to TurboShare. Shared by File > Upload to
 // TurboShare and the menu bar upload button so both use the same mechanism.
 // Authors: katboizz
-const WORKSHOP_UPLOAD_URL = 'https://danvpr.github.io/workshop/#upload';
+const WORKSHOP_UPLOAD_URL = 'https://turboshare.org.uk/#upload';
 
 /**
  * Open TurboShare in a new tab and send it the packaged project.

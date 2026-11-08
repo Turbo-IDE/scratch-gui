@@ -34,7 +34,7 @@ describe('uploadProjectToWorkshop', () => {
         const result = await uploadProjectToWorkshop({vm, projectTitle: 'My Project', onOpened});
 
         expect(result).toBe(true);
-        expect(window.open).toHaveBeenCalledWith('https://danvpr.github.io/workshop/#upload', '_blank');
+        expect(window.open).toHaveBeenCalledWith('https://turboshare.org.uk/#upload', '_blank');
         expect(onOpened).toHaveBeenCalledTimes(1);
 
         window.dispatchEvent(new MessageEvent('message', {data: {type: 'DANV_WORKSHOP_READY'}}));
