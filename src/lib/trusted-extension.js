@@ -3,6 +3,18 @@ const isGalleryExtensionUrl = url => (
     url.startsWith('https://extensions.mistium.com/')
 );
 
+const isMarketplaceExtensionUrl = url => {
+    try {
+        const parsed = new URL(url);
+        return parsed.origin === 'https://turboshare.org.uk' &&
+            /^\/api\/extensions\/marketplace\/source\/[a-f0-9]{64}$/.test(parsed.pathname) &&
+            !parsed.search &&
+            !parsed.hash;
+    } catch (e) {
+        return false;
+    }
+};
+
 /**
  * /static/turboshare-extensions/ is only trusted when this editor serves it
  * itself. The same path on any other origin (for example
@@ -24,9 +36,10 @@ const isSameOriginTurboshareExtension = url => {
 };
 
 const isTrustedExtensionUrl = url => isGalleryExtensionUrl(url) ||
+    isMarketplaceExtensionUrl(url) ||
     url.startsWith('http://localhost:8000/') ||
     url.startsWith('http://localhost:8601/') ||
     isSameOriginTurboshareExtension(url);
 
-export {isGalleryExtensionUrl};
+export {isGalleryExtensionUrl, isMarketplaceExtensionUrl};
 export default isTrustedExtensionUrl;

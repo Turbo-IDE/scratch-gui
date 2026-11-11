@@ -252,6 +252,44 @@
     font-size: 0.875rem;
 }
 
+.store-loading {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    box-sizing: border-box;
+    color: color-mix(in srgb, $text-primary 75%, transparent);
+    text-align: center;
+}
+
+.store-loading p {
+    margin: 0;
+    font-size: 0.9375rem;
+}
+
+.store-loading-spinner {
+    width: 34px;
+    height: 34px;
+    border: 3px solid $ui-black-transparent;
+    border-top-color: $looks-secondary;
+    border-radius: 50%;
+    animation: store-loading-spin 0.8s linear infinite;
+}
+
+@keyframes store-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .store-loading-spinner {
+        animation-duration: 2s;
+    }
+}
+
 .empty-state-button {
     display: inline-flex;
     align-items: center;

@@ -5494,6 +5494,7 @@
     "mw.extensionGallery.loading": "Đang tải tiện ích mở rộng từ thư viện tiện ích mở rộng TurboWarp...",
     "mw.extensionGallery.more": "Mở trang web thư viện tiện ích mở rộng TurboWarp trong thẻ mới. Các tiện ích mở rộng cũng được liệt kê dưới TurboWarp.",
     "mw.extensionGallery.error": "Không thể tải thư viện tiện ích mở rộng TurboWarp. Chọn thẻ này để duyệt trên extensions.turbowarp.org.",
+    "mw.extensionStore.loading": "Đang tải Cửa hàng tiện ích mở rộng…",
     "mw.extensionTags.turboshare": "TurboShare",
     "mw.extensionTags.scratch": "Scratch",
     "mw.extensionTags.turbowarp": "TurboWarp",

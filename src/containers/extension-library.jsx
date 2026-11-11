@@ -53,6 +53,7 @@ const readFileAsBase64 = file => new Promise((resolve, reject) => {
 });
 
 let cachedGallery = null;
+let cachedMarketplaceGallery = null;
 
 const fetchCatalog = async (name, url) => {
     const response = await fetch(url);
@@ -62,6 +63,28 @@ const fetchCatalog = async (name, url) => {
         throw new Error(`${name} extensions: Invalid catalog response`);
     }
     return data.extensions;
+};
+
+const mapMarketplaceExtensions = extensions => extensions.map(extension => ({
+    name: extension.name,
+    description: extension.description,
+    extensionId: extension.extensionId,
+    extensionURL: extension.extensionURL,
+    source: 'marketplace',
+    tags: ['marketplace'],
+    iconURL: extension.coverURL || extensionIcon,
+    credits: [extension.author],
+    incompatibleWithScratch: true
+}));
+
+const fetchMarketplaceLibrary = async () => {
+    const data = await marketplaceExtensions();
+    if (!data || !Array.isArray(data.extensions)) {
+        throw new Error('TurboShare extension catalog returned an invalid response.');
+    }
+    const marketplace = mapMarketplaceExtensions(data.extensions);
+    marketplace.marketplaceError = null;
+    return marketplace;
 };
 
 const fetchLibrary = async () => {
@@ -174,22 +197,22 @@ const fetchLibrary = async () => {
             featured: true
         }));
 
-    const marketplace = marketplaceData.map(extension => ({
-        name: extension.name,
-        description: extension.description,
-        extensionId: extension.extensionId,
-        extensionURL: extension.extensionURL,
-        source: 'marketplace',
-        tags: ['marketplace'],
-        iconURL: extension.coverURL || extensionIcon,
-        credits: [extension.author],
-        incompatibleWithScratch: true
-    }));
+    const marketplace = mapMarketplaceExtensions(marketplaceData);
     
     // Combine both extension sets
     const extensions = [...twExtensions, ...mistiumExtensions, ...marketplace];
     extensions.marketplaceError = marketplaceError;
     return extensions;
+};
+
+const cacheGallery = (gallery, storeOnly) => {
+    if (storeOnly) {
+        cachedMarketplaceGallery = gallery;
+        return;
+    }
+    cachedGallery = gallery;
+    cachedMarketplaceGallery = gallery.filter(item => item.source === 'marketplace');
+    cachedMarketplaceGallery.marketplaceError = gallery.marketplaceError;
 };
 
 class ExtensionLibrary extends React.PureComponent {
@@ -202,7 +225,7 @@ class ExtensionLibrary extends React.PureComponent {
             'handleCloseSubmission'
         ]);
         this.state = {
-            gallery: cachedGallery,
+            gallery: this.props.storeOnly ? cachedMarketplaceGallery : cachedGallery,
             galleryError: null,
             galleryTimedOut: false,
             submitOpen: false,
@@ -225,9 +248,10 @@ class ExtensionLibrary extends React.PureComponent {
                 }
             }, 750);
 
-            fetchLibrary()
+            const fetchCurrentLibrary = this.props.storeOnly ? fetchMarketplaceLibrary : fetchLibrary;
+            fetchCurrentLibrary()
                 .then(gallery => {
-                    cachedGallery = gallery;
+                    cacheGallery(gallery, this.props.storeOnly);
                     if (this._isMounted) {
                         this.setState({
                             gallery
@@ -350,8 +374,11 @@ class ExtensionLibrary extends React.PureComponent {
                     'Submitted for admin review. It will appear in the store after approval.'
             });
             try {
-                cachedGallery = await fetchLibrary();
-                if (this._isMounted) this.setState({gallery: cachedGallery});
+                const gallery = this.props.storeOnly ?
+                    await fetchMarketplaceLibrary() :
+                    await fetchLibrary();
+                cacheGallery(gallery, this.props.storeOnly);
+                if (this._isMounted) this.setState({gallery});
             } catch (error) {
                 log.error(error);
             }
@@ -416,6 +443,7 @@ class ExtensionLibrary extends React.PureComponent {
                         this.props.intl.formatMessage(messages.extensionTitle)}
                     visible={this.props.visible}
                     storeOnly={this.props.storeOnly}
+                    storeLoading={!this.state.gallery && !this.state.galleryError}
                     storeError={this.state.gallery ?
                         this.state.gallery.marketplaceError :
                         this.state.galleryError}
@@ -558,4 +586,4 @@ const mapDispatchToProps = dispatch => ({
 
 export default injectIntl(connect(null, mapDispatchToProps)(ExtensionLibrary));
 
-export {ExtensionLibrary, fetchLibrary};
+export {ExtensionLibrary, fetchLibrary, fetchMarketplaceLibrary};

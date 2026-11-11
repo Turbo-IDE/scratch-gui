@@ -6,7 +6,10 @@ import log from '../lib/utils/log.js';
 import SecurityManagerModal from '../components/tw-security-manager-modal/security-manager-modal.jsx';
 import SecurityModals from '../lib/constants/security-manager.js';
 import {setPersistedUnsandboxed} from '../lib/persistence/tw-unsandboxed.js';
-import isTrustedExtensionUrl, {isGalleryExtensionUrl} from '../lib/trusted-extension.js';
+import isTrustedExtensionUrl, {
+    isGalleryExtensionUrl,
+    isMarketplaceExtensionUrl
+} from '../lib/trusted-extension.js';
 import {getRememberedPlatformProjectState} from '../lib/community/publish.js';
 import {extensionSourceUrl, hashExtensionUrl} from '../lib/community/api.js';
 import {blockProjectPrompts, isProjectPromptBlocked} from '../lib/project-prompt-blocking.js';
@@ -54,7 +57,9 @@ const isPlatformTrustedExtension = async url => {
 const isTrustedExtension = url => {
     const platformProject = isPlatformProjectLoad() && getRememberedPlatformProjectState();
     if (platformProject && Array.isArray(platformProject.trustedExtensions)) {
-        return isGalleryExtensionUrl(url) || extensionsTrustedByUser.has(url);
+        return isGalleryExtensionUrl(url) ||
+            isMarketplaceExtensionUrl(url) ||
+            extensionsTrustedByUser.has(url);
     }
     return isTrustedExtensionUrl(url) || extensionsTrustedByUser.has(url);
 };

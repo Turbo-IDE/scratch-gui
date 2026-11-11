@@ -64,6 +64,16 @@ test('only official or explicitly trusted extensions run unsandboxed', () => {
     expect(isTrustedExtension(custom)).toBe(true);
 });
 
+test('only approved TurboShare marketplace source URLs run unsandboxed', () => {
+    const sourceURL = `https://turboshare.org.uk/api/extensions/marketplace/source/${'a'.repeat(64)}`;
+    expect(isTrustedExtension(sourceURL)).toBe(true);
+    expect(isTrustedExtension(`${sourceURL}?redirect=https://example.com/extension.js`)).toBe(false);
+    expect(isTrustedExtension(`https://example.com/api/extensions/marketplace/source/${'a'.repeat(64)}`))
+        .toBe(false);
+    expect(isTrustedExtension('https://turboshare.org.uk/api/extensions/marketplace/source/not-a-hash'))
+        .toBe(false);
+});
+
 test('turboshare extensions are only trusted from the editor\'s own origin', () => {
     const origin = window.location.origin;
     expect(isTrustedExtension(`${origin}/static/turboshare-extensions/CloudDB.js`)).toBe(true);
@@ -104,6 +114,8 @@ test('platform projects trust only hashes approved by the server', async () => {
     });
     expect(await isPlatformTrustedExtension('https://example.com/trusted.js')).toBe(true);
     expect(isTrustedExtension('https://example.com/trusted.js')).toBe(false);
+    expect(isTrustedExtension(`https://turboshare.org.uk/api/extensions/marketplace/source/${'b'.repeat(64)}`))
+        .toBe(true);
     expect(isTrustedExtension('https://extensions.turbowarp.org/unreviewed.js')).toBe(true);
     expect(isTrustedExtension('https://extensions.mistium.com/featured/example.js')).toBe(true);
     window.history.replaceState(null, '', '/editor');

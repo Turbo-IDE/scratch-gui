@@ -49,6 +49,7 @@ test('enabled, event', () => {
     const fn = jest.fn();
     store.addEventListener('setting-changed', fn);
     expect(store.getAddonEnabled('editor-devtools')).toBe(true);
+    expect(store.getAddonEnabled('load-wow-economy')).toBe(true);
     expect('enabled' in store.store['editor-devtools']).toBe(false);
     store.setAddonEnabled('editor-devtools', false);
     expect(store.getAddonEnabled('editor-devtools')).toBe(false);

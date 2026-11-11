@@ -59,6 +59,11 @@ const messages = defineMessages({
         id: 'mw.extensionStore.unavailable',
         defaultMessage: 'The Extensions Store could not be loaded.',
         description: 'Error title shown when the extension store API is unavailable'
+    },
+    storeLoading: {
+        id: 'mw.extensionStore.loading',
+        defaultMessage: 'Loading the Extensions Store…',
+        description: 'Status shown while the Extensions Store catalog is loading'
     }
 });
 
@@ -280,7 +285,17 @@ class TWExtensionLibrary extends React.Component {
     }
 
     render () {
-        const {intl, tags, title, onRequestClose, onItemSelected, onPublish, storeError, storeOnly} = this.props;
+        const {
+            intl,
+            tags,
+            title,
+            onRequestClose,
+            onItemSelected,
+            onPublish,
+            storeError,
+            storeLoading,
+            storeOnly
+        } = this.props;
         const data = this.props.data || [];
         const divider = data.indexOf('---');
         const builtIn = data.slice(0, divider === -1 ? data.length : divider).filter(isExtension);
@@ -376,7 +391,19 @@ class TWExtensionLibrary extends React.Component {
                             />
                         </div>
                         <div className={styles.scroll}>
-                            {storeOnly && storeError ? (
+                            {storeOnly && storeLoading ? (
+                                <div
+                                    className={styles.storeLoading}
+                                    role="status"
+                                    aria-live="polite"
+                                >
+                                    <span
+                                        className={styles.storeLoadingSpinner}
+                                        aria-hidden="true"
+                                    />
+                                    <p>{intl.formatMessage(messages.storeLoading)}</p>
+                                </div>
+                            ) : storeOnly && storeError ? (
                                 <div
                                     className={styles.emptyState}
                                     role="alert"
@@ -451,6 +478,7 @@ TWExtensionLibrary.propTypes = {
     onItemSelected: PropTypes.func.isRequired,
     onPublish: PropTypes.func,
     storeError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    storeLoading: PropTypes.bool,
     storeOnly: PropTypes.bool,
     onRequestClose: PropTypes.func
 };

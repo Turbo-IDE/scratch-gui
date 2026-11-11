@@ -275,7 +275,7 @@ const twMessages = defineMessages({
     },
     backToProjectPage: {
         id: 'mw.editor.backToProjectPage',
-        defaultMessage: 'Xem trang dự án',
+        defaultMessage: 'View project page',
         description: 'Button that opens the project page the editor was launched from'
     },
     forkProject: {

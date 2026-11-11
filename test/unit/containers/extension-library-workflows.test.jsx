@@ -1,4 +1,8 @@
-import {ExtensionLibrary, fetchLibrary} from '../../../src/containers/extension-library.jsx';
+import {
+    ExtensionLibrary,
+    fetchLibrary,
+    fetchMarketplaceLibrary
+} from '../../../src/containers/extension-library.jsx';
 
 const response = (ok, data, status = 200) => ({
     ok,
@@ -49,6 +53,24 @@ describe('extension gallery loading', () => {
 
         expect(gallery.find(item => item.extensionId === 'community-test').credits)
             .toEqual(['Example Author']);
+    });
+
+    test('loads the store catalog without waiting for the other extension galleries', async () => {
+        global.fetch = jest.fn().mockResolvedValue(response(true, {
+            ok: true,
+            extensions: [{
+                extensionId: 'community-test',
+                name: 'Community Test',
+                author: 'Example Author',
+                extensionURL: 'https://turboshare.org.uk/api/extensions/marketplace/source/example'
+            }]
+        }));
+
+        const gallery = await fetchMarketplaceLibrary();
+
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch.mock.calls[0][0]).toBe('https://turboshare.org.uk/api/extensions/marketplace');
+        expect(gallery.map(item => item.extensionId)).toEqual(['community-test']);
     });
 });
 

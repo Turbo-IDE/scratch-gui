@@ -34,6 +34,7 @@ import _editor_sounds from "../addons/editor-sounds/_manifest_entry.js";
 import _folders from "../addons/folders/_manifest_entry.js";
 import _block_switching from "../addons/block-switching/_manifest_entry.js";
 import _load_extensions from "../addons/load-extensions/_manifest_entry.js";
+import _load_wow_economy from "../addons/load-wow-economy/_manifest_entry.js";
 import _custom_zoom from "../addons/custom-zoom/_manifest_entry.js";
 import _copy_reporter from "../addons/copy-reporter/_manifest_entry.js";
 import _initialise_sprite_position from "../addons/initialise-sprite-position/_manifest_entry.js";
@@ -95,6 +96,7 @@ export default {
   "folders": _folders,
   "block-switching": _block_switching,
   "load-extensions": _load_extensions,
+  "load-wow-economy": _load_wow_economy,
   "custom-zoom": _custom_zoom,
   "copy-reporter": _copy_reporter,
   "initialise-sprite-position": _initialise_sprite_position,
