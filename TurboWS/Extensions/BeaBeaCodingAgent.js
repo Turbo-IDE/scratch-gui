@@ -204,10 +204,11 @@ en: {
       return String(loc).toLowerCase().indexOf('vi') === 0 ? 'vi' : 'en';
     } catch (e) { return 'en'; }
   }
-  function t(key, a1) {
+  function t(key, a1, a2) {
     var lang = getLocale();
     var str = (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS.en[key] || key;
     if (a1 !== undefined) str = String(str).split('$1').join(String(a1));
+    if (a2 !== undefined) str = String(str).split('$2').join(String(a2));
     return str;
   }
 
@@ -228,14 +229,9 @@ en: {
   if (currentModel === 'openai-reasoning') currentModel = 'openai';
   var autoConfirmActions = safeGet('beabea_auto_confirm', 'false') === 'true';
   var savedMaxAutoSteps = parseInt(safeGet('beabea_max_auto_steps', '10'), 10);
-  maxAutoSteps = isNaN(savedMaxAutoSteps) ? 10 : savedMaxAutoSteps;
-
-  // Load task queue from localStorage
-  var taskQueue = [];
-  try {
-    var savedTasks = localStorage.getItem('beabea_task_queue');
-    if (savedTasks) taskQueue = JSON.parse(savedTasks);
-  } catch (e) {}
+  var maxAutoSteps = isNaN(savedMaxAutoSteps) || savedMaxAutoSteps < 1 || savedMaxAutoSteps > 50
+    ? 10
+    : savedMaxAutoSteps;
 
   // Mode state
   var currentMode = 'plan'; // 'code' | 'ask' | 'debug' | 'plan'
@@ -255,7 +251,11 @@ en: {
   var currentTask = null;
   var taskQueue = [];
   var isAutonomousMode = false;
-  var maxAutoSteps = 10;
+  try {
+    var savedTasks = localStorage.getItem('beabea_task_queue');
+    var parsedTasks = savedTasks ? JSON.parse(savedTasks) : [];
+    if (Array.isArray(parsedTasks)) taskQueue = parsedTasks;
+  } catch (e) {}
   var autoStepCount = 0;
   var consecutiveFailures = 0;
   var maxConsecutiveFailures = 3;
@@ -275,10 +275,10 @@ en: {
   // ==========================================
   function escHtml(s) {
     return String(s == null ? '' : s)
-      .replace(/&/g, '&')
-      .replace(/</g, '<')
-      .replace(/>/g, '>')
-      .replace(/"/g, '"')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
       .replace(/'/g, "&apos;");
   }
   function inlineFormat(str) {
@@ -991,7 +991,13 @@ en: {
     try {
       var cleanJson = match[1].replace(/```json/g, '').replace(/```/g, '').trim();
       var decision = JSON.parse(cleanJson);
-      if (decision && (decision.action === 'continue' || decision.action === 'replan' || decision.action === 'finish')) {
+      if (decision && (
+        decision.action === 'continue' ||
+        decision.action === 'replan' ||
+        decision.action === 'finish' ||
+        decision.action === 'retry' ||
+        decision.action === 'skip'
+      )) {
         return decision;
       }
       return { action: 'continue', reason: '' };
@@ -1095,15 +1101,15 @@ en: {
 
     console.log('[BeaBea] Executing step', currentTask.currentStep + 1, '/', currentTask.plan.length, ':', step.tool);
 
-    executeAction({ type: step.tool, args: step.args }).then(function (result) {
+    Promise.resolve(executeAction({ type: step.tool, args: step.args })).then(function (result) {
       if (!beabeaWindow || !currentTask) return;
 
       step.result = result;
       step.status = result.success ? 'completed' : 'failed';
-      currentTask.currentStep++;
-      autoStepCount++;
 
       if (result.success) {
+        currentTask.currentStep++;
+        autoStepCount++;
         consecutiveFailures = 0;
         // Feed observation to AI for next decision
         sendObservationToAI(step, result).then(function (decisionResult) {
@@ -1135,11 +1141,13 @@ en: {
         });
       } else {
         consecutiveFailures++;
+        autoStepCount++;
         handleStepError(result.error || 'Unknown error', step, contentEl);
       }
     }).catch(function (err) {
       console.error('[BeaBea] Step execution error:', err);
       consecutiveFailures++;
+      autoStepCount++;
       handleStepError(err.message, step, contentEl);
     });
   }
@@ -1173,10 +1181,10 @@ en: {
       return;
     }
 
-    // Ask AI whether to retry, skip, or replan
+    // Ask AI whether to retry, skip, finish, or replan.
     var messages = [
       { role: 'system', content: buildSystemPrompt() },
-      { role: 'user', content: 'Bước ' + (currentTask.currentStep + 1) + ' thất bại: ' + errorMsg + '\n\nBạn muốn: retry (thử lại), skip (bỏ qua), hoặc replan (lập kế hoạch lại)? Trả về JSON trong thẻ <decision>.' }
+      { role: 'user', content: 'Bước ' + (currentTask.currentStep + 1) + ' thất bại: ' + errorMsg + '\n\nBạn muốn: retry (thử lại), skip (bỏ qua), replan (lập kế hoạch lại), hoặc finish (dừng)? Trả về JSON trong thẻ <decision>.' }
     ];
     sendToAI('', { stream: false, messages: messages }).then(function (parsed) {
       var extracted = extractPlanAndDecision(parsed.content);
@@ -1191,20 +1199,21 @@ en: {
           } else {
             finishTask('replan_failed', 'Không thể lập kế hoạch lại');
           }
+        }).catch(function (err) {
+          finishTask('replan_error', 'Lỗi lập kế hoạch lại: ' + err.message);
         });
       } else if (decision.action === 'finish') {
-        finishTask('completed', 'Dừng do lỗi: ' + errorMsg);
+        finishTask('failed', 'Dừng do lỗi: ' + errorMsg);
+      } else if (decision.action === 'retry') {
+        executeNextStep(contentEl);
       } else {
         // Default: skip this step and continue
         currentTask.currentStep++;
-        autoStepCount++;
         executeNextStep(contentEl);
       }
     }).catch(function (err) {
-      // On AI error, skip step and continue
-      currentTask.currentStep++;
-      autoStepCount++;
-      executeNextStep(contentEl);
+      console.error('[BeaBea] Failed to resolve step error:', err);
+      finishTask('decision_failed', 'Không thể quyết định cách xử lý lỗi: ' + err.message);
     });
   }
 
@@ -1327,8 +1336,14 @@ en: {
           }
         }, i + idx * 30);
       });
-    } else if (!fullReasoning) {
-      onChunk({ done: true, content: '', reasoning: '' });
+    } else {
+      if (fullReasoning) {
+        setTimeout(function () {
+          onChunk({ done: true, content: '', reasoning: fullReasoning });
+        }, i);
+      } else {
+        onChunk({ done: true, content: '', reasoning: '' });
+      }
     }
   }
 
@@ -1467,16 +1482,6 @@ en: {
             renderChat(contentEl);
           }
         }
-      }).then(function (parsed) {
-        if (!beabeaWindow) { isProcessing = false; return; }
-        console.log('[BeaBea] sendToAI succeeded (non-streaming fallback)');
-        chatHistory.pop(); // remove thinking message
-        var finalContent = parsed.content.replace(/<action>[\s\S]*?<\/action>/g, '').trim();
-        chatHistory.push({ role: 'assistant', content: finalContent || parsed.content, reasoning: parsed.reasoning });
-        renderChat(contentEl);
-        bindActionButtons(contentEl);
-        isProcessing = false;
-        hideBlockingOverlay();
       }).catch(function (err) {
         if (!beabeaWindow) { isProcessing = false; return; }
         console.error('[BeaBea] sendToAI failed:', err);
@@ -1767,7 +1772,8 @@ en: {
       else { title = 'Hành động: ' + action.type; desc = JSON.stringify(action.args); }
       actionHtml = '<div class="bb-action-card" style="margin-top:10px;padding:12px;border:1px dashed var(--bb-accent);border-radius:10px;background:var(--bb-win)"><div style="font-size:12px;color:var(--bb-accent);font-weight:600">' + escHtml(title) + '</div><div style="font-family:monospace;font-size:11px;white-space:pre-wrap;color:var(--bb-mut)">' + escHtml(desc) + '</div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="bb-btn bb-btn-secondary" data-action-revise="1">' + escHtml(t('actionRevise')) + '</button><button class="bb-btn" data-action-exec="' + escHtml(encodeURIComponent(JSON.stringify(action))) + '">' + escHtml(t('actionAccept')) + '</button></div></div>';
     }
-    return '<div class="bb-chat-row"><img class="bb-avatar" src="' + BEABEA_AVATAR + '"><div class="bb-bubble bb-bubble-bot">' + reasoningHtml + renderMarkdown(m.content) + actionHtml + '</div></div>';
+    var visibleContent = String(m.content || '').replace(/<action>[\s\S]*?<\/action>/g, '').trim();
+    return '<div class="bb-chat-row"><img class="bb-avatar" src="' + BEABEA_AVATAR + '"><div class="bb-bubble bb-bubble-bot">' + reasoningHtml + renderMarkdown(visibleContent) + actionHtml + '</div></div>';
   }
 
   function renderChatTab(content) {
